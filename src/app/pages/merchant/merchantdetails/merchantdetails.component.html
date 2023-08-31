@@ -1,0 +1,170 @@
+<div class="position-relative">
+  <div class="bgsetforloading position-absolute" *ngIf="loader">
+    <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+  </div>
+  <div class="container-fluid">
+    <div class="row bg-white py-2">
+      <div class="col-lg-6 col-md-6 col-12">
+        <h3>Merchant</h3>
+      </div>
+      <div class="col-lg-6 col-md-6 col-12 text-end">
+        <button
+          class="btn btn-lg btn-primary"
+          *ngIf="showAddBtn"
+          (click)="toggleAddOrderBtn()"
+        >
+          Add New
+        </button>
+        <button
+          class="btn btn-lg btn-primary"
+          *ngIf="!showAddBtn"
+          (click)="toggleAddOrderBtn()"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <div class="row bg-white" *ngIf="!showAddBtn">
+      <form class="row" [formGroup]="merchantForm" (ngSubmit)="addMerchant()">
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Location Type:</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="locationType"
+          />
+        </div>
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Name:</label>
+          <input type="text" class="form-control" formControlName="name" />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>House:</label>
+          <input type="text" class="form-control" formControlName="house" />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Road:</label>
+          <input type="text" class="form-control" formControlName="road" />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Area:</label>
+          <input type="text" class="form-control" formControlName="area" />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Police Station:</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="policeStation"
+          />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>District:</label>
+          <input type="text" class="form-control" formControlName="district" />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Country:</label>
+          <input type="text" class="form-control" formControlName="country" />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Phone Number:</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="phoneNumber"
+          />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Alternative Phone Number:</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="altPhoneNumber"
+          />
+        </div>
+
+        <div class="form-group mb-3 col-lg-3 col-md-3">
+          <label>Wallet Number:</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="walletNumber"
+          />
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-12">
+          <button type="submit" class="w-100 my-2 btn btn-primary">
+            Submit
+          </button>
+        </div>
+        <div class="col-lg-6 col-md-6 col-12">
+          <button
+            class="my-2 btn btn-warning w-100"
+            (click)="merchantformRefresh()"
+          >
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="row bg-white mt-3" *ngIf="showAddBtn">
+      <div class="col-lg-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Location Type</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Phone Number</th>
+              <th>Wallet Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of merchantdetailsList">
+              <td class="p-0">
+                <div
+                  class="absolute-position dropdown customcolorforaction"
+                  ngbDropdown
+                  placement="bottom-right"
+                >
+                  <a
+                    href="javascript: void(0);"
+                    class="dropdown-toggle card-drop"
+                    ngbDropdownToggle
+                  >
+                    <i class="fas fa-ellipsis-h font-size-18 ms-2 mt-3"></i>
+                  </a>
+                  <div
+                    class="dropdown-menu dropdown-menu-end dropdown-menu-customize"
+                    ngbDropdownMenu
+                  >
+                    <a class="dropdown-item" (click)="editUser(data)"
+                      ><i class="fas fa-pencil-alt text-success me-1"></i
+                      >Edit</a
+                    >
+                  </div>
+                </div>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

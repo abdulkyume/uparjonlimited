@@ -1,0 +1,62 @@
+<header id="page-topbar">
+  <div class="navbar-header">
+    <div class="d-flex">
+      <div class="navbar-brand-box bg-white">
+
+        <a routerLink="/" class="logo logo-light fl">
+          <span class="">
+            <img src="assets/images/upjl/icon.png" alt="" height="50" />
+          </span>
+        </a>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-sm px-3 font-size-16 header-item"
+        id="vertical-menu-btn"
+        (click)="toggleMobileMenu($event)"
+      >
+        <i class="fa fa-fw fa-bars"></i>
+      </button>
+    </div>
+
+    <div class="d-flex">
+      <div class="dropdown d-inline-block" ngbDropdown>
+        <button
+          type="button"
+          class="btn header-item"
+          ngbDropdownToggle
+          id="page-header-user-dropdown"
+        >
+          <img
+            class="rounded-circle header-profile-user"
+            src="assets/images/users/avatar_male.png"
+            alt="Avatar"
+            id="pp"
+          />
+          <span class="d-inline-block ms-1">{{ username }}</span>
+          <i class="fas fa-chevron-down ms-2 tap-color"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+
+          <a
+            class="dropdown-item text-danger"
+            routerLink="/account/change-password"
+          >
+            <i class="bx bx-key font-size-16 align-middle me-1 text-danger"></i>
+            Change Password</a
+          >
+          <a
+            class="dropdown-item text-danger"
+            href="javascript: void(0);"
+            (click)="logout()"
+          >
+            <i
+              class="bx bx-power-off font-size-16 align-middle me-1 text-danger"
+            ></i> Logout</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

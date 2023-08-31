@@ -1,0 +1,71 @@
+<ng-template #contentTemplate>
+  <div id="sidebar-menu">
+    <ul class="metismenu list-unstyled" id="side-menu" #sideMenu>
+      <ng-container *ngFor="let item of menuItems">
+        <li *ngIf="!item.isTitle && !item.isLayout">
+          <a
+            id="test-id-1"
+            *ngIf="hasItems(item)"
+            href="javascript:void(0);"
+            class="is-parent tap-color mm-collapsed"
+            aria-expanded="false"
+          >
+            <i class="{{ item.menuIcon }}" *ngIf="item.menuIcon"></i>
+            <span> {{ item.name }}</span>
+            <span
+              class="badge rounded-pill float-end bg-{{ item.badge.variant }}"
+              *ngIf="item.badge"
+              >{{ item.badge.text }}</span
+            >
+          </a>
+          <ul
+            *ngIf="hasItems(item)"
+            class="sub-menu mm-collapse"
+            aria-expanded="false"
+          >
+            <li *ngFor="let subitem of item.subItems">
+              <a
+                [routerLink]="subitem.menuUrl"
+                *ngIf="!hasItems(subitem)"
+                class="side-nav-link-ref"
+                [attr.data-parent]="subitem.parentId"
+                routerLinkActive="active"
+              >
+                {{ subitem.name }}
+              </a>
+              <ul
+                *ngIf="hasItems(subitem)"
+                class="sub-menu mm-collapse"
+                aria-expanded="false"
+              >
+                <li *ngFor="let subSubitem of subitem.subItems">
+                  <a
+                    [attr.data-parent]="subSubitem.parentId"
+                    [routerLink]="subSubitem.menuUrl"
+                    routerLinkActive="active"
+                    class="side-nav-link-ref"
+                  >
+                    {{ subSubitem.name }}
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</ng-template>
+<!-- Sidebar -->
+
+<div class="vertical-menu">
+  <ngx-simplebar class="h-100" #componentRef>
+    <div *ngIf="!isCondensed">
+      <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+    </div>
+    <div *ngIf="isCondensed">
+      <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+    </div>
+  </ngx-simplebar>
+</div>
+<!-- Left Sidebar End -->
