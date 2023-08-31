@@ -26,7 +26,7 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
   loader: boolean = false;
   showAddBtn: boolean = true;
   merchantForm!: FormGroup;
-  merchantForm!: FormGroup;
+  merchantSForm!: FormGroup;
   userid: string = '';
   merchantdetailsList: any;
   page: number = 0;
