@@ -139,7 +139,7 @@ export class MerchantService {
       .set('pageSize', String(limit));
 
     return this.http
-      .get(`${this.apiurl}merchant/getMerchant`, {
+      .get(`${this.apiurl}merchant/getMerchantDetail`, {
         params,
       })
       .pipe(
@@ -176,72 +176,77 @@ export class MerchantService {
   }
 
   addMerchantDetail(newUser: any) {
+    console.log(newUser);
     var apiurl = environment.environment;
-    return this.http.post<any>(`${apiurl}merchant/addMerchantDetail`, newUser).pipe(
-      timeout(60000),
-      catchError((err) => {
-        console.log(err);
-        if (
-          err === 'Unauthorized user.' ||
-          err.message === 'Unauthorized user.'
-        ) {
-          this.authService.logout();
-        }
-        if (err.name === 'TimeoutError') {
-          Swal.fire('Time Out!!', 'Internal Server Problem');
-        }
-        if (err === 'Bad Request') {
-          Swal.fire('Error!!', 'Form Submission Error');
-        }
-        if (err === 'Unknown Error') {
-          Swal.fire('Error!!', 'No Connection Found');
-        }
-        if (
-          err.message === "Cannot read properties of null (reading 'message')"
-        ) {
-          Swal.fire(
-            'Error!!',
-            'Resource Not Available. Link is Not Working',
-            'error'
-          );
-        }
-        throw err;
-      })
-    );
+    return this.http
+      .post<any>(`${apiurl}merchant/addMerchantDetail`, newUser)
+      .pipe(
+        timeout(60000),
+        catchError((err) => {
+          console.log(err);
+          if (
+            err === 'Unauthorized user.' ||
+            err.message === 'Unauthorized user.'
+          ) {
+            this.authService.logout();
+          }
+          if (err.name === 'TimeoutError') {
+            Swal.fire('Time Out!!', 'Internal Server Problem');
+          }
+          if (err === 'Bad Request') {
+            Swal.fire('Error!!', 'Form Submission Error');
+          }
+          if (err === 'Unknown Error') {
+            Swal.fire('Error!!', 'No Connection Found');
+          }
+          if (
+            err.message === "Cannot read properties of null (reading 'message')"
+          ) {
+            Swal.fire(
+              'Error!!',
+              'Resource Not Available. Link is Not Working',
+              'error'
+            );
+          }
+          throw err;
+        })
+      );
   }
 
   updateMerchantDetail(newUser: any) {
     var apiurl = environment.environment;
-    return this.http.put<any>(`${apiurl}merchant/updateMerchantDetail`, newUser).pipe(
-      timeout(60000),
-      catchError((err) => {
-        console.log(err);
-        if (
-          err === 'Unauthorized user.' ||
-          err.message === 'Unauthorized user.'
-        ) {
-          this.authService.logout();
-        }
-        if (err.name === 'TimeoutError') {
-          Swal.fire('Time Out!!', 'Internal Server Problem');
-        }
-        if (err === 'Bad Request') {
-          Swal.fire('Error!!', 'Form Submission Error');
-        }
-        if (err === 'Unknown Error') {
-          Swal.fire('Error!!', 'No Connection Found');
-        }
-        if (
-          err.message === "Cannot read properties of null (reading 'message')"
-        ) {
-          Swal.fire(
-            'Error!!',
-            'Resource Not Available. Link is Not Working',
-            'error'
-          );
-        }
-        throw err;
-      })
-    );
+    return this.http
+      .put<any>(`${apiurl}merchant/updateMerchantDetail`, newUser)
+      .pipe(
+        timeout(60000),
+        catchError((err) => {
+          console.log(err);
+          if (
+            err === 'Unauthorized user.' ||
+            err.message === 'Unauthorized user.'
+          ) {
+            this.authService.logout();
+          }
+          if (err.name === 'TimeoutError') {
+            Swal.fire('Time Out!!', 'Internal Server Problem');
+          }
+          if (err === 'Bad Request') {
+            Swal.fire('Error!!', 'Form Submission Error');
+          }
+          if (err === 'Unknown Error') {
+            Swal.fire('Error!!', 'No Connection Found');
+          }
+          if (
+            err.message === "Cannot read properties of null (reading 'message')"
+          ) {
+            Swal.fire(
+              'Error!!',
+              'Resource Not Available. Link is Not Working',
+              'error'
+            );
+          }
+          throw err;
+        })
+      );
   }
 }

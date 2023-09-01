@@ -5,7 +5,6 @@ import { MerchantdetailsComponent } from './merchantdetails/merchantdetails.comp
 
 const routes: Routes = [
   { path: 'merchant', component: MerchantComponent },
-  { path: 'merchantd', component: MerchantdetailsComponent },
 ];
 
 @NgModule({

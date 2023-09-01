@@ -77,6 +77,7 @@ export class SidebarComponent
       }
     }, 300);
   }
+
   getRoleWiseMenu() {
     this.defaultService.getRoleWiseMenu().subscribe((res: any) => {
       let keepParentMenus = res.data.filter((x: any) => x.parentId === "");
@@ -96,7 +97,7 @@ export class SidebarComponent
       });
       //  }
       this.menuItems = generateMenu;
-      console.log(this.menuItems);
+      
       localStorage.setItem(
         'menus',
         this.encryptionService.encrypt(JSON.stringify(generateMenu))

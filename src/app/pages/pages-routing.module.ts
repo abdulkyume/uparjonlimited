@@ -29,6 +29,12 @@ const routes: Routes = [
     loadChildren: () =>
       import('./merchant/merchant.module').then((m) => m.MerchantModule),
   },
+  
+  {
+    path: 'configuration',
+    loadChildren: () =>
+      import('./configuration/configuration-routing.module').then((m) => m.ConfigurationRoutingModule),
+  },
 ];
 
 @NgModule({

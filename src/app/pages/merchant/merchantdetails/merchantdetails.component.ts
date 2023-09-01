@@ -28,9 +28,10 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
   merchantForm!: FormGroup;
   merchantSForm!: FormGroup;
   userid: string = '';
+  merchantId: string = '';
   merchantdetailsList: any;
   page: number = 0;
-  pageSize: number = 0;
+  pageSize: number = 10;
 
   constructor(
     private formbuilder: FormBuilder,
@@ -40,16 +41,20 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.merchantId = this.shareDateService.getSharedData().id;
+    this.userid = JSON.parse(
+      this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
+    ).id;
+
     this.merchantdformRefresh();
-    // this.userid = (JSON.parse(this.encryptionService.decrypt(localStorage.getItem("currentUser")!))).id;
-    this.userid = '16b23cbe-32cd-4f57-a3de-1cc2950ae0e0';
+    this.merchantdSForm();
     this.getAllmerchant();
   }
 
   merchantdformRefresh() {
     this.merchantForm = this.formbuilder.group({
       id: [null],
-      merchantId: [this.shareDateService.getSharedData().id],
+      merchantId: [`${this.merchantId}`, [Validators.required]],
       locationType: [''],
       name: ['', [Validators.required]],
       house: ['', [Validators.required]],
@@ -60,11 +65,17 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
       country: ['', [Validators.required]],
       phoneNumber: ['', [Validators.required]],
       altPhoneNumber: [''],
-      walletNumber: ['', [Validators.required]],
+      walletPhoneNumber: ['', [Validators.required]],
+      active: [true],
+      deleted: [true],
     });
   }
 
-  merchantdSForm() {}
+  merchantdSForm() {
+    this.merchantSForm = this.formbuilder.group({
+      number: [''],
+    });
+  }
 
   successmsg(message: string) {
     Swal.fire('Success!', message, 'success');
@@ -74,11 +85,26 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
   }
 
   getAllmerchant() {
-    this.merchantService.getMerchantDetail(
-      this.userid,
-      this.page,
-      this.pageSize
-    );
+    this.merchantService
+      .getMerchantDetail(
+        this.merchantId,
+        this.page,
+        this.pageSize,
+        this.merchantSForm.controls['number'].value
+      )
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          console.log(res);
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loader = false;
+        },
+        complete: () => {
+          this.loader = false;
+        },
+      });
   }
 
   addMerchant() {
