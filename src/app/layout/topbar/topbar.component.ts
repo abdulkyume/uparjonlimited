@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { DOCUMENT, CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/core/service/auth.service';
@@ -10,7 +10,7 @@ import { RoleService } from 'src/app/core/service/role.service';
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, SimplebarAngularModule, NgbDropdownModule],
+  imports: [CommonModule, SimplebarAngularModule, NgbDropdownModule, RouterModule],
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
 })

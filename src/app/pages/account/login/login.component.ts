@@ -72,8 +72,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
             if (data.reason === 'Change Password') {
               this.router.navigate(['account/change-password']);
-            } else if (!data.isSuccess) {
-              this.error = data.reason;
+            } else if (data.statusCode == 100) {
+              this.error = data.message;
             } else {
               localStorage.setItem(
                 'isfetchmenu',

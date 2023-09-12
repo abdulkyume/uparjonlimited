@@ -13,10 +13,10 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'order-placement',
+    path: 'rider',
     loadChildren: () =>
-      import('./orderplacement/orderplacement.module').then(
-        (m) => m.OrderplacementModule
+      import('./rider/order.module').then(
+        (m) => m.RiderModule
       ),
   },
   {
@@ -29,7 +29,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./merchant/merchant.module').then((m) => m.MerchantModule),
   },
-  
+
   {
     path: 'configuration',
     loadChildren: () =>

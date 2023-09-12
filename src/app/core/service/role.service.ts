@@ -118,7 +118,7 @@ export class RoleService {
 
   createUser(newUser: any) {
     var apiurl = environment.environment;
-    return this.http.post<any>(`${apiurl}Account/signup`, newUser).pipe(
+    return this.http.post<any>(`${apiurl}user/create-user`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
         console.log(err);
@@ -148,7 +148,7 @@ export class RoleService {
   updateUser(newUser: any) {
     var apiurl = environment.environment;
     return this.http
-      .put<any>(`${apiurl}Account/UpdateUser/${newUser.id}`, newUser)
+      .put<any>(`${apiurl}user/update-user/${newUser.id}`, newUser)
       .pipe(
         timeout(60000),
         catchError((err) => {

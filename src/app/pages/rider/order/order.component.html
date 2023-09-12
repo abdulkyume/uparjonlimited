@@ -1,0 +1,295 @@
+<div class="position-relative">
+  <div class="bgsetforloading position-absolute" *ngIf="loader">
+    <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+  </div>
+  <div class="container-fluid">
+    <div class="row bg-white">
+      <div class="col-lg-6 col-md-6 col-12"><h3>Order</h3></div>
+      <div class="col-lg-6 col-md-6 col-12 text-end">
+        <button
+          class="btn btn-lg btn-primary"
+          (click)="toggleAddOrderBtn()"
+          *ngIf="showAddBtn"
+        >
+          Add New
+        </button>
+        <button
+          class="btn btn-lg btn-primary"
+          (click)="toggleAddOrderBtn()"
+          *ngIf="!showAddBtn"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+    <div class="row bg-white mt-3" *ngIf="!showAddBtn">
+      <form class="row" [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+        <div class="col-lg-4 col-md-3 col-12 mb-3">
+          <label for="merchantname"> Merchant Name </label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Merchant'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList"
+            [(ngModel)]="selectedItems"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect($event)"
+            (onDeSelect)="onInitiatorItemUnSelect($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-12 mb-3">
+          <label for="paymentTypeId"> Payment Info </label>
+          <select
+            formControlName="paymentTypeId"
+            id="paymentTypeId"
+            class="form-select"
+          >
+            <option value="COD Received">COD Received</option>
+            <option value="Delivery Cost Only">Delivery Cost Only</option>
+            <option value="No Cash Receive">No Cash Receive</option>
+            <option value="Customer paid to merchant">
+              Customer Paid to Merchant
+            </option>
+            <option value="Customer will pay bKash to Merchant">
+              Customer will pay bKash to Merchant
+            </option>
+            <option value="Custoemr unreachable">Custoemr unreachable</option>
+          </select>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-12 mb-3">
+          <label for="receivedAmount"> Amount Received </label>
+          <input
+            type="text"
+            formControlName="receivedAmount"
+            id="receivedAmount"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-12 mb-3">
+          <label for="otherNote"> Other Note </label>
+          <input
+            type="text"
+            formControlName="otherNote"
+            id="otherNote"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-12 mb-3">
+          <label for="orderDate"> Date </label>
+          <input
+            type="date"
+            formControlName="orderDate"
+            id="orderDate"
+            class="form-control"
+            [value]="currentdate"
+          />
+        </div>
+
+        <div class="col-lg-12 col-md-3 col-12 mb-3">
+          <div class="row">
+            <div class="col-lg-12 text-end">
+              <button
+                type="button"
+                class="ms-2 btn btn-primary w-md"
+                (click)="addSlub()"
+              >
+                Add Item
+              </button>
+            </div>
+          </div>
+          <div class="row pb-5">
+            <div class="col-lg-12">
+              <table
+                  class="table table-centered table-nowrap table-bordered"
+                  [formGroup]="slubform"
+                >
+                  <thead class="customise-thead"></thead>
+                  <tbody formArrayName="slubformval">
+                    <tr
+                      *ngFor="let data1 of slubdata().controls; let i = index"
+                      [formGroupName]="i"
+                    >
+                      <td
+                        class="d-flex justify-content-center align-items-center"
+                      >
+                        <i class="fas fa-trash-alt" (click)="deleteslub(i)"></i>
+                      </td>
+                      <td class="w-25">
+                        <input
+                          type="number"
+                          formControlName="quantity"
+                          id="quantity"
+                          placeholder="Quantity"
+                          min="1"
+                          class="form-control"
+                        />
+                      </td>
+                      <td>
+                        <ng-multiselect-dropdown
+                          [placeholder]="'Select Item'"
+                          [settings]="dropdownSettings"
+                          [data]="dropdownList1"
+                          [(ngModel)]="selectedItems1[i]"
+                          [ngModelOptions]="{ standalone: true }"
+                          (onSelect)="onInitiatorItemSelect1($event, i)"
+                          (onDeSelect)="onInitiatorItemUnSelect1($event, i)"
+                        >
+                        </ng-multiselect-dropdown>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="9">
+                        <div
+                          *ngIf="slubadderrorshow && slubdata().invalid"
+                          class="text-danger"
+                        >
+                          <div>Fill Up the Form First</div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-12">
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            *ngIf="!f['id'].value"
+          >
+            Submit
+          </button>
+          <button
+            class="btn btn-warning w-100"
+            type="submit"
+            *ngIf="f['id'].value"
+          >
+            Update
+          </button>
+        </div>
+        <div class="col-lg-6 col-md-6 col-12">
+          <button class="btn btn-success w-100" (click)="orderRefreshForm()">
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row bg-white mt-3 p-3" *ngIf="showAddBtn">
+    <form [formGroup]="searchForm" class="row" (ngSubmit)="getAllOrderList()">
+      <div class="col-lg-6 mb-3">
+        <label for="fromdate">From Date</label>
+        <input
+          class="form-control"
+          type="date"
+          formControlName="fromdate"
+          id="fromdate"
+          [value]="currentdate"
+        />
+      </div>
+      <div class="col-lg-6 mb-3">
+        <label for="toDate">To Date</label>
+        <input
+          class="form-control"
+          type="date"
+          formControlName="todate"
+          id="todate"
+          [value]="currentdate"
+        />
+      </div>
+      <div class="col-lg-6 mb-3">
+        <button class="btn btn-primary w-100" type="submit">Search</button>
+      </div>
+      <div class="col-lg-6 mb-3">
+        <button class="btn btn-warning w-100" (click)="searchRefreshForm()">
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="row bg-white mt-2 p-3" *ngIf="showAddBtn">
+    <div class="col-lg-12">
+      <table class="table table-responsive">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Order Date</th>
+            <th>Merchant Name</th>
+            <th>Merchant Number</th>
+            <th>Payment Info</th>
+            <th>Amount Received</th>
+            <th>Other Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of orderList">
+            <td class="p-0">
+              <div
+                class="absolute-position dropdown customcolorforaction"
+                ngbDropdown
+                placement="bottom-right"
+              >
+                <a
+                  href="javascript: void(0);"
+                  class="dropdown-toggle card-drop"
+                  ngbDropdownToggle
+                >
+                  <i class="fas fa-ellipsis-h font-size-18 ms-2 mt-3"></i>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-end dropdown-menu-customize"
+                  ngbDropdownMenu
+                >
+                  <a class="dropdown-item" (click)="editOrder(data)"
+                    ><i class="fas fa-pencil-alt text-success me-1"></i>Edit</a
+                  >
+                </div>
+              </div>
+            </td>
+            <td>{{ data.orderDate }}</td>
+            <td>{{ getMercahntName(data.merchantId) }}</td>
+            <td>{{ getMercahntMobile(data.merchantId) }}</td>
+            <td>{{ data.paymentTypeId }}</td>
+            <td>{{ data.receivedAmount }}</td>
+            <td>{{ data.otherNote }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- pagination start -->
+  <div class="row justify-content-md-between align-items-md-center mt-2">
+    <div class="col-sm-12 col-md-5">
+      <div
+        class="dataTables_info mb-2"
+        id="tickets-table_info"
+        role="status"
+        aria-live="polite"
+      >
+        Showing
+        {{ cPageVal }} to {{ toPageVal }} of {{ total }}
+        entries
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-5">
+      <div class="text-md-right float-md-end pagination-rounded">
+        <ngb-pagination
+          id="paginationCustoimse"
+          [collectionSize]="total"
+          (pageChange)="page = onPageChange($event)"
+          [pageSize]="pageSize"
+          [maxSize]="3"
+        >
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+  <!-- pagination ends -->
+</div>

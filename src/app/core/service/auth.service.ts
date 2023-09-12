@@ -101,11 +101,24 @@ export class AuthService {
   }
 
   changepassword(currentPassword: string, newPassword: string) {
+    let user = JSON.parse(
+      this.encryptionservice.decrypt(localStorage.getItem("currentUser")!)
+    );
+    let reqm = {
+      id: user.id,
+      active: true,
+      deleted: false,
+      userName: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      mobile: user.mobile,
+      email: user.email,
+      password: newPassword,
+      roleId: user.roleId
+    }
     return this.http
-      .post(this.apiurl + 'Account/changepass', {
-        currentPassword,
-        newPassword,
-      })
+      .post(this.apiurl + 'user/update-userp', reqm)
       .pipe(
         timeout(60000),
         catchError((err) => {
