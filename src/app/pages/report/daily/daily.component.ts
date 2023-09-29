@@ -23,6 +23,23 @@ import { MerchantService } from 'src/app/core/service/merchant.service';
 import { ReportService } from 'src/app/core/service/report.service';
 import { RoleService } from 'src/app/core/service/role.service';
 import * as XLSX from 'xlsx';
+import { LoaderComponent } from 'src/app/common/loader/loader.component';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { Subject, takeUntil } from 'rxjs';
+import { OrderService } from 'src/app/core/service/order.service';
+import { EncryptionService } from 'src/app/core/service/encryption.service';
+import { ConfigurationService } from 'src/app/core/service/configuration.service';
+import { MerchantService } from 'src/app/core/service/merchant.service';
+import { ReportService } from 'src/app/core/service/report.service';
+import { RoleService } from 'src/app/core/service/role.service';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-daily',
@@ -35,7 +52,16 @@ import * as XLSX from 'xlsx';
     NgbPaginationModule,
     NgMultiSelectDropDownModule,
   ],
+  imports: [
+    CommonModule,
+    LoaderComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbPaginationModule,
+    NgMultiSelectDropDownModule,
+  ],
   templateUrl: './daily.component.html',
+  styleUrls: ['./daily.component.scss'],
   styleUrls: ['./daily.component.scss'],
 })
 export class DailyComponent implements OnInit, OnDestroy {

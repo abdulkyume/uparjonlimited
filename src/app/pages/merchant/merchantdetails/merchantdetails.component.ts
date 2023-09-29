@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, map } from 'rxjs';
+import { Subject, takeUntil, map } from 'rxjs';
 import {
   FormBuilder,
   FormGroup,
@@ -21,6 +22,7 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-merchantdetails',
   standalone: true,
+  imports: [CommonModule, LoaderComponent, FormsModule, ReactiveFormsModule, NgbPaginationModule, NgbDropdownModule, NgMultiSelectDropDownModule],
   imports: [CommonModule, LoaderComponent, FormsModule, ReactiveFormsModule, NgbPaginationModule, NgbDropdownModule, NgMultiSelectDropDownModule],
   templateUrl: './merchantdetails.component.html',
   styleUrls: ['./merchantdetails.component.scss'],
@@ -55,8 +57,18 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
     private merchantService: MerchantService,
     private configservice: ConfigurationService
   ) { }
+    private merchantService: MerchantService,
+    private configservice: ConfigurationService
+  ) { }
 
   ngOnInit(): void {
+    this.dropdownSettings = {
+      singleSelection: true,
+      idField: 'id',
+      textField: 'customtext',
+      itemsShowLimit: 6,
+      allowSearchFilter: true,
+    };
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'id',
@@ -68,6 +80,7 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
     this.userid = JSON.parse(
       this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
     ).id;
+    this.getallZone()
     this.getallZone()
     this.merchantdformRefresh();
     this.merchantdSForm();
@@ -84,6 +97,8 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
       road: ['', [Validators.required]],
       area: ['', [Validators.required]],
       policeStation: ['', [Validators.required]],
+      district: ['Dhaka', [Validators.required]],
+      country: ['Bangladesh', [Validators.required]],
       district: ['Dhaka', [Validators.required]],
       country: ['Bangladesh', [Validators.required]],
       phoneNumber: ['', [Validators.required]],
@@ -179,6 +194,11 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
           if (this.toPageVal > this.total) {
             this.toPageVal = this.total;
           }
+          this.merchantdetailsList = res.data.content;
+          this.total = res.data.totalElements!;
+          if (this.toPageVal > this.total) {
+            this.toPageVal = this.total;
+          }
         },
         error: (err: any) => {
           console.error(err);
@@ -239,6 +259,25 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
     }
   }
 
+  editUser(data: any) {
+    this.merchantForm.controls["id"].setValue(data.id);
+    this.merchantForm.controls["merchantId"].setValue(data.merchantId);
+    this.merchantForm.controls["locationType"].setValue(data.locationType);
+    this.merchantForm.controls["name"].setValue(data.name);
+    this.merchantForm.controls["house"].setValue(data.house);
+    this.merchantForm.controls["road"].setValue(data.road);
+    this.merchantForm.controls["area"].setValue(data.area);
+    this.merchantForm.controls["policeStation"].setValue(data.policeStation);
+    this.merchantForm.controls["district"].setValue(data.district);
+    this.merchantForm.controls["country"].setValue(data.country);
+    this.merchantForm.controls["phoneNumber"].setValue(data.phoneNumber);
+    this.merchantForm.controls["altPhoneNumber"].setValue(data.altPhoneNumber);
+    this.merchantForm.controls["walletPhoneNumber"].setValue(data.walletPhoneNumber);
+    this.merchantForm.controls["active"].setValue(data.active);
+    this.merchantForm.controls["deleted"].setValue(data.deleted);
+    this.selectedItems = this.dropdownList.filter((d: any) => d.id == data.area)
+    this.showAddBtn = false;
+  }
   editUser(data: any) {
     this.merchantForm.controls["id"].setValue(data.id);
     this.merchantForm.controls["merchantId"].setValue(data.merchantId);
