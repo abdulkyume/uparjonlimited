@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/core/service/auth.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-passwordreset',
@@ -20,6 +21,8 @@ import { AuthService } from 'src/app/core/service/auth.service';
   styleUrls: ['./passwordreset.component.scss'],
 })
 export class PasswordresetComponent implements OnInit, OnDestroy {
+
+  private ngUnsubscribe: Subject<any> = new Subject();
   resetForm!: FormGroup;
   submitted: boolean = false;
   error: string = '';
@@ -111,6 +114,7 @@ export class PasswordresetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+    this.ngUnsubscribe.next(undefined);
+    this.ngUnsubscribe.complete();
   }
 }

@@ -9,9 +9,9 @@ export function ErrorInterceptor(
 ) {
   const authService = inject(AuthService);
   return next(request).pipe(
-    catchError((error) => {
-      if (error.status === 401) {
-        authService.logout()
+    catchError((error: any) => {
+      if (error.status === 401 || error.status === 403) {
+        authService.logout();
       }
       return throwError(() => error.error.message || error.statusText);
     })

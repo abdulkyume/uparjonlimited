@@ -49,13 +49,60 @@ export class MerchantComponent implements OnInit, OnDestroy {
   merchantformRefresh() {
     this.merchantForm = this.formbuilder.group({
       id: [null],
-      name: ["", [Validators.required]],
+      name: ["", [Validators.required, Validators.minLength(2)]],
     })
   }
   merchantSformRefresh() {
     this.merchantSForm = this.formbuilder.group({
       sname: [""],
     })
+  }
+
+  deletemerchant(data: any) {
+
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger ms-2",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "Do you want to Delete!",
+        icon: "warning",
+        confirmButtonText: "Yes!",
+        cancelButtonText: "No!",
+        showCancelButton: true,
+      })
+      .then((result) => {
+        if (result.value) {
+          this.loader = true;
+
+          data.deleted = true;
+          this.merchantService.updateMerchant(data).subscribe({
+            next: (res: any) => {
+              if (res.isSuccess || res.statusCode == 200) {
+                this.successmsg(res.message)
+              }
+              else {
+                this.errorssmsg(res.message)
+              }
+            },
+            error: (err: any) => {
+              console.error(err);
+              this.loader = false;
+            },
+            complete: () => {
+              this.getAllmerchant()
+              window.scrollTo(0, 0);
+              this.loader = false;
+            }
+          })
+        }
+      });
   }
   Search() {
     this.getAllmerchant();
@@ -99,6 +146,10 @@ export class MerchantComponent implements OnInit, OnDestroy {
     this.showAddBtn = false
   }
   addMerchant() {
+    if (this.merchantForm.invalid) {
+      return;
+    }
+
     this.loader = true;
     if (this.merchantForm.controls["id"].value) {
       this.merchantService.updateMerchant(this.merchantForm.value)
@@ -158,7 +209,7 @@ export class MerchantComponent implements OnInit, OnDestroy {
   onPageChange(event: number) {
     this.loader = true;
     this.toPageVal = event * this.pageSize;
-    this.page = event;
+    this.page = event - 1;
 
     this.cPageVal = (event - 1) * this.pageSize + 1;
 

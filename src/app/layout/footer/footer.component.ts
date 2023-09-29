@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from 'src/app/core/service/auth.service';
 
 @Component({
   selector: 'app-footer',
@@ -10,4 +11,10 @@ import { CommonModule } from '@angular/common';
 })
 export class FooterComponent {
   year: number = new Date().getFullYear();
+  constructor(private authService: AuthService) { }
+  @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
+    if (event['storageArea'] == localStorage) {
+      localStorage.getItem('currentUser') ?? this.authService.logout();
+    }
+  }
 }

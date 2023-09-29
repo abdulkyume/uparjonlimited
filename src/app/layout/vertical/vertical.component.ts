@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { FooterComponent } from '../footer/footer.component';
@@ -7,6 +7,7 @@ import { SIDEBAR_TYPE } from 'src/app/core/models/layout';
 import { TopbarComponent } from '../topbar/topbar.component';
 import { RightsidebarComponent } from '../rightsidebar/rightsidebar.component';
 import { EventService } from 'src/app/core/service/event.service';
+import { AuthService } from 'src/app/core/service/auth.service';
 
 @Component({
   selector: 'app-vertical',
@@ -26,12 +27,18 @@ export class VerticalComponent implements OnInit, AfterViewInit {
   isCondensed: boolean = false;
   sidebartype!: string;
 
-  constructor(private router: Router, private eventService: EventService) {
+  constructor(private router: Router, private eventService: EventService, private authService: AuthService) {
     this.router.events.forEach((event: any) => {
       if (event instanceof NavigationEnd) {
         document.body.classList.remove('sidebar-enable');
       }
     });
+  }
+
+  @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
+    if (event['storageArea'] == localStorage) {
+      localStorage.getItem('currentUser') ?? this.authService.logout();
+    }
   }
 
   ngOnInit() {

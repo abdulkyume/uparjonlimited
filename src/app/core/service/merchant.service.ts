@@ -18,7 +18,7 @@ export class MerchantService {
     return this.http.post<any>(`${apiurl}merchant/addMerchant`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (
           err === 'Unauthorized user.' ||
           err.message === 'Unauthorized user.'
@@ -53,7 +53,7 @@ export class MerchantService {
     return this.http.put<any>(`${apiurl}merchant/updateMerchant`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (
           err === 'Unauthorized user.' ||
           err.message === 'Unauthorized user.'
@@ -96,7 +96,7 @@ export class MerchantService {
       .pipe(
         timeout(60000),
         catchError((err) => {
-          console.log(err);
+          console.error(err);
           if (
             err === 'Unauthorized user.' ||
             err.message === 'Unauthorized user.'
@@ -145,7 +145,7 @@ export class MerchantService {
       .pipe(
         timeout(60000),
         catchError((err) => {
-          console.log(err);
+          console.error(err);
           if (
             err === 'Unauthorized user.' ||
             err.message === 'Unauthorized user.'
@@ -176,14 +176,13 @@ export class MerchantService {
   }
 
   addMerchantDetail(newUser: any) {
-    console.log(newUser);
     var apiurl = environment.environment;
     return this.http
       .post<any>(`${apiurl}merchant/addMerchantDetail`, newUser)
       .pipe(
         timeout(60000),
         catchError((err) => {
-          console.log(err);
+          console.error(err);
           if (
             err === 'Unauthorized user.' ||
             err.message === 'Unauthorized user.'
@@ -220,7 +219,7 @@ export class MerchantService {
       .pipe(
         timeout(60000),
         catchError((err) => {
-          console.log(err);
+          console.error(err);
           if (
             err === 'Unauthorized user.' ||
             err.message === 'Unauthorized user.'

@@ -1,4 +1,4 @@
 {
   "localUrl": "http://localhost:8080/api/",
-  "prodUrl": ""
+  "prodUrl": "http://manager.uparjonmart.com:8080/api/"
 }

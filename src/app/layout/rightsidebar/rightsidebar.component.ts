@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { LAYOUT_WIDTH, SIDEBAR_TYPE, TOPBAR } from 'src/app/core/models/layout';
 import { EventService } from 'src/app/core/service/event.service';
+import { AuthService } from 'src/app/core/service/auth.service';
 
 @Component({
   selector: 'app-rightsidebar',
@@ -19,7 +20,7 @@ export class RightsidebarComponent implements OnInit {
   sidebartype!: string;
   topbar!: string;
 
-  constructor(private eventService: EventService) { }
+  constructor(private eventService: EventService, private authService: AuthService) { }
 
   ngOnInit() {
     this.width = LAYOUT_WIDTH;
@@ -36,6 +37,12 @@ export class RightsidebarComponent implements OnInit {
     }
     if (this.attribute == 'horizontal') {
       vertical!.removeAttribute('checked');
+    }
+  }
+
+  @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
+    if (event['storageArea'] == localStorage) {
+      localStorage.getItem('currentUser') ?? this.authService.logout();
     }
   }
 

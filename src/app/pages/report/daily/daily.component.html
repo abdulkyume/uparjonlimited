@@ -1,1 +1,172 @@
-<p>daily works!</p>
+<div class="position-relative">
+  <div class="bgsetforloading position-absolute" *ngIf="loader">
+    <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+  </div>
+  <div class="container-fluid">
+    <div class="row bg-white py-3">
+      <div class="col-lg-2">
+        <button class="btn btn-lg btn-success w-100">
+          <div>Total Order</div>
+          <div>{{ this.totalOrder }}</div>
+        </button>
+      </div>
+      <div class="col-lg-2">
+        <button class="btn btn-lg btn-success w-100">
+          <div>Total Received Amount</div>
+          <div>{{ totalReceivedAmount }}</div>
+        </button>
+      </div>
+      <div class="col-lg-2">
+        <button class="btn btn-lg btn-success w-100">
+          <div>Total Delivery Cost</div>
+          <div>{{ totalDeliveryCost }}</div>
+        </button>
+      </div>
+      <div class="col-lg-2">
+        <button class="btn btn-lg btn-success w-100">
+          <div>Total Payable</div>
+          <div>{{ totalPayable }}</div>
+        </button>
+      </div>
+      <div class="col-lg-2">
+        <button class="btn btn-lg btn-success w-100">
+          <div>Total Expense</div>
+          <div>{{ totalExpense }}</div>
+        </button>
+      </div>
+      <div class="col-lg-2">
+        <button class="btn btn-lg btn-success w-100">
+          <div>Profit</div>
+          <div>{{ totalProfit }}</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="row bg-white">
+      <form [formGroup]="reprotForm" class="row" (ngSubmit)="getExpense()">
+        <div class="col-lg-3 col-md-3 col-12">
+          <label for="merchantname"> Merchant Name </label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Merchant'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList"
+            [(ngModel)]="selectedItems"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect($event)"
+            (onDeSelect)="onInitiatorItemUnSelect($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+        <div class="col-lg-3 col-md-3 col-12">
+          <label for="fromDate">From Date</label>
+          <input
+            type="date"
+            formControlName="fromdate"
+            id="fromDate"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-md-3 col-12">
+          <label for="toDate">To Date</label>
+          <input
+            type="date"
+            formControlName="toDate"
+            id="toDate"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-md-3 col-12">
+          <label for="rider"> Rider </label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Rider'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList1"
+            [(ngModel)]="selectedItems1"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect1($event)"
+            (onDeSelect)="onInitiatorItemUnSelect1($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-12 mt-3">
+          <button class="btn btn-lg btn-primary w-100" type="submit">
+            Search
+          </button>
+        </div>
+        <div class="col-lg-4 col-md-4 col-12 mt-3">
+          <button class="btn btn-lg btn-success w-100" (click)="downloadxl()">
+            Download
+          </button>
+        </div>
+        <div class="col-lg-4 col-md-4 col-12 mt-3">
+          <button
+            class="btn btn-lg btn-warning w-100"
+            (click)="reprotFormRefresh()"
+          >
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="row bg-white mt-3">
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-responsive" id="reporttable" #reporttable>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Rider</th>
+                <th>Merchant</th>
+                <th>Merchant Number</th>
+                <th>Received Amount</th>
+                <th>Delivery Cost</th>
+                <th>Mercahnt Payable</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of orderList">
+                <td>{{ data.orderDate }}</td>
+                <td>{{ getRider(data.userId) }}</td>
+                <td>{{ getMercahntName(data.merchantId) }}</td>
+                <td>{{ getMercahntMobile(data.merchantId) }}</td>
+                <td>{{ data.receivedAmount }}</td>
+                <td>{{ data.deliveryCost }}</td>
+                <td>{{ data.receivedAmount - data.deliveryCost }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- pagination start -->
+    <div class="row justify-content-md-between align-items-md-center mt-2">
+      <div class="col-sm-12 col-md-5">
+        <div
+          class="dataTables_info mb-2"
+          id="tickets-table_info"
+          role="status"
+          aria-live="polite"
+        >
+          Showing
+          {{ cPageVal }} to {{ toPageVal }} of {{ total }}
+          entries
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-5">
+        <div class="text-md-right float-md-end pagination-rounded">
+          <ngb-pagination
+            id="paginationCustoimse"
+            [collectionSize]="total"
+            (pageChange)="page = onPageChange($event)"
+            [pageSize]="pageSize"
+            [maxSize]="3"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+    <!-- pagination ends -->
+  </div>
+</div>

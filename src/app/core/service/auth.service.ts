@@ -98,18 +98,32 @@ export class AuthService {
 
     this.currentUserSubject.next(null!);
     this.isLoggedIn = false;
+    this.router.navigate(["/account/login"]);
   }
 
   changepassword(currentPassword: string, newPassword: string) {
+    let user = JSON.parse(
+      this.encryptionservice.decrypt(localStorage.getItem("currentUser")!)
+    );
+    let reqm = {
+      id: user.id,
+      active: true,
+      deleted: false,
+      userName: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      mobile: user.mobile,
+      email: user.email,
+      password: newPassword,
+      roleId: user.roleId
+    }
     return this.http
-      .post(this.apiurl + 'Account/changepass', {
-        currentPassword,
-        newPassword,
-      })
+      .post(this.apiurl + 'user/update-userp', reqm)
       .pipe(
         timeout(60000),
-        catchError((err) => {
-          console.log(err);
+        catchError((err: any) => {
+          console.error(err);
           if (err.name === 'TimeoutError') {
             Swal.fire('Time Out!!', 'Internal Server Problem');
           }
@@ -144,8 +158,8 @@ export class AuthService {
       .post<any>(`${this.apiurl}menu/getRoleWiseMenu`, reqmodel)
       .pipe(
         timeout(60000),
-        catchError((err) => {
-          console.log(err);
+        catchError((err: any) => {
+          console.error(err);
           if (err.name === 'TimeoutError') {
             Swal.fire('Time Out!!', 'Internal Server Problem');
           }

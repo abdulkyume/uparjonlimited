@@ -49,7 +49,7 @@ export class ConfigurationService {
     return this.http.post<any>(`${apiurl}item/add-item`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (
           err === 'Unauthorized user.' ||
           err.message === 'Unauthorized user.'
@@ -84,7 +84,7 @@ export class ConfigurationService {
     return this.http.put<any>(`${apiurl}item/update-item`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (
           err === 'Unauthorized user.' ||
           err.message === 'Unauthorized user.'
@@ -151,7 +151,7 @@ export class ConfigurationService {
     return this.http.post<any>(`${apiurl}pickndrop/add-zone`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (
           err === 'Unauthorized user.' ||
           err.message === 'Unauthorized user.'
@@ -186,7 +186,7 @@ export class ConfigurationService {
     return this.http.put<any>(`${apiurl}pickndrop/update-zone`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (
           err === 'Unauthorized user.' ||
           err.message === 'Unauthorized user.'
