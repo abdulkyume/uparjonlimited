@@ -28,6 +28,7 @@
     <div class="row bg-white" *ngIf="!showAddBtn">
       <form class="row" [formGroup]="merchantForm" (ngSubmit)="addMerchant()">
         <div class="form-group mb-3 col-lg-4 col-md-4">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>Location Type:</label>
           <input
             type="text"
@@ -73,7 +74,7 @@
           />
         </div>
 
-        <!-- <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-3 col-md-3">
           <label>District:</label>
           <input type="text" class="form-control" formControlName="district" />
         </div>
@@ -81,9 +82,9 @@
         <div class="form-group mb-3 col-lg-3 col-md-3">
           <label>Country:</label>
           <input type="text" class="form-control" formControlName="country" />
-        </div> -->
+        </div>
 
-        <div class="form-group mb-3 col-lg-4 col-md-4">
+        <div class="form-group mb-3 col-lg-3 col-md-3">
           <label>Phone Number:</label>
           <input
             type="tel"
@@ -94,7 +95,7 @@
           />
         </div>
 
-        <div class="form-group mb-3 col-lg-4 col-md-4">
+        <div class="form-group mb-3 col-lg-3 col-md-3">
           <label>Alternative Phone Number:</label>
           <input
             type="tel"
@@ -105,7 +106,7 @@
           />
         </div>
 
-        <div class="form-group mb-3 col-lg-4 col-md-4">
+        <div class="form-group mb-3 col-lg-3 col-md-3">
           <label>Wallet Number:</label>
           <input
             type="tel"
