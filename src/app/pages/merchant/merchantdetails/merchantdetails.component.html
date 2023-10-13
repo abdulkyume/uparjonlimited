@@ -27,7 +27,7 @@
 
     <div class="row bg-white" *ngIf="!showAddBtn">
       <form class="row" [formGroup]="merchantForm" (ngSubmit)="addMerchant()">
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>Location Type:</label>
           <input
             type="text"
@@ -35,27 +35,36 @@
             formControlName="locationType"
           />
         </div>
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>Name:</label>
           <input type="text" class="form-control" formControlName="name" />
         </div>
 
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
+          <label>Area:</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Area'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList"
+            [(ngModel)]="selectedItems"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect($event)"
+            (onDeSelect)="onInitiatorItemUnSelect($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>House:</label>
           <input type="text" class="form-control" formControlName="house" />
         </div>
 
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>Road:</label>
           <input type="text" class="form-control" formControlName="road" />
         </div>
 
-        <div class="form-group mb-3 col-lg-3 col-md-3">
-          <label>Area:</label>
-          <input type="text" class="form-control" formControlName="area" />
-        </div>
-
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>Police Station:</label>
           <input
             type="text"
@@ -64,7 +73,7 @@
           />
         </div>
 
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <!-- <div class="form-group mb-3 col-lg-3 col-md-3">
           <label>District:</label>
           <input type="text" class="form-control" formControlName="district" />
         </div>
@@ -72,32 +81,38 @@
         <div class="form-group mb-3 col-lg-3 col-md-3">
           <label>Country:</label>
           <input type="text" class="form-control" formControlName="country" />
-        </div>
+        </div> -->
 
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>Phone Number:</label>
           <input
-            type="text"
+            type="tel"
             class="form-control"
             formControlName="phoneNumber"
+            minlength="11"
+            maxlength="11"
           />
         </div>
 
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>Alternative Phone Number:</label>
           <input
-            type="text"
+            type="tel"
             class="form-control"
             formControlName="altPhoneNumber"
+            minlength="11"
+            maxlength="11"
           />
         </div>
 
-        <div class="form-group mb-3 col-lg-3 col-md-3">
+        <div class="form-group mb-3 col-lg-4 col-md-4">
           <label>Wallet Number:</label>
           <input
-            type="text"
+            type="tel"
             class="form-control"
             formControlName="walletPhoneNumber"
+            minlength="11"
+            maxlength="11"
           />
         </div>
 
@@ -156,15 +171,46 @@
                   </div>
                 </div>
               </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td>{{ data.locationType }}</td>
+              <td>{{ data.name }}</td>
+              <td>
+                {{ data.house }}, {{ data.road }},{{ getZoneName(data.area) }},
+                {{ data.policeStation }}, {{ data.district }}
+              </td>
+              <td>{{ data.phoneNumber }}</td>
+              <td>{{ data.walletPhoneNumber }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+    <!-- pagination start -->
+    <div class="row justify-content-md-between align-items-md-center mt-2">
+      <div class="col-sm-12 col-md-5">
+        <div
+          class="dataTables_info mb-2"
+          id="tickets-table_info"
+          role="status"
+          aria-live="polite"
+        >
+          Showing
+          {{ cPageVal }} to {{ toPageVal }} of {{ total }}
+          entries
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-5">
+        <div class="text-md-right float-md-end pagination-rounded">
+          <ngb-pagination
+            id="paginationCustoimse"
+            [collectionSize]="total"
+            (pageChange)="page = onPageChange($event)"
+            [pageSize]="pageSize"
+            [maxSize]="3"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+    <!-- pagination ends -->
   </div>
 </div>

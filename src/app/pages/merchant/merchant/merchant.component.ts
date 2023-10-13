@@ -49,7 +49,7 @@ export class MerchantComponent implements OnInit, OnDestroy {
   merchantformRefresh() {
     this.merchantForm = this.formbuilder.group({
       id: [null],
-      name: ["", [Validators.required]],
+      name: ["", [Validators.required, Validators.minLength(2)]],
     })
   }
   merchantSformRefresh() {
@@ -57,8 +57,101 @@ export class MerchantComponent implements OnInit, OnDestroy {
       sname: [""],
     })
   }
+
+  deletemerchant(data: any) {
+
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger ms-2",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "Do you want to Delete!",
+        icon: "warning",
+        confirmButtonText: "Yes!",
+        cancelButtonText: "No!",
+        showCancelButton: true,
+      })
+      .then((result) => {
+        if (result.value) {
+          this.loader = true;
+
+          data.deleted = true;
+          this.merchantService.updateMerchant(data).subscribe({
+            next: (res: any) => {
+              if (res.isSuccess || res.statusCode == 200) {
+                this.successmsg(res.message)
+              }
+              else {
+                this.errorssmsg(res.message)
+              }
+            },
+            error: (err: any) => {
+              console.error(err);
+              this.loader = false;
+            },
+            complete: () => {
+              this.getAllmerchant()
+              window.scrollTo(0, 0);
+              this.loader = false;
+            }
+          })
+        }
+      });
+  }
   Search() {
-    this.getAllmerchant();
+    this.loader = true;
+    if (this.merchantSForm.controls["sname"].value.length > 0) {
+      this.merchantService.getMercahnt(0, 100, this.merchantSForm.controls["sname"].value.toLowerCase())
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            this.merchantList = res.data.content;
+            this.total = res.data.totalElements!;
+            if (this.toPageVal > this.total) {
+              this.toPageVal = this.total;
+            }
+            else {
+              this.toPageVal = this.merchantList.length;
+            }
+          },
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false;
+          },
+          complete: () => {
+            this.loader = false;
+          }
+        });
+    }
+    else {
+      this.merchantService.getMercahnt(this.page, this.pageSize, this.merchantSForm.controls["sname"].value)
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            this.merchantList = res.data.content;
+            this.total = res.data.totalElements!;
+            if (this.toPageVal > this.total) {
+              this.toPageVal = this.total;
+            }
+            else {
+              this.toPageVal = this.merchantList.length;
+            }
+          },
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false;
+          },
+          complete: () => {
+            this.loader = false;
+          }
+        });
+    }
   }
 
   successmsg(message: string) {
@@ -99,6 +192,10 @@ export class MerchantComponent implements OnInit, OnDestroy {
     this.showAddBtn = false
   }
   addMerchant() {
+    if (this.merchantForm.invalid) {
+      return;
+    }
+
     this.loader = true;
     if (this.merchantForm.controls["id"].value) {
       this.merchantService.updateMerchant(this.merchantForm.value)
@@ -107,9 +204,9 @@ export class MerchantComponent implements OnInit, OnDestroy {
           next: (res: any) => {
             if (!res.isSuccess) {
               this.loader = false;
-              this.errorssmsg(res.reason);
+              this.errorssmsg(res.message);
             } else {
-              this.successmsg(res.reason);
+              this.successmsg(res.message);
               this.merchantformRefresh();
               this.showAddBtn = true;
               this.getAllmerchant();
@@ -131,9 +228,9 @@ export class MerchantComponent implements OnInit, OnDestroy {
           next: (res: any) => {
             if (!res.isSuccess) {
               this.loader = false;
-              this.errorssmsg(res.reason);
+              this.errorssmsg(res.message);
             } else {
-              this.successmsg(res.reason);
+              this.successmsg(res.message);
               this.merchantformRefresh();
               this.showAddBtn = true;
               this.getAllmerchant();
@@ -158,7 +255,7 @@ export class MerchantComponent implements OnInit, OnDestroy {
   onPageChange(event: number) {
     this.loader = true;
     this.toPageVal = event * this.pageSize;
-    this.page = event;
+    this.page = event - 1;
 
     this.cPageVal = (event - 1) * this.pageSize + 1;
 

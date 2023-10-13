@@ -73,7 +73,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   onPageChange(event: number) {
     this.loader = true;
     this.toPageVal = event * this.pageSize;
-    this.page = event;
+    this.page = event-1;
 
     this.cPageVal = (event - 1) * this.pageSize + 1;
 

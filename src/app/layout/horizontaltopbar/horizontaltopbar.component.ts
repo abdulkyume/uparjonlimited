@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, HostListener } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { SimplebarAngularModule } from 'simplebar-angular';
@@ -51,6 +51,12 @@ export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
     // } else {
     //   this.flagvalue = val.map((element) => element.flag);
     // }
+  }
+
+  @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
+    if (event['storageArea'] == localStorage) {
+      localStorage.getItem('currentUser') ?? this.authService.logout();
+    }
   }
 
   /**
@@ -229,11 +235,11 @@ export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
       }
     }
   }
-  
+
   initialize(): void {
     this.menuItems = this.MENU;
   }
-  
+
   hasItems(item: any) {
     return item.subItems !== undefined ? item.subItems.length > 0 : false;
   }

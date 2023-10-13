@@ -9,15 +9,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ConfigurationService } from 'src/app/core/service/configuration.service';
 import {
   NgbDropdownModule,
   NgbPaginationModule,
 } from '@ng-bootstrap/ng-bootstrap';
+import { ConfigurationService } from 'src/app/core/service/configuration.service';
 import Swal from 'sweetalert2';
+import { EncryptionService } from 'src/app/core/service/encryption.service';
+import { OrderService } from 'src/app/core/service/order.service';
 
 @Component({
-  selector: 'app-pickdropzone',
+  selector: 'app-expense',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,12 +29,12 @@ import Swal from 'sweetalert2';
     NgbDropdownModule,
     NgbPaginationModule,
   ],
-  templateUrl: './pickdropzone.component.html',
-  styleUrls: ['./pickdropzone.component.scss'],
+  templateUrl: './expense.component.html',
+  styleUrls: ['./expense.component.scss'],
 })
-export class PickdropzoneComponent implements OnInit, OnDestroy {
+export class ExpenseComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
-  loader: boolean = true;
+  loader: boolean = false;
   showAddBtn: boolean = true;
   itemForm!: FormGroup;
   itemSForm!: FormGroup;
@@ -44,28 +46,41 @@ export class PickdropzoneComponent implements OnInit, OnDestroy {
   cPageVal: number = 1;
   toPageVal!: number;
   total!: number;
+  userid!: string;
 
   constructor(
     private formBuilder: FormBuilder,
-    private configservice: ConfigurationService
-  ) {}
+    private configservice: OrderService,
+    private encryptionService: EncryptionService
+  ) { }
 
   ngOnInit(): void {
-    this.itemRefreshForm();
+    this.userid = JSON.parse(
+      this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
+    ).id;
+    
     this.itemSRefreshForm();
     this.getallItem();
+    this.itemRefreshForm();
+
   }
 
   itemRefreshForm() {
     this.itemForm = this.formBuilder.group({
       id: [null],
-      name: ['', [Validators.required]],
+      userId: [this.userid],
+      name: ['Fuel for Car', [Validators.required]],
+      amount: [0, [Validators.required]],
+      note: [''],
+      expenseDate: ['', [Validators.required]],
     });
   }
 
   itemSRefreshForm() {
     this.itemSForm = this.formBuilder.group({
-      name: [''],
+      userId: [this.userid],
+      fromDate: [""],
+      toDate: [""],
     });
   }
 
@@ -85,10 +100,12 @@ export class PickdropzoneComponent implements OnInit, OnDestroy {
 
   getallItem() {
     this.configservice
-      .getAllZone(
+      .getAllexpense(
         this.page,
         this.pageSize,
-        this.itemSForm.controls['name'].value
+        this.userid,
+        this.itemSForm.controls["fromDate"].value,
+        this.itemSForm.controls["toDate"].value,
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -121,14 +138,19 @@ export class PickdropzoneComponent implements OnInit, OnDestroy {
   editItem(data: any) {
     this.itemForm.controls['id'].setValue(data.id);
     this.itemForm.controls['name'].setValue(data.name);
-    this.itemForm.controls['price'].setValue(data.price);
+    this.itemForm.controls['amount'].setValue(data.amount);
+    this.itemForm.controls['note'].setValue(data.note);
+    this.itemForm.controls['expenseDate'].setValue(data.expenseDate);
     this.showAddBtn = false;
   }
   onsubmit() {
+    if (this.itemForm.invalid) {
+      return;
+    }
     this.loader = true;
     if (this.itemForm.controls['id'].value) {
       this.configservice
-        .updateZone(this.itemForm.value)
+        .updateExpense(this.itemForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
@@ -139,7 +161,6 @@ export class PickdropzoneComponent implements OnInit, OnDestroy {
               this.successmsg(res.reason);
               this.itemRefreshForm();
               this.showAddBtn = true;
-              this.page = 0;
               this.getallItem();
             }
           },
@@ -153,7 +174,7 @@ export class PickdropzoneComponent implements OnInit, OnDestroy {
         });
     } else {
       this.configservice
-        .addZone(this.itemForm.value)
+        .addExpense(this.itemForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
@@ -163,7 +184,6 @@ export class PickdropzoneComponent implements OnInit, OnDestroy {
             } else {
               this.successmsg(res.reason);
               this.itemRefreshForm();
-              this.page = 0;
               this.showAddBtn = true;
               this.getallItem();
             }

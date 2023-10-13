@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Output, HostListener } from '@angular/core';
 import { DOCUMENT, CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/core/service/auth.service';
@@ -10,7 +10,7 @@ import { RoleService } from 'src/app/core/service/role.service';
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, SimplebarAngularModule, NgbDropdownModule],
+  imports: [CommonModule, SimplebarAngularModule, NgbDropdownModule, RouterModule],
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
 })
@@ -33,6 +33,11 @@ export class TopbarComponent {
     private roleService: RoleService,
     private encryptionService: EncryptionService
   ) { }
+  @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
+    if (event['storageArea'] == localStorage) {
+      localStorage.getItem('currentUser') ?? this.authService.logout();
+    }
+  }
 
   openMobileMenu!: boolean;
 
@@ -57,13 +62,18 @@ export class TopbarComponent {
     });
 
     setTimeout(() => {
-      this.userRole = JSON.parse(
-        this.encryptionService.decrypt(localStorage.getItem('allroleid')!)
-      ).filter(
-        (role: any) =>
-          role.id ===
-          +this.encryptionService.encrypt(localStorage.getItem('role')!)
-      )[0]?.roleName;
+      if (localStorage.getItem('allroleid')!) {
+        this.userRole = JSON.parse(
+          this.encryptionService.decrypt(localStorage.getItem('allroleid')!)
+        ).filter(
+          (role: any) =>
+            role.id ===
+            +this.encryptionService.encrypt(localStorage.getItem('role')!)
+        )[0]?.roleName;
+      }
+      else {
+        this.authService.logout()
+      }
     }, 2000);
     this.openMobileMenu = false;
     this.element = document.documentElement;

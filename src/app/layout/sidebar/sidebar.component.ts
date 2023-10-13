@@ -15,6 +15,7 @@ import { SimplebarAngularModule } from 'simplebar-angular';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/core/service/auth.service';
 import { EncryptionService } from 'src/app/core/service/encryption.service';
+import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar',
@@ -39,7 +40,8 @@ export class SidebarComponent
   constructor(
     private defaultService: AuthService,
     private router: Router,
-    private encryptionService: EncryptionService
+    private encryptionService: EncryptionService,
+    private authService: AuthService
   ) {
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
@@ -47,6 +49,12 @@ export class SidebarComponent
         this._scrollElement();
       }
     });
+  }
+
+  @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
+    if (event['storageArea'] == localStorage) {
+      localStorage.getItem('currentUser') ?? this.authService.logout();
+    }
   }
 
   ngOnInit() {
@@ -97,7 +105,7 @@ export class SidebarComponent
       });
       //  }
       this.menuItems = generateMenu;
-      
+
       localStorage.setItem(
         'menus',
         this.encryptionService.encrypt(JSON.stringify(generateMenu))
@@ -199,9 +207,14 @@ export class SidebarComponent
    * Initialize
    */
   initialize(): void {
-    this.menuItems = JSON.parse(
-      this.encryptionService.decrypt(localStorage.getItem('menus')!)
-    );
+    if (localStorage.getItem('menus')!) {
+      this.menuItems = JSON.parse(
+        this.encryptionService.decrypt(localStorage.getItem('menus')!)
+      );
+    }
+    else {
+      this.authService.logout()
+    }
   }
 
 

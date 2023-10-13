@@ -1,0 +1,76 @@
+<div class="position-relative">
+  <div class="bgsetforloading position-absolute" *ngIf="loader">
+    <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+  </div>
+
+  <div class="container-fluid">
+    <form class="row" [formGroup]="reprotForm" (ngSubmit)="getExpense()">
+      <div class="col-lg-6 mb-3">
+        <label for="fromDate">From Date</label>
+        <input
+          type="date"
+          formControlName="fromDate"
+          id="fromDate"
+          class="form-control"
+        />
+      </div>
+      <div class="col-lg-6 mb-3">
+        <label for="toDate">From Date</label>
+        <input
+          type="date"
+          formControlName="toDate"
+          id="toDate"
+          class="form-control"
+        />
+      </div>
+      <div class="col-lg-4 mb-3">
+        <button class="btn btn-primary w-100" type="submit">Search</button>
+      </div>
+      <div class="col-lg-4 mb-3">
+        <button
+          class="btn btn-success w-100"
+          type="button"
+          (click)="downloadXl()"
+        >
+          Download
+        </button>
+      </div>
+      <div class="col-lg-4 mb-3">
+        <button
+          class="btn btn-primary w-100"
+          type="button"
+          (click)="reportFormReferesh()"
+        >
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <table class="table table-responsive" id="reporttable" #reporttable>
+          <thead>
+            <tr>
+              <th>Expense Date</th>
+              <th>Expense Name</th>
+              <th>Expense Amount</th>
+              <th>Note</th>
+              <th>User</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of totalExpenseReport">
+              <td>{{ data.expenseDate }}</td>
+              <td>{{ data.name }}</td>
+              <td>{{ data.amount }}</td>
+              <td>{{ data.note }}</td>
+              <td>{{ getUserInfo(data.userId) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

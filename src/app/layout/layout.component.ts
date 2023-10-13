@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LAYOUT_HORIZONTAL,
@@ -9,6 +9,7 @@ import {
 import { VerticalComponent } from './vertical/vertical.component';
 import { HorizontalComponent } from './horizontal/horizontal.component';
 import { EventService } from '../core/service/event.service';
+import { AuthService } from '../core/service/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -22,8 +23,13 @@ export class LayoutComponent {
   layoutwidth!: string;
   topbar!: string;
 
-  constructor(private eventService: EventService) { }
+  constructor(private eventService: EventService, private authService: AuthService) { }
 
+  @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
+    if (event['storageArea'] == localStorage) {
+      localStorage.getItem('currentUser') ?? this.authService.logout();
+    }
+  }
   ngOnInit() {
     // default settings
     this.layoutType = LAYOUT_VERTICAL;

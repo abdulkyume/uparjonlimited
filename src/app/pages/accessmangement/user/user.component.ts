@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, retryWhen, takeUntil } from 'rxjs';
 import Swal from 'sweetalert2';
 import {
   NgbDropdownModule,
@@ -17,9 +17,9 @@ import { LoaderComponent } from 'src/app/common/loader/loader.component';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { Baseresponsewlist } from 'src/app/core/models/baseresponsewlist';
 import { Baseresponse } from 'src/app/core/models/baseresponse';
-import { RoleService } from 'src/app/core/service/role.service';
 import { AuthService } from 'src/app/core/service/auth.service';
 import { EncryptionService } from 'src/app/core/service/encryption.service';
+import { RoleService } from 'src/app/core/service/role.service';
 
 @Component({
   selector: 'app-user',
@@ -58,7 +58,7 @@ export class UserComponent implements OnInit, OnDestroy {
     private roleService: RoleService,
     private authService: AuthService,
     private encryptionService: EncryptionService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.createUserFormRefresh();
@@ -86,9 +86,9 @@ export class UserComponent implements OnInit, OnDestroy {
   createUserFormRefresh() {
     this.createUserForm = this.formBuilder.group({
       id: [null],
-      uname: ['', [Validators.required]],
-      fname: ['', [Validators.required]],
-      lname: ['', [Validators.required]],
+      userName: ['', [Validators.required]],
+      firstName: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
       gender: ['male', [Validators.required]],
       email: ['', [Validators.required]],
       mobile: [
@@ -99,10 +99,10 @@ export class UserComponent implements OnInit, OnDestroy {
           Validators.pattern(/(^(01){1}[3-9]{1}\d{8})$/),
         ],
       ],
-      role: ['', [Validators.required]],
+      roleId: ['', [Validators.required]],
       password: ['uparjon'],
       active: [true],
-      deleted: [false]
+      deleted: [false],
     });
   }
   get f() {
@@ -110,12 +110,12 @@ export class UserComponent implements OnInit, OnDestroy {
   }
   editUser(user: any) {
     this.f['id'].setValue(user.id);
-    this.f['uname'].setValue(user.username);
-    this.f['fname'].setValue(user.firstName);
-    this.f['lname'].setValue(user.lastName);
+    this.f['userName'].setValue(user.username);
+    this.f['firstName'].setValue(user.firstName);
+    this.f['lastName'].setValue(user.lastName);
     this.f['mobile'].setValue(user.mobile);
     this.f['email'].setValue(user.email);
-    this.f['role'].setValue(user.roleId);
+    this.f['roleId'].setValue(user.roleId);
     this.f['active'].setValue(user.active);
     this.f['deleted'].setValue(user.deleted);
     if (!this.addUserFormShow) {
@@ -134,9 +134,9 @@ export class UserComponent implements OnInit, OnDestroy {
       if (this.f['id'].value) {
         let requestForm = {
           id: this.f['id'].value,
-          uname: this.f['uname'].value,
+          userName: this.f['userName'].value,
           userPhone: this.f['userPhone'].value,
-          role: this.f['role'].value,
+          roleId: this.f['roleId'].value,
           isActive: this.f['isActive'].value,
           isDeleted: false,
           isPasswordChanged: false,
@@ -160,11 +160,11 @@ export class UserComponent implements OnInit, OnDestroy {
                 this.getAllusers();
               }
             },
-            error: (err) => {
+            error: (err: any) => {
               console.error(err);
               this.loader = false;
             },
-            complete: () => { },
+            complete: () => {},
           });
       } else {
         this.roleService
@@ -182,11 +182,11 @@ export class UserComponent implements OnInit, OnDestroy {
                 this.getAllusers();
               }
             },
-            error: (err) => {
+            error: (err: any) => {
               console.error(err);
               this.loader = false;
             },
-            complete: () => { },
+            complete: () => {},
           });
       }
     } else {
@@ -208,6 +208,14 @@ export class UserComponent implements OnInit, OnDestroy {
     }
   }
 
+  roleName(id: string): string {
+    let a = this.allroles.filter((roleId: any) => roleId.id == id);
+    if (a.length > 0) {
+      return a[0].name;
+    }
+    return '';
+  }
+
   getAllRoleIds() {
     if (localStorage.getItem('allroleid') == null) {
       this.roleService
@@ -221,7 +229,7 @@ export class UserComponent implements OnInit, OnDestroy {
               this.encryptionService.encrypt(JSON.stringify(this.allroles))
             );
           },
-          error: (err) => {
+          error: (err: any) => {
             console.error(err);
           },
         });
@@ -231,15 +239,15 @@ export class UserComponent implements OnInit, OnDestroy {
       );
     }
   }
-  // getAllRoleId() {
-  //   this.roleService.getAllRoleId().subscribe((res: any) => {
-  //     this.allroles = res.data;
-  //   });
-  // }
+  getAllRoleId() {
+    this.roleService.getAllRoleId().subscribe((res: any) => {
+      this.allroles = res.data;
+    });
+  }
 
   getAllusers() {
     this.roleService
-      .getAllusers(this.pagea-1, this.pageSizes)
+      .getAllusers(this.pagea - 1, this.pageSizes)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -262,7 +270,7 @@ export class UserComponent implements OnInit, OnDestroy {
   onPageChange(event: number) {
     this.loader = true;
     this.toPageVal = event * this.pageSizes;
-    this.pagea = event;
+    this.pagea = event-1;
 
     this.cPageVal = (event - 1) * this.pageSizes + 1;
 
@@ -293,7 +301,7 @@ export class UserComponent implements OnInit, OnDestroy {
             this.toPageVal = this.total;
           }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error(err);
           this.loader = false;
         },

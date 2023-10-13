@@ -1,0 +1,308 @@
+<div class="position-relative">
+  <div class="bgsetforloading position-absolute" *ngIf="loader">
+    <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-3 mb-2 col-md-3 col-6">
+        <button class="btn btn-success btn-lg w-100">
+          Total Order : {{ totalOrder }}
+        </button>
+      </div>
+      <div class="col-lg-3 mb-2 col-md-3 col-6">
+        <button class="btn btn-success btn-lg w-100">
+          Pending : {{ totalPOrder }}
+        </button>
+      </div>
+      <div class="col-lg-3 mb-2 col-md-3 col-6">
+        <button class="btn btn-success btn-lg w-100">
+          Canceled : {{ totalCnOrder }}
+        </button>
+      </div>
+      <div class="col-lg-3 mb-2 col-md-3 col-6">
+        <button class="btn btn-success btn-lg w-100">
+          Completed : {{ totalCOrder }}
+        </button>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-lg-12 text-end">
+        <button
+          class="btn btn-primary"
+          (click)="toggleBtn()"
+          *ngIf="showAddBtn"
+        >
+          New Order
+        </button>
+        <button
+          class="btn btn-primary"
+          (click)="toggleBtn()"
+          *ngIf="!showAddBtn"
+        >
+          Close Form
+        </button>
+      </div>
+    </div>
+    <div class="row mt-2" *ngIf="!showAddBtn">
+      <form class="row" [formGroup]="placeOrderForm" (ngSubmit)="onSubmit()">
+        <div class="col-lg-3 col-6 mb-2">
+          <label for="pickupdate">Pick Up Date</label>
+          <input
+            type="date"
+            formControlName="pickupdate"
+            id="pickupdate"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-6 mb-2">
+          <label for="pickuptime">Pick Up Time</label>
+          <select
+            formControlName="pickuptime"
+            id="pickuptime"
+            class="form-select"
+          >
+            <option value="flexible">Flexible Time</option>
+            <option value="9am-10.30am">9 AM - 10.30 AM</option>
+            <option value="11am-11.30am">11 AM - 11.30 AM</option>
+            <option value="12pm">12 PM</option>
+            <option value="2pm">2 PM</option>
+          </select>
+        </div>
+        <div class="col-lg-3 col-6 mb-2">
+          <label for="deliverydate">Delivery Date</label>
+          <input
+            type="date"
+            formControlName="deliverydate"
+            id="deliverydate"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-6 mb-2">
+          <label for="deliverytime">Delivery Time</label>
+          <select
+            formControlName="deliverytime"
+            id="deliverytime"
+            class="form-select"
+          >
+            <option value="flexible">Flexible Time</option>
+            <option value="12pm-1pm">12 PM - 1 PM</option>
+            <option value="2pm-3pm">2 PM - 3 PM</option>
+            <option value="4pm-5pm">4 PM - 5 PM</option>
+          </select>
+        </div>
+        <div class="col-lg-3 mb-2 col-12">
+          <label for="item">Delivery Item</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Delivery Item'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList"
+            [(ngModel)]="selectedItems"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect($event)"
+            (onDeSelect)="onInitiatorItemUnSelect($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+        <div class="col-lg-3 mb-2 col-12">
+          <label for="service">Delivery Service</label>
+          <select
+            (change)="servicechargef()"
+            class="form-select"
+            formControlName="service"
+            id="service"
+          >
+            <option value="">Select Delivery Service</option>
+            <option [value]="data.serviceName" *ngFor="let data of serviceList">
+              {{ data.serviceName }}
+            </option>
+          </select>
+        </div>
+        <div class="col-lg-3 col-12 mb-2">
+          <label for="packageCount"
+            >Packaging Box/Bag (Additional box 100 bdt)</label
+          >
+          <input
+            type="number"
+            formControlName="packageCount"
+            id="packageCount"
+            class="form-control"
+            min="0"
+            (change)="addPackageCost()"
+          />
+        </div>
+        <div class="col-lg-3 col-6 mb-2">
+          <label for="weight">Package Weight</label>
+          <input
+            type="text"
+            formControlName="weight"
+            id="weight"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-6 mb-2">
+          <label for="deliveryCost">Delivery Cost</label>
+          <input
+            type="number"
+            formControlName="deliveryCost"
+            id="deliveryCost"
+            readonly
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-6 mb-2">
+          <label for="productCost">Product Cost</label>
+          <input
+            type="number"
+            formControlName="productCost"
+            id="productCost"
+            (keyup)="updateCollectionCost()"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-6 mb-2">
+          <label for="collectionAmount">Collection Amount</label>
+          <input
+            type="number"
+            formControlName="collectionAmount"
+            id="collectionAmount"
+            class="form-control"
+            readonly
+          />
+        </div>
+        <div class="col-lg-3 col-md-6 col-12 mb-3">
+          <label for="paymentInfo"> Payment Info </label>
+          <select
+            formControlName="paymentInfo"
+            id="paymentInfo"
+            class="form-select"
+          >
+            <option value="Cash On Delivery">Cash On Delivery</option>
+            <option value="Full Paid">Full Paid</option>
+            <option value="Delivery Cost Only">Delivery Cost Only</option>
+          </select>
+        </div>
+        <div class="col-lg-3 col-12 mb-2">
+          <label for="customerName">Customer Name</label>
+          <input
+            type="text"
+            formControlName="customerName"
+            id="customerName"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-12 mb-2">
+          <label for="customerNumber">Customer Number</label>
+          <input
+            type="tel"
+            formControlName="customerNumber"
+            id="customerNumber"
+            minlength="11"
+            maxlength="11"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-12 mb-2">
+          <label for="customerAltNumber">Customer Alt Number</label>
+          <input
+            type="tel"
+            formControlName="customerAltNumber"
+            id="customerAltNumber"
+            minlength="11"
+            maxlength="11"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-lg-3 col-12 mb-2">
+          <label for="customerArea">Customer Area</label>
+        </div>
+        <div class="col-lg-3 col-12 mb-2">
+          <label for="customerAddress">Customer Address</label>
+          <input
+            type="text"
+            formControlName="customerAddress"
+            id="customerAddress"
+            class="form-control"
+          />
+        </div>
+      </form>
+    </div>
+    <div class="row mt-2" *ngIf="showAddBtn">
+      <form class="row" [formGroup]="orderSform" (ngSubmit)="onSearch()">
+        <div class="col-lg-6 mb-2">
+          <label for="fromDate">From Date</label>
+          <input
+            type="date"
+            formControlName="fromDate"
+            id="fromDate"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-6 mb-2">
+          <label for="toDate">To Date</label>
+          <input
+            type="date"
+            formControlName="toDate"
+            id="fromDate"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-6 mb-2">
+          <button class="btn btn-success w-100" type="submit">Search</button>
+        </div>
+        <div class="col-lg-6 mb-2">
+          <button
+            class="btn btn-warning w-100"
+            type="button"
+            (click)="orderSformRefresh()"
+          >
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="row mt-2" *ngIf="showAddBtn">
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-responsive">
+            <thead></thead>
+            <tbody></tbody>
+            <tfoot>
+              <!-- pagination start -->
+              <div
+                class="row justify-content-md-between align-items-md-center mt-2"
+              >
+                <div class="col-12 col-md-5">
+                  <div
+                    class="dataTables_info mb-2"
+                    id="tickets-table_info"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    Showing
+                    {{ cPageVal }} to {{ toPageVal }} of {{ total }}
+                    entries
+                  </div>
+                </div>
+                <div class="col-12 col-md-5">
+                  <div class="text-md-right float-md-end pagination-rounded">
+                    <ngb-pagination
+                      id="paginationCustoimse"
+                      [collectionSize]="total"
+                      (pageChange)="page = onPageChange($event)"
+                      [pageSize]="pageSize"
+                      [maxSize]="3"
+                    >
+                    </ngb-pagination>
+                  </div>
+                </div>
+              </div>
+              <!-- pagination ends -->
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

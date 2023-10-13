@@ -11,7 +11,7 @@ import { Baseresponsewlist } from '../models/baseresponsewlist';
 })
 export class RoleService {
   apiURL: string = environment.environment;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAllRoleId(page: number = 1, limit: number = 10, sort: string = 'desc') {
     let params = new HttpParams()
@@ -21,7 +21,7 @@ export class RoleService {
     return this.http.get(`${this.apiURL}Roles/getAllRoleId`, { params }).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (err.name === 'TimeoutError') {
           Swal.fire('Time Out!!', 'Internal Server Problem');
         }
@@ -44,32 +44,32 @@ export class RoleService {
       })
     );
   }
-  
+
   getAllRoleIds(): Observable<Baseresponse<any>> {
     return this.http
       .get<Baseresponse<any>>(`${this.apiURL}role/all_role`)
       .pipe(
         timeout(60000),
-        catchError((err) => {
-          console.log(err);
+        catchError((err: any) => {
+          console.error(err);
           if (err.name === 'TimeoutError') {
             Swal.fire('Time Out!!', 'Internal Server Problem');
           }
-          if (
-            err.message === "Cannot read properties of null (reading 'message')"
-          ) {
-            Swal.fire(
-              'Error!!',
-              'Resource Not Available. Link is Not Working',
-              'error'
-            );
-          }
+          // if (
+          //   err.message === "Cannot read properties of null (reading 'message')"
+          // ) {
+          //   Swal.fire(
+          //     'Error!!',
+          //     'Resource Not Available. Link is Not Working',
+          //     'error'
+          //   );
+          // }
           if (err === 'Bad Request') {
             Swal.fire('Error!!', 'Form Submission Error');
           }
-          if (err === 'Unknown Error') {
-            Swal.fire('Error!!', 'No Connection Found');
-          }
+          // if (err === 'Unknown Error') {
+          //   Swal.fire('Error!!', 'No Connection Found');
+          // }
           throw err;
         })
       );
@@ -118,10 +118,10 @@ export class RoleService {
 
   createUser(newUser: any) {
     var apiurl = environment.environment;
-    return this.http.post<any>(`${apiurl}Account/signup`, newUser).pipe(
+    return this.http.post<any>(`${apiurl}user/create-user`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (err.name === 'TimeoutError') {
           Swal.fire('Time Out!!', 'Internal Server Problem');
         }
@@ -148,11 +148,11 @@ export class RoleService {
   updateUser(newUser: any) {
     var apiurl = environment.environment;
     return this.http
-      .put<any>(`${apiurl}Account/UpdateUser/${newUser.id}`, newUser)
+      .put<any>(`${apiurl}user/update-user/${newUser.id}`, newUser)
       .pipe(
         timeout(60000),
         catchError((err) => {
-          console.log(err);
+          console.error(err);
           if (err.name === 'TimeoutError') {
             Swal.fire('Time Out!!', 'Internal Server Problem');
           }
@@ -182,7 +182,7 @@ export class RoleService {
       .pipe(
         timeout(60000),
         catchError((err) => {
-          console.log(err);
+          console.error(err);
           if (err.name === 'TimeoutError') {
             Swal.fire('Time Out!!', 'Internal Server Problem');
           }
@@ -210,7 +210,7 @@ export class RoleService {
     return this.http.put(`${this.apiURL}Roles/updateMenuWeb`, item).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (err.name === 'TimeoutError') {
           Swal.fire('Time Out!!', 'Internal Server Problem');
         }
@@ -240,7 +240,7 @@ export class RoleService {
       .pipe(
         timeout(60000),
         catchError((err) => {
-          console.log(err);
+          console.error(err);
           if (err.name === 'TimeoutError') {
             Swal.fire('Time Out!!', 'Internal Server Problem');
           }
@@ -269,7 +269,7 @@ export class RoleService {
     return this.http.post<any>(`${apiurl}Roles/addNewRole`, newRole).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (err.name === 'TimeoutError') {
           Swal.fire('Time Out!!', 'Internal Server Problem');
         }
@@ -297,7 +297,7 @@ export class RoleService {
     return this.http.put<any>(`${this.apiURL}Roles/updateRole`, newRole).pipe(
       timeout(60000),
       catchError((err) => {
-        console.log(err);
+        console.error(err);
         if (err.name === 'TimeoutError') {
           Swal.fire('Time Out!!', 'Internal Server Problem');
         }
@@ -327,7 +327,7 @@ export class RoleService {
       .pipe(
         timeout(60000),
         catchError((err) => {
-          console.log(err);
+          console.error(err);
           if (err.name === 'TimeoutError') {
             Swal.fire('Time Out!!', 'Internal Server Problem');
           }
