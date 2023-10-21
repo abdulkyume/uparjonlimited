@@ -9,10 +9,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, catchError, take, takeUntil } from 'rxjs';
 import { LoaderComponent } from 'src/app/common/loader/loader.component';
-import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { ConfigurationService } from 'src/app/core/service/configuration.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-order',
@@ -24,6 +26,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     FormsModule,
     ReactiveFormsModule,
     NgMultiSelectDropDownModule,
+    NgbDropdownModule
   ],
   templateUrl: './order.component.html',
   styleUrls: ['./order.component.scss'],
@@ -46,10 +49,17 @@ export class OrderComponent implements OnInit, OnDestroy {
   uniqueItemsLista: any = [];
   serviceList: any = [];
   deliveryCost: number = 0;
+  orderList: any = [];
 
   dropdownSettings = {};
   dropdownList = [];
   selectedItems: any;
+
+  dropdownList1 = [];
+  selectedItems1: any;
+
+  dropdownList2 = [];
+  selectedItems2: any;
 
   currentdate: string = `${new Date().getFullYear()}-${String(
     new Date().getMonth() + 1
@@ -58,10 +68,13 @@ export class OrderComponent implements OnInit, OnDestroy {
   constructor(
     private formbuilder: FormBuilder,
     private encryptionService: EncryptionService,
-    private merchantService: MerchantService
-  ) {}
+    private merchantService: MerchantService,
+    private configservice: ConfigurationService
+  ) { }
 
   ngOnInit(): void {
+
+    this.getallZone();
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'id',
@@ -72,40 +85,163 @@ export class OrderComponent implements OnInit, OnDestroy {
     this.orderSformRefresh();
     this.placeOrderFormRefresh();
     this.sericecharge();
+    this.getAllOrder();
   }
 
   placeOrderFormRefresh() {
     this.placeOrderForm = this.formbuilder.group({
-      pickupArea: ['', [Validators.required]],
-      pickupAddress: ['', [Validators.required]],
-      pickupdate: [`${this.currentdate}`, [Validators.required]],
-      deliverydate: [`${this.currentdate}`, [Validators.required]],
-      pickuptime: ['flexible', [Validators.required]],
-      deliverytime: ['flexible', [Validators.required]],
+      id: [null],
+      pickupDate: [`${this.currentdate}`],
+      deliverydate: [`${this.currentdate}`],
+      pickuptime: ['flexible'],
+      deliverytime: ['flexible'],
       item: ['', [Validators.required]],
       service: ['', [Validators.required]],
-      charge: ['', [Validators.required]],
-      packageCount: [0, [Validators.required]],
+      packageCount: [0],
       weight: ['', [Validators.required]],
       collectionAmount: ['', [Validators.required]],
       deliveryCost: ['', [Validators.required]],
-      paymentInfo: ['Cash On Delivery', [Validators.required]],
+      paymentInfo: ['Cash On Delivery'],
       productCost: ['', [Validators.required]],
       customerName: ['', [Validators.required]],
       customerNumber: ['', [Validators.required]],
       customerAltNumber: [''],
       customerAddress: ['', [Validators.required]],
       customerArea: ['', [Validators.required]],
-      deliveryStatus: [''],
+      deliveryStatus: ['PENDING'],
+      pickUpAssigned: [''],
+      deliveryAssigned: [''],
+      active: [true],
+      deleted: [false]
     });
   }
 
-  onSearch() {}
+  onSearch() {
+    this.getAllOrder();
+  }
 
-  onSubmit() {}
+  editOrder(data: any) {
+    console.log(data);
+  }
+  successmsg(message: string) {
+    Swal.fire('Success!', message, 'success');
+  }
+  errorssmsg(message: string) {
+    Swal.fire('Ops!', message, 'error');
+  }
+  onSubmit() {
+    if (this.placeOrderForm.invalid) {
+      return;
+    }
+    if (this.f['id'].value) {
+      this.merchantService.updateOrder(this.placeOrderForm.value)
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            if (res.isSuccess || res.statusCode == 200) {
+              this.showAddBtn = true;
+              this.placeOrderFormRefresh();
+              this.successmsg(res.message);
+            }
+            else {
+              this.errorssmsg(res.message)
+            }
+          },
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false
+          },
+          complete: () => {
+            this.getAllOrder();
+          }
+        })
+    }
+    else {
+      this.merchantService.addOrder(this.placeOrderForm.value)
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            console.log(res);
+            if (res.isSuccess || res.statusCode == 201) {
+              this.showAddBtn = true;
+              this.placeOrderFormRefresh();
+              this.successmsg(res.message);
+            }
+            else {
+              this.errorssmsg(res.message)
+            }
+          },
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false
+          },
+          complete: () => {
+            this.getAllOrder();
+          }
+        })
+    }
+  }
 
   toggleBtn() {
     this.showAddBtn ? (this.showAddBtn = false) : (this.showAddBtn = true);
+  }
+
+  getallZone() {
+    let list: any = [];
+    this.configservice
+      .getAllZone(0, 2000, '')
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          res.data.content.map((content: any) => {
+            list.push({ id: content.id, customtext: content.name });
+          });
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loader = false;
+        },
+        complete: () => {
+          this.dropdownList1 = list;
+        },
+      });
+  }
+
+  orderSformRefresh() {
+    this.orderSform = this.formbuilder.group({
+      id: [''],
+      status: ['PENDING'],
+      fromDate: [`${this.currentdate}`],
+      toDate: [`${this.currentdate}`],
+    });
+  }
+
+  get sfc() {
+    return this.orderSform.controls;
+  }
+
+  getAllOrder() {
+    this.merchantService.getOrder(this.page, this.pageSize, this.sfc['id'].value, this.sfc['status'].value, this.sfc['fromDate'].value, this.sfc['toDate'].value)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          console.log(res.data.content)
+          if (res.isSuccess || res.statusCode == 200) {
+            this.orderList = res.data.content;
+            this.total = res.data.totalElements;
+            if (this.toPageVal > this.total) {
+              this.toPageVal = this.total;
+            } else {
+              this.toPageVal = this.orderList.length;
+            }
+          }
+        },
+
+        error: (err: any) => {
+          console.error(err);
+          this.loader = false;
+        }
+      })
   }
 
   onPageChange(event: number) {
@@ -118,16 +254,11 @@ export class OrderComponent implements OnInit, OnDestroy {
     if (this.toPageVal > this.total) {
       this.toPageVal = this.total;
     }
-    // this.getAllmerchant();
+    this.getAllOrder();
     return event;
   }
 
-  orderSformRefresh() {
-    this.orderSform = this.formbuilder.group({
-      fromDate: [`${this.currentdate}`],
-      toDate: [`${this.currentdate}`],
-    });
-  }
+
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next(undefined);
@@ -135,11 +266,20 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   onInitiatorItemSelect(item: any) {
+    this.f['item'].setValue(item)
     this.serviceList = this.getServiceInfoByItem(item);
   }
 
   onInitiatorItemUnSelect(item: any) {
     this.dropdownList = [];
+  }
+
+  onInitiatorItemSelect1(item: any) {
+    this.placeOrderForm.controls['customerArea'].setValue(item.id);
+  }
+
+  onInitiatorItemUnSelect1(item: any) {
+    this.placeOrderForm.controls[''].setValue(item.id);
   }
 
   get f() {
@@ -301,5 +441,39 @@ export class OrderComponent implements OnInit, OnDestroy {
       }
     });
     return result;
+  }
+
+  // getAllZone() {
+  //   let allzone: any = [];
+  //   this.configservice
+  //     .getAllZone(
+  //       0,
+  //       2000,
+  //       ""
+  //     )
+  //     .pipe(takeUntil(this.ngUnsubscribe))
+  //     .subscribe({
+  //       next: (res: any) => {
+  //         res.data.content.map((content: any) => {
+  //           allzone.push({ id: content.id, customtext: content.name });
+  //         });
+  //       },
+  //       error: (err: any) => {
+  //         console.error(err);
+  //         this.loader = false;
+  //       },
+  //       complete: () => {
+  //         this.dropdownList2 = allzone;
+  //         console.log(this.dropdownList2)
+  //       },
+  //     });
+  // }
+
+  getZoneName(st: any) {
+    let a: any = this.dropdownList1.filter((x: any) => x.id === st);
+    if (a.length > 0) {
+      return a[0].customtext;
+    }
+    return '';
   }
 }

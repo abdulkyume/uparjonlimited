@@ -47,11 +47,11 @@
     <div class="row mt-2" *ngIf="!showAddBtn">
       <form class="row" [formGroup]="placeOrderForm" (ngSubmit)="onSubmit()">
         <div class="col-lg-3 col-6 mb-2">
-          <label for="pickupdate">Pick Up Date</label>
+          <label for="pickupDate">Pick Up Date</label>
           <input
             type="date"
-            formControlName="pickupdate"
-            id="pickupdate"
+            formControlName="pickupDate"
+            id="pickupDate"
             class="form-control"
           />
         </div>
@@ -216,6 +216,16 @@
 
         <div class="col-lg-3 col-12 mb-2">
           <label for="customerArea">Customer Area</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Area'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList1"
+            [(ngModel)]="selectedItems1"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect1($event)"
+            (onDeSelect)="onInitiatorItemUnSelect1($event)"
+          >
+          </ng-multiselect-dropdown>
         </div>
         <div class="col-lg-3 col-12 mb-2">
           <label for="customerAddress">Customer Address</label>
@@ -226,11 +236,65 @@
             class="form-control"
           />
         </div>
+        <div class="col-lg-3 col-12 mb-2">
+          <label for="pickUpAssigned">Pickup Assigned</label>
+          <input
+            type="text"
+            formControlName="pickUpAssigned"
+            id="pickUpAssigned"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 col-12 mb-2">
+          <label for="deliveryAssigned">Delivery Assigned</label>
+          <input
+            type="text"
+            formControlName="deliveryAssigned"
+            id="deliveryAssigned"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-12">
+          <div class="row mt-2">
+            <div class="col-lg-6">
+              <button class="btn btn-primary w-100" type="submit">
+                Submit
+              </button>
+            </div>
+            <div class="col-lg-6">
+              <button
+                class="btn btn-warning w-100"
+                type="submit"
+                (click)="placeOrderFormRefresh()"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
     <div class="row mt-2" *ngIf="showAddBtn">
       <form class="row" [formGroup]="orderSform" (ngSubmit)="onSearch()">
-        <div class="col-lg-6 mb-2">
+        <div class="col-lg-3 mb-2">
+          <label for="id">Order Id</label>
+          <input
+            type="text"
+            formControlName="id"
+            id="id"
+            class="form-control"
+          />
+        </div>
+        <div class="col-lg-3 mb-2">
+          <label for="status">Order Status</label>
+          <select formControlName="status" class="form-select">
+            <option value="PENDING">PENDING</option>
+            <option value="APPROVED">APPROVED</option>
+            <option value="PICKEDUP">PICKEDUP</option>
+            <option value="DELIVERED">DELIVERED</option>
+          </select>
+        </div>
+        <div class="col-lg-3 mb-2">
           <label for="fromDate">From Date</label>
           <input
             type="date"
@@ -239,7 +303,7 @@
             class="form-control"
           />
         </div>
-        <div class="col-lg-6 mb-2">
+        <div class="col-lg-3 mb-2">
           <label for="toDate">To Date</label>
           <input
             type="date"
@@ -265,42 +329,114 @@
     <div class="row mt-2" *ngIf="showAddBtn">
       <div class="card">
         <div class="card-body">
-          <table class="table table-responsive">
-            <thead></thead>
-            <tbody></tbody>
-            <tfoot>
-              <!-- pagination start -->
-              <div
-                class="row justify-content-md-between align-items-md-center mt-2"
-              >
-                <div class="col-12 col-md-5">
+          <table class="table table-responsive table-bordered">
+            <thead>
+              <tr>
+                <th>Actions</th>
+                <th>Id</th>
+                <th>
+                  <p>Pickup Date - Time</p>
+                  <p>Delivery Date - Time</p>
+                </th>
+                <th>Delivery Status</th>
+                <th>Item - Extra Box - Weight</th>
+                <th>Delivery Service Type</th>
+                <th>
+                  <p>Product Cost</p>
+                  <p>Collection Amount</p>
+                  <p>Payment Info</p>
+                </th>
+                <th>Pickup Assigned</th>
+                <th>Delivery Assigned</th>
+                <th>Customer Information</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of orderList">
+                <td class="p-0">
                   <div
-                    class="dataTables_info mb-2"
-                    id="tickets-table_info"
-                    role="status"
-                    aria-live="polite"
+                    class="absolute-position dropdown customcolorforaction"
+                    ngbDropdown
+                    placement="bottom-right"
                   >
-                    Showing
-                    {{ cPageVal }} to {{ toPageVal }} of {{ total }}
-                    entries
-                  </div>
-                </div>
-                <div class="col-12 col-md-5">
-                  <div class="text-md-right float-md-end pagination-rounded">
-                    <ngb-pagination
-                      id="paginationCustoimse"
-                      [collectionSize]="total"
-                      (pageChange)="page = onPageChange($event)"
-                      [pageSize]="pageSize"
-                      [maxSize]="3"
+                    <a
+                      href="javascript: void(0);"
+                      class="dropdown-toggle card-drop"
+                      ngbDropdownToggle
                     >
-                    </ngb-pagination>
+                      <i class="fas fa-ellipsis-h font-size-18 ms-2 mt-3"></i>
+                    </a>
+                    <div
+                      class="dropdown-menu dropdown-menu-end dropdown-menu-customize"
+                      ngbDropdownMenu
+                    >
+                      <a class="dropdown-item" (click)="editOrder(data)"
+                        ><i class="fas fa-pencil-alt text-success me-1"></i
+                        >Edit</a
+                      >
+                    </div>
                   </div>
-                </div>
-              </div>
-              <!-- pagination ends -->
-            </tfoot>
+                </td>
+                <td>{{ data.id }}</td>
+                <td>
+                  <p>{{ data.pickupDate }} - {{ data.pickuptime }}</p>
+                  <p>{{ data.deliverydate }} - {{ data.deliverytime }}</p>
+                </td>
+                <td>{{ data.deliveryStatus }}</td>
+                <td>
+                  {{ data.item }} - {{ data.packageCount }} - {{ data.weight }}
+                </td>
+                <td>{{ data.service }} Charge: {{ data.deliveryCost }}</td>
+
+                <td>
+                  <p>{{ data.productCost }}</p>
+                  <p>{{ data.collectionAmount }}</p>
+                  <p>{{ data.paymentInfo }}</p>
+                </td>
+                <td>{{ data.pickUpAssigned }}</td>
+                <td>{{ data.deliveryAssigned }}</td>
+                <td>
+                  <p>
+                    {{ data.customerName }} - {{ data.customerNumber }},
+                    {{ data.customerAltNumber }}
+                  </p>
+                  <p>{{ getZoneName(data.customerArea) }}</p>
+                  <p>{{ data.customerAddress }}</p>
+                </td>
+              </tr>
+            </tbody>
           </table>
+
+          <!-- pagination start -->
+          <div
+            class="row justify-content-md-between align-items-md-center mt-2"
+          >
+            <div class="col-12 col-md-5">
+              <div
+                class="dataTables_info mb-2"
+                id="tickets-table_info"
+                role="status"
+                aria-live="polite"
+              >
+                Showing
+                {{ cPageVal }} to {{ toPageVal }} of {{ total }}
+                entries
+              </div>
+            </div>
+            <div class="col-12 col-md-5">
+              <div class="text-md-right float-md-end pagination-rounded">
+                <ngb-pagination
+                  id="paginationCustoimse"
+                  [collectionSize]="total"
+                  (pageChange)="page = onPageChange($event)"
+                  [pageSize]="pageSize"
+                  [maxSize]="3"
+                >
+                </ngb-pagination>
+              </div>
+            </div>
+          </div>
+          <!-- pagination ends -->
         </div>
       </div>
     </div>

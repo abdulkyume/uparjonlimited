@@ -13,11 +13,10 @@ import { MerchantService } from 'src/app/core/service/merchant.service';
 import Swal from 'sweetalert2';
 import { LoaderComponent } from 'src/app/common/loader/loader.component';
 import { DataService } from 'src/app/core/service/data.service';
-import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { ConfigurationService } from 'src/app/core/service/configuration.service';
-import { filter } from 'rxjs/operators';
-import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbPaginationModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { ConfigurationService } from 'src/app/core/service/configuration.service';
 import { filter } from 'rxjs/operators';
@@ -25,13 +24,20 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-merchantdetails',
   standalone: true,
-  imports: [CommonModule, LoaderComponent, FormsModule, ReactiveFormsModule, NgbPaginationModule, NgbDropdownModule, NgMultiSelectDropDownModule],
+  imports: [
+    CommonModule,
+    LoaderComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbPaginationModule,
+    NgbDropdownModule,
+    NgMultiSelectDropDownModule,
+  ],
   templateUrl: './merchantdetails.component.html',
   styleUrls: ['./merchantdetails.component.scss'],
 })
 export class MerchantdetailsComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
-  loader: boolean = true;
   loader: boolean = true;
   showAddBtn: boolean = true;
   merchantForm!: FormGroup;
@@ -53,22 +59,12 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
   selectedItems = [];
   pickdropzonelist: any = [];
 
-  total: number = 0;
-  cPageVal!: number;
-  toPageVal!: number;
-
-  areaList: any = [];
-
-  dropdownSettings = {};
-  dropdownList = [];
-  selectedItems = [];
-  pickdropzonelist: any = [];
-
   constructor(
     private formbuilder: FormBuilder,
     private encryptionService: EncryptionService,
     private shareDateService: DataService,
-    private merchantService: MerchantService
+    private merchantService: MerchantService,
+    private configservice: ConfigurationService
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +79,7 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
     this.userid = JSON.parse(
       this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
     ).id;
-    this.getallZone()
+    this.getallZone();
     this.merchantdformRefresh();
     this.merchantdSForm();
     this.getAllmerchant();
@@ -101,9 +97,26 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
       policeStation: ['', [Validators.required]],
       district: ['Dhaka', [Validators.required]],
       country: ['Bangladesh', [Validators.required]],
-      phoneNumber: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
-      altPhoneNumber: ['', [Validators.minLength(11), Validators.maxLength(11)]],
-      walletPhoneNumber: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
+      phoneNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(11),
+          Validators.maxLength(11),
+        ],
+      ],
+      altPhoneNumber: [
+        '',
+        [Validators.minLength(11), Validators.maxLength(11)],
+      ],
+      walletPhoneNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(11),
+          Validators.maxLength(11),
+        ],
+      ],
       active: [true],
       deleted: [false],
     });
@@ -135,11 +148,7 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
   getallZone() {
     let list: any = [];
     this.configservice
-      .getAllZone(
-        0,
-        2000,
-        ""
-      )
+      .getAllZone(0, 2000, '')
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -158,71 +167,64 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
   }
 
   onInitiatorItemSelect(item: any) {
-    this.merchantForm.controls["area"].setValue(item.id);
+    this.merchantForm.controls['area'].setValue(item.id);
   }
 
   onInitiatorItemUnSelect(item: any) {
-    this.merchantForm.controls["area"].setValue("")
-  }
-      deleted: [false],
-    });
+    this.merchantForm.controls['area'].setValue('');
   }
 
-  getZoneName(string: any) {
-    let a: any = this.dropdownList.filter((x: any) => x.id == string);
-    return a[0].customtext;
-  }
+  // getZoneName(string: any) {
+  //   let a: any = this.dropdownList.filter((x: any) => x.id == string);
+  //   return a[0].customtext;
+  // }
 
-  get f() {
-    return this.merchantForm.controls;
-  }
+  // get f() {
+  //   return this.merchantForm.controls;
+  // }
 
-  onPageChange(event: number) {
-    this.loader = true;
-    this.toPageVal = event * this.pageSize;
-    this.page = event - 1;
+  // onPageChange(event: number) {
+  //   this.loader = true;
+  //   this.toPageVal = event * this.pageSize;
+  //   this.page = event - 1;
 
-    this.cPageVal = (event - 1) * this.pageSize + 1;
+  //   this.cPageVal = (event - 1) * this.pageSize + 1;
 
-    if (this.toPageVal > this.total) {
-      this.toPageVal = this.total;
-    }
-    this.getAllmerchant();
-    return event;
-  }
+  //   if (this.toPageVal > this.total) {
+  //     this.toPageVal = this.total;
+  //   }
+  //   this.getAllmerchant();
+  //   return event;
+  // }
 
-  getallZone() {
-    let list: any = [];
-    this.configservice
-      .getAllZone(
-        0,
-        2000,
-        ""
-      )
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res: any) => {
-          res.data.content.map((content: any) => {
-            list.push({ id: content.id, customtext: content.name });
-          });
-        },
-        error: (err: any) => {
-          console.error(err);
-          this.loader = false;
-        },
-        complete: () => {
-          this.dropdownList = list;
-        },
-      });
-  }
+  // getallZone() {
+  //   let list: any = [];
+  //   this.configservice
+  //     .getAllZone(0, 2000, '')
+  //     .pipe(takeUntil(this.ngUnsubscribe))
+  //     .subscribe({
+  //       next: (res: any) => {
+  //         res.data.content.map((content: any) => {
+  //           list.push({ id: content.id, customtext: content.name });
+  //         });
+  //       },
+  //       error: (err: any) => {
+  //         console.error(err);
+  //         this.loader = false;
+  //       },
+  //       complete: () => {
+  //         this.dropdownList = list;
+  //       },
+  //     });
+  // }
 
-  onInitiatorItemSelect(item: any) {
-    this.merchantForm.controls["area"].setValue(item.id);
-  }
+  // onInitiatorItemSelect(item: any) {
+  //   this.merchantForm.controls['area'].setValue(item.id);
+  // }
 
-  onInitiatorItemUnSelect(item: any) {
-    this.merchantForm.controls["area"].setValue("")
-  }
+  // onInitiatorItemUnSelect(item: any) {
+  //   this.merchantForm.controls['area'].setValue('');
+  // }
 
   merchantdSForm() {
     this.merchantSForm = this.formbuilder.group({
@@ -285,10 +287,9 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
             console.error(err);
             this.loader = false;
           },
-          complete: () => { },
+          complete: () => {},
         });
-    }
-    else {
+    } else {
       this.merchantService
         .addMerchantDetail(this.merchantForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
@@ -308,28 +309,32 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
             console.error(err);
             this.loader = false;
           },
-          complete: () => { },
+          complete: () => {},
         });
     }
   }
 
   editUser(data: any) {
-    this.merchantForm.controls["id"].setValue(data.id);
-    this.merchantForm.controls["merchantId"].setValue(data.merchantId);
-    this.merchantForm.controls["locationType"].setValue(data.locationType);
-    this.merchantForm.controls["name"].setValue(data.name);
-    this.merchantForm.controls["house"].setValue(data.house);
-    this.merchantForm.controls["road"].setValue(data.road);
-    this.merchantForm.controls["area"].setValue(data.area);
-    this.merchantForm.controls["policeStation"].setValue(data.policeStation);
-    this.merchantForm.controls["district"].setValue(data.district);
-    this.merchantForm.controls["country"].setValue(data.country);
-    this.merchantForm.controls["phoneNumber"].setValue(data.phoneNumber);
-    this.merchantForm.controls["altPhoneNumber"].setValue(data.altPhoneNumber);
-    this.merchantForm.controls["walletPhoneNumber"].setValue(data.walletPhoneNumber);
-    this.merchantForm.controls["active"].setValue(data.active);
-    this.merchantForm.controls["deleted"].setValue(data.deleted);
-    this.selectedItems = this.dropdownList.filter((d: any) => d.id == data.area)
+    this.merchantForm.controls['id'].setValue(data.id);
+    this.merchantForm.controls['merchantId'].setValue(data.merchantId);
+    this.merchantForm.controls['locationType'].setValue(data.locationType);
+    this.merchantForm.controls['name'].setValue(data.name);
+    this.merchantForm.controls['house'].setValue(data.house);
+    this.merchantForm.controls['road'].setValue(data.road);
+    this.merchantForm.controls['area'].setValue(data.area);
+    this.merchantForm.controls['policeStation'].setValue(data.policeStation);
+    this.merchantForm.controls['district'].setValue(data.district);
+    this.merchantForm.controls['country'].setValue(data.country);
+    this.merchantForm.controls['phoneNumber'].setValue(data.phoneNumber);
+    this.merchantForm.controls['altPhoneNumber'].setValue(data.altPhoneNumber);
+    this.merchantForm.controls['walletPhoneNumber'].setValue(
+      data.walletPhoneNumber
+    );
+    this.merchantForm.controls['active'].setValue(data.active);
+    this.merchantForm.controls['deleted'].setValue(data.deleted);
+    this.selectedItems = this.dropdownList.filter(
+      (d: any) => d.id == data.area
+    );
     this.showAddBtn = false;
   }
 

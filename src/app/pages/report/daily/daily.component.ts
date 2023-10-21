@@ -5,13 +5,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoaderComponent } from 'src/app/common/loader/loader.component';
 import {

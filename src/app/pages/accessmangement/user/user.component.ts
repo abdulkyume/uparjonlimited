@@ -58,7 +58,7 @@ export class UserComponent implements OnInit, OnDestroy {
     private roleService: RoleService,
     private authService: AuthService,
     private encryptionService: EncryptionService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.createUserFormRefresh();
@@ -164,7 +164,7 @@ export class UserComponent implements OnInit, OnDestroy {
               console.error(err);
               this.loader = false;
             },
-            complete: () => {},
+            complete: () => { },
           });
       } else {
         this.roleService
@@ -186,7 +186,7 @@ export class UserComponent implements OnInit, OnDestroy {
               console.error(err);
               this.loader = false;
             },
-            complete: () => {},
+            complete: () => { },
           });
       }
     } else {
@@ -270,7 +270,7 @@ export class UserComponent implements OnInit, OnDestroy {
   onPageChange(event: number) {
     this.loader = true;
     this.toPageVal = event * this.pageSizes;
-    this.pagea = event-1;
+    this.pagea = event - 1;
 
     this.cPageVal = (event - 1) * this.pageSizes + 1;
 
