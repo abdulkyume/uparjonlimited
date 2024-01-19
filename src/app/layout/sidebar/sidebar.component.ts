@@ -16,6 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/core/service/auth.service';
 import { EncryptionService } from 'src/app/core/service/encryption.service';
 import { HostListener } from '@angular/core';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sidebar',
@@ -88,6 +89,7 @@ export class SidebarComponent
 
   getRoleWiseMenu() {
     this.defaultService.getRoleWiseMenu().subscribe((res: any) => {
+      res.data = res.data.filter((x: any) => x != null)
       let keepParentMenus = res.data.filter((x: any) => x.parentId === "");
       keepParentMenus.forEach((x: any) => {
         x.subItems = [];

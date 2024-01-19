@@ -73,11 +73,10 @@ export class OrderComponent implements OnInit, OnDestroy {
     private encryptionService: EncryptionService,
     private configService: ConfigurationService,
     private merchantService: MerchantService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getitemlist();
-    this.getAllmerchant();
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'id',
@@ -99,7 +98,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   getAllmerchant() {
     let merchantdetailsList: any = [];
     this.merchantService
-      .getMerchantDetail(this.userid, this.page, this.pageSize, '')
+      .getMerchantDetail("", this.page, 1000, '')
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -116,8 +115,8 @@ export class OrderComponent implements OnInit, OnDestroy {
           this.loader = false;
         },
         complete: () => {
-          this.loader = false;
           this.dropdownList = merchantdetailsList;
+          this.loader = false;
         },
       });
   }
@@ -138,6 +137,8 @@ export class OrderComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.dropdownList1 = ilist;
+
+        this.getAllmerchant();
       },
     });
   }

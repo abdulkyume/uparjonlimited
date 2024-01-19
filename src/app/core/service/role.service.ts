@@ -148,7 +148,7 @@ export class RoleService {
   updateUser(newUser: any) {
     var apiurl = environment.environment;
     return this.http
-      .put<any>(`${apiurl}user/update-user/${newUser.id}`, newUser)
+      .put<any>(`${apiurl}user/update-user`, newUser)
       .pipe(
         timeout(60000),
         catchError((err) => {

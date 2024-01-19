@@ -4,7 +4,7 @@
   </div>
 
   <div class="container-fluid">
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-lg-3 mb-2 col-md-3 col-6">
         <button class="btn btn-success btn-lg w-100">
           Total Order : {{ totalOrder }}
@@ -25,7 +25,7 @@
           Completed : {{ totalCOrder }}
         </button>
       </div>
-    </div>
+    </div> -->
     <div class="row mt-2">
       <div class="col-lg-12 text-end">
         <button
@@ -119,9 +119,7 @@
           </select>
         </div>
         <div class="col-lg-3 col-12 mb-2">
-          <label for="packageCount"
-            >Packaging Box/Bag (Additional box 100 bdt)</label
-          >
+          <label for="packageCount">Extra box (100 bdt)</label>
           <input
             type="number"
             formControlName="packageCount"
@@ -167,7 +165,6 @@
             formControlName="collectionAmount"
             id="collectionAmount"
             class="form-control"
-            readonly
           />
         </div>
         <div class="col-lg-3 col-md-6 col-12 mb-3">
@@ -203,7 +200,7 @@
           />
         </div>
         <div class="col-lg-3 col-12 mb-2">
-          <label for="customerAltNumber">Customer Alt Number</label>
+          <label for="customerAltNumber">Alternative Number</label>
           <input
             type="tel"
             formControlName="customerAltNumber"
@@ -236,23 +233,37 @@
             class="form-control"
           />
         </div>
-        <div class="col-lg-3 col-12 mb-2">
+        <div
+          class="col-lg-3 col-12 mb-2"
+          *ngIf="roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
+        >
           <label for="pickUpAssigned">Pickup Assigned</label>
-          <input
-            type="text"
-            formControlName="pickUpAssigned"
-            id="pickUpAssigned"
-            class="form-control"
-          />
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Rider'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList3"
+            [(ngModel)]="selectedItems3"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect3($event)"
+            (onDeSelect)="onInitiatorItemUnSelect3($event)"
+          >
+          </ng-multiselect-dropdown>
         </div>
-        <div class="col-lg-3 col-12 mb-2">
+        <div
+          class="col-lg-3 col-12 mb-2"
+          *ngIf="roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
+        >
           <label for="deliveryAssigned">Delivery Assigned</label>
-          <input
-            type="text"
-            formControlName="deliveryAssigned"
-            id="deliveryAssigned"
-            class="form-control"
-          />
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Rider'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList3"
+            [(ngModel)]="selectedItems4"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect4($event)"
+            (onDeSelect)="onInitiatorItemUnSelect4($event)"
+          >
+          </ng-multiselect-dropdown>
         </div>
         <div class="col-lg-12">
           <div class="row mt-2">
@@ -288,6 +299,7 @@
         <div class="col-lg-3 mb-2">
           <label for="status">Order Status</label>
           <select formControlName="status" class="form-select">
+            <option value="">All</option>
             <option value="PENDING">PENDING</option>
             <option value="APPROVED">APPROVED</option>
             <option value="PICKEDUP">PICKEDUP</option>
@@ -312,10 +324,19 @@
             class="form-control"
           />
         </div>
-        <div class="col-lg-6 mb-2">
-          <button class="btn btn-success w-100" type="submit">Search</button>
+        <div class="col-lg-4 mb-2">
+          <button class="btn btn-primary w-100" type="submit">Search</button>
         </div>
-        <div class="col-lg-6 mb-2">
+        <div class="col-lg-4 mb-2">
+          <button
+            class="btn btn-success w-100"
+            type="button"
+            (click)="downloadXl()"
+          >
+            Download
+          </button>
+        </div>
+        <div class="col-lg-4 mb-2">
           <button
             class="btn btn-warning w-100"
             type="button"
@@ -328,32 +349,41 @@
     </div>
     <div class="row mt-2" *ngIf="showAddBtn">
       <div class="card">
-        <div class="card-body">
-          <table class="table table-responsive table-bordered">
+        <div class="card-body overflow-y-auto">
+          <table
+            class="table table-responsive table-bordered table-centered table-nowrap"
+            id="reporttable"
+            #reporttable
+          >
             <thead>
               <tr>
-                <th>Actions</th>
-                <th>Id</th>
-                <th>
+                <th class="align-middle double-column">Actions</th>
+                <th class="align-middle double-column">Delivery Status</th>
+                <th class="align-middle double-column">
                   <p>Pickup Date - Time</p>
                   <p>Delivery Date - Time</p>
                 </th>
-                <th>Delivery Status</th>
-                <th>Item - Extra Box - Weight</th>
-                <th>Delivery Service Type</th>
-                <th>
-                  <p>Product Cost</p>
+                <th class="align-middle double-column">Merchant Information</th>
+                <th class="align-middle double-column">
+                  Item - Extra Box - Weight
+                  <br />
+                  Product Cost
+                </th>
+                <th class="align-middle double-column">
+                  Delivery Service Type
+                </th>
+                <th class="align-middle double-column">
                   <p>Collection Amount</p>
                   <p>Payment Info</p>
                 </th>
-                <th>Pickup Assigned</th>
-                <th>Delivery Assigned</th>
-                <th>Customer Information</th>
+                <th class="align-middle double-column">Pickup Assigned</th>
+                <th class="align-middle double-column">Delivery Assigned</th>
+                <th class="align-middle double-column">Customer Information</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let data of orderList">
-                <td class="p-0">
+                <td class="align-middle double-column p-0">
                   <div
                     class="absolute-position dropdown customcolorforaction"
                     ngbDropdown
@@ -370,36 +400,123 @@
                       class="dropdown-menu dropdown-menu-end dropdown-menu-customize"
                       ngbDropdownMenu
                     >
-                      <a class="dropdown-item" (click)="editOrder(data)"
+                      <a
+                        href="javascript: void(0);"
+                        *ngIf="
+                          roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc' ||
+                          roleid == 'e4241052-bf66-497b-9c4e-ee439cc586d4'
+                        "
+                        class="dropdown-item"
+                        (click)="editOrder(data)"
                         ><i class="fas fa-pencil-alt text-success me-1"></i
                         >Edit</a
                       >
+                      <a
+                        href="javascript: void(0);"
+                        *ngIf="
+                          roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc' ||
+                          roleid == 'e4241052-bf66-497b-9c4e-ee439cc586d4'
+                        "
+                        class="dropdown-item"
+                        (click)="deleteOrder(data)"
+                        ><i class="fas fa-trash text-danger me-1"></i>Delete</a
+                      >
+                      <a
+                        href="javascript: void(0);"
+                        *ngIf="roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
+                        class="dropdown-item"
+                        (click)="approveOrder(data)"
+                        >Approve Order
+                      </a>
+                      <a
+                        href="javascript: void(0);"
+                        *ngIf="
+                          roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc' ||
+                          roleid == '44eff443-bf52-4e6f-a5d5-d42fb409e0c1'
+                        "
+                        class="dropdown-item"
+                        (click)="pickOrder(data)"
+                        >Pickup Complete
+                      </a>
+                      <a
+                        href="javascript: void(0);"
+                        *ngIf="
+                          roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc' ||
+                          roleid == '44eff443-bf52-4e6f-a5d5-d42fb409e0c1'
+                        "
+                        class="dropdown-item"
+                        (click)="deliveryOrder(data)"
+                        >Delivery Complete
+                      </a>
                     </div>
                   </div>
                 </td>
-                <td>{{ data.id }}</td>
-                <td>
-                  <p>{{ data.pickupDate }} - {{ data.pickuptime }}</p>
-                  <p>{{ data.deliverydate }} - {{ data.deliverytime }}</p>
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  {{ data.deliveryStatus }}
                 </td>
-                <td>{{ data.deliveryStatus }}</td>
-                <td>
-                  {{ data.item }} - {{ data.packageCount }} - {{ data.weight }}
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  <p>{{ data.pickupDate }}, {{ data.pickuptime }}</p>
+                  <p>{{ data.deliverydate }}, {{ data.deliverytime }}</p>
                 </td>
-                <td>{{ data.service }} Charge: {{ data.deliveryCost }}</td>
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  <div
+                    [innerHTML]="getMerchantInformation(data.mercahntId)"
+                  ></div>
+                  <!-- {{ getMerchantInformation(data.mercahntId) }} -->
+                </td>
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  {{ data.item }} <br /><br />
+                  Extra Box: {{ data.packageCount }} <br /><br />
+                  Weight: {{ data.weight }} <br /><br />
+                  Product Price{{ data.productCost }} TK
+                </td>
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  {{ data.service }} <br />Charge: {{ data.deliveryCost }}
+                </td>
 
-                <td>
-                  <p>{{ data.productCost }}</p>
-                  <p>{{ data.collectionAmount }}</p>
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  <p>Collection Amount{{ data.collectionAmount }}</p>
+                  <br />
                   <p>{{ data.paymentInfo }}</p>
                 </td>
-                <td>{{ data.pickUpAssigned }}</td>
-                <td>{{ data.deliveryAssigned }}</td>
-                <td>
-                  <p>
-                    {{ data.customerName }} - {{ data.customerNumber }},
-                    {{ data.customerAltNumber }}
-                  </p>
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  <div [innerHTML]="getRider(data.pickUpAssigned)"></div>
+                  <!-- {{ getRider(data.pickUpAssigned) }} -->
+                </td>
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  <div [innerHTML]="getRider(data.deliveryAssigned)"></div>
+                  <!-- {{ getRider(data.deliveryAssigned) }} -->
+                </td>
+                <td
+                  class="align-middle double-column"
+                  (click)="openModal(content, data)"
+                >
+                  <p>{{ data.customerName }}</p>
+                  <p>{{ data.customerNumber }}/ {{ data.customerAltNumber }}</p>
                   <p>{{ getZoneName(data.customerArea) }}</p>
                   <p>{{ data.customerAddress }}</p>
                 </td>
@@ -442,3 +559,92 @@
     </div>
   </div>
 </div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Fee Package Details</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <table class="table table-bordered table-responsive">
+      <tbody>
+        <tr>
+          <td>PickUp Time</td>
+          <td>{{ modalData.pickupDate }}, {{ modalData.pickuptime }}</td>
+        </tr>
+        <tr>
+          <td>Merchant</td>
+          <td>
+            <div
+              [innerHTML]="getMerchantInformation(modalData.mercahntId)"
+            ></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Product</td>
+          <td>
+            {{ modalData.item }} <br /><br />
+            Extra Box: {{ modalData.packageCount }} <br /><br />
+            Weight: {{ modalData.weight }} <br /><br />
+            Product Price{{ modalData.productCost }} TK
+          </td>
+        </tr>
+        <tr>
+          <td>Charge</td>
+          <td>{{ modalData.deliveryCost }}</td>
+        </tr>
+        <tr>
+          <td>Delivery Information</td>
+          <td>
+            Pickup:
+            <div [innerHTML]="getRider(modalData.pickUpAssigned)"></div>
+            <br />
+            Delivery:
+            <div [innerHTML]="getRider(modalData.pickUpAssigned)"></div>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2"></td>
+        </tr>
+
+        <tr>
+          <td>Delivery Time</td>
+          <td>{{ modalData.deliverydate }}, {{ modalData.deliverytime }}</td>
+        </tr>
+        <tr>
+          <td>Customer Information</td>
+          <td>
+            <p>{{ modalData.customerName }}</p>
+            <p>
+              {{ modalData.customerNumber }}/
+              {{ modalData.customerAltNumber }}
+            </p>
+            <p>{{ getZoneName(modalData.customerArea) }}</p>
+            <p>{{ modalData.customerAddress }}</p>
+          </td>
+        </tr>
+        <tr>
+          <td>Collection Amount</td>
+          <td>
+            {{ modalData.collectionAmount }} <br />{{ modalData.paymentInfo }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-light"
+      (click)="modal.close('Close click')"
+    >
+      Close
+    </button>
+  </div>
+</ng-template>

@@ -135,9 +135,14 @@ export class UserComponent implements OnInit, OnDestroy {
         let requestForm = {
           id: this.f['id'].value,
           userName: this.f['userName'].value,
-          userPhone: this.f['userPhone'].value,
+          firstName: this.f['firstName'].value,
+          lastName: this.f['lastName'].value,
+          gender: this.f['gender'].value,
+          mobile: this.f['mobile'].value,
+          email: this.f['email'].value,
+          password: this.f['password'].value,
           roleId: this.f['roleId'].value,
-          isActive: this.f['isActive'].value,
+          isActive: this.f['active'].value,
           isDeleted: false,
           isPasswordChanged: false,
         };
@@ -288,7 +293,7 @@ export class UserComponent implements OnInit, OnDestroy {
     this.loader = true;
     this.roleService
       .getAllusers(
-        this.pagea,
+        this.pagea-1,
         this.pageSizes,
         this.fsu['usernumbersearch'].value
       )

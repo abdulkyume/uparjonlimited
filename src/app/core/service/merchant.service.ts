@@ -284,7 +284,7 @@ export class MerchantService {
   }
 
   updateOrder(reqm: any) {
-    return this.http.post<any>(`${this.apiurl}merchant/update-order`, reqm).pipe(
+    return this.http.put<any>(`${this.apiurl}merchant/update-order`, reqm).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);
@@ -317,14 +317,17 @@ export class MerchantService {
     );
   }
 
-  getOrder(page: number = 0, limit: number = 10, id: string = '', status: string = '', fromDate: string = '', toDate: string = '') {
+  getOrder(page: number = 0, limit: number = 10, id: string = '', status: string = '', fromDate: string = '', toDate: string = '', merchantId: string = '', pickup: string = '', delivery: string = '') {
     let params = new HttpParams()
       .set('id', String(id))
       .set('status', String(status))
-      .set('fromDate', String(id))
-      .set('toDate', String(id))
+      .set('fromDate', String(fromDate))
+      .set('toDate', String(toDate))
       .set('page', String(page))
-      .set('pageSize', String(limit));
+      .set('pageSize', String(limit))
+      .set('merchantId', String(merchantId))
+      .set('assigned', String(delivery))
+      .set('pickup', String(pickup));
 
     return this.http
       .get(`${this.apiurl}merchant/get-order`, {
