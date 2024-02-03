@@ -291,39 +291,31 @@ export class PendingorderComponent implements OnInit, OnDestroy {
       });
   }
   getMerchantInformation(id: any) {
-    console.log(id);
     let user = this.existingUserList.filter((m: any) => m.id == id);
-    let merchant = this.merchantList.filter(
-      (m: any) => m.phoneNumber == user[0].mobile
-    );
-    console.log(user);
-    console.log(this.merchantList);
-    console.log(merchant);
 
-    // if (merchant.length > 0) {
-    //   return merchant[0].name + "<br/><br/>" + merchant[0].phoneNumber + "/" + merchant[0].altPhoneNumber +
-    //     "<br/><br/>" + merchant[0].house + ", " + merchant[0].road + "<br/><br/>" +
-    //     this.filterArea(merchant[0]) + ", " + merchant[0].district
-    // }
-    // else {
-    //   return ""
-    // }
-
-    return (
-      merchant[0].name +
-      '<br/><br/>' +
-      merchant[0].phoneNumber +
-      '/' +
-      merchant[0].altPhoneNumber +
-      '<br/><br/>' +
-      merchant[0].house +
-      ', ' +
-      merchant[0].road +
-      '<br/><br/>' +
-      this.filterArea(merchant[0]) +
-      ', ' +
-      merchant[0].district
-    );
+    if (user.length > 0) {
+      let merchant = this.merchantList.filter(
+        (m: any) => m.phoneNumber == user[0].mobile
+      );
+      return (
+        merchant[0].name +
+        '<br/><br/>' +
+        merchant[0].phoneNumber +
+        '/' +
+        merchant[0].altPhoneNumber +
+        '<br/><br/>' +
+        merchant[0].house +
+        ', ' +
+        merchant[0].road +
+        '<br/><br/>' +
+        this.filterArea(merchant[0]) +
+        ', ' +
+        merchant[0].district
+      );
+    }
+    else{
+      return "";
+    }
   }
 
   filterArea(m: any) {
@@ -402,8 +394,7 @@ export class PendingorderComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any, data: any) {
-    console.log(data);
-    this.modalData = data
+    this.modalData = data;
     this.modalService.open(content, {
       size: 'xl',
       backdrop: 'static',

@@ -50,6 +50,7 @@
                   <thead>
                     <tr>
                       <th class="align-middle double-column">Actions</th>
+                      <th class="align-middle double-column">Order Id</th>
                       <th class="align-middle double-column">
                         Delivery Status
                       </th>
@@ -128,6 +129,11 @@
                             </a>
                           </div>
                         </div>
+                      </td>
+                      <td
+                        class="align-middle double-column"
+                      >
+                        {{ data.id }}
                       </td>
                       <td
                         class="align-middle double-column"
@@ -291,7 +297,7 @@
             <div [innerHTML]="getRider(modalData.pickUpAssigned)"></div>
             <br />
             Delivery:
-            <div [innerHTML]="getRider(modalData.pickUpAssigned)"></div>
+            <div [innerHTML]="getRider(modalData.deliveryAssigned)"></div>
           </td>
         </tr>
 
