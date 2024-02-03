@@ -164,24 +164,29 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   getMerchantInformation(id: any) {
     let user = this.existingUserList.filter((m: any) => m.id == id);
-    let merchant = this.merchantList.filter(
-      (m: any) => m.phoneNumber == user[0].mobile
-    );
-    return (
-      merchant[0].name +
-      '<br/><br/>' +
-      merchant[0].phoneNumber +
-      '/' +
-      merchant[0].altPhoneNumber +
-      '<br/><br/>' +
-      merchant[0].house +
-      ', ' +
-      merchant[0].road +
-      '<br/><br/>' +
-      this.filterArea(merchant[0]) +
-      ', ' +
-      merchant[0].district
-    );
+
+    if (user.length > 0) {
+      let merchant = this.merchantList.filter(
+        (m: any) => m.phoneNumber == user[0].mobile
+      );
+      return (
+        merchant[0].name +
+        '<br/><br/>' +
+        merchant[0].phoneNumber +
+        '/' +
+        merchant[0].altPhoneNumber +
+        '<br/><br/>' +
+        merchant[0].house +
+        ', ' +
+        merchant[0].road +
+        '<br/><br/>' +
+        this.filterArea(merchant[0]) +
+        ', ' +
+        merchant[0].district
+      );
+    } else {
+      return '';
+    }
   }
 
   filterArea(m: any) {
@@ -457,7 +462,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   getAllusers() {
     let data: any = [];
     this.roleService
-      .getAllusers(0, 1000,"","44eff443-bf52-4e6f-a5d5-d42fb409e0c1")
+      .getAllusers(0, 1000, '', '44eff443-bf52-4e6f-a5d5-d42fb409e0c1')
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -784,8 +789,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       cost: 250,
     },
     {
-      serviceName:
-        'AC Car / Freezing Van (Flexible Time): 2-6 hr',
+      serviceName: 'AC Car / Freezing Van (Flexible Time): 2-6 hr',
       items: {
         list: [
           'Birthday Cake',
@@ -801,8 +805,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       cost: 250,
     },
     {
-      serviceName:
-        'AC Car / Freezing Van (Urgent Delivery): 1-2 hr',
+      serviceName: 'AC Car / Freezing Van (Urgent Delivery): 1-2 hr',
       items: {
         list: [
           'Birthday Cake',
@@ -893,7 +896,6 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any, data: any) {
-    console.log(data);
     this.modalData = data;
     this.modalService.open(content, {
       size: 'xl',
