@@ -11,7 +11,7 @@ import { Baseresponsewlist } from '../models/baseresponsewlist';
 })
 export class RoleService {
   apiURL: string = environment.environment;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getAllRoleId(page: number = 1, limit: number = 10, sort: string = 'desc') {
     let params = new HttpParams()
@@ -46,49 +46,46 @@ export class RoleService {
   }
 
   getAllRoleIds(): Observable<Baseresponse<any>> {
-    return this.http
-      .get<Baseresponse<any>>(`${this.apiURL}role/all_role`)
-      .pipe(
-        timeout(60000),
-        catchError((err: any) => {
-          console.error(err);
-          if (err.name === 'TimeoutError') {
-            Swal.fire('Time Out!!', 'Internal Server Problem');
-          }
-          // if (
-          //   err.message === "Cannot read properties of null (reading 'message')"
-          // ) {
-          //   Swal.fire(
-          //     'Error!!',
-          //     'Resource Not Available. Link is Not Working',
-          //     'error'
-          //   );
-          // }
-          if (err === 'Bad Request') {
-            Swal.fire('Error!!', 'Form Submission Error');
-          }
-          // if (err === 'Unknown Error') {
-          //   Swal.fire('Error!!', 'No Connection Found');
-          // }
-          throw err;
-        })
-      );
+    return this.http.get<Baseresponse<any>>(`${this.apiURL}role/all_role`).pipe(
+      timeout(60000),
+      catchError((err: any) => {
+        console.error(err);
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        // if (
+        //   err.message === "Cannot read properties of null (reading 'message')"
+        // ) {
+        //   Swal.fire(
+        //     'Error!!',
+        //     'Resource Not Available. Link is Not Working',
+        //     'error'
+        //   );
+        // }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        // if (err === 'Unknown Error') {
+        //   Swal.fire('Error!!', 'No Connection Found');
+        // }
+        throw err;
+      })
+    );
   }
 
   getAllusers(
     page: number = 0,
     limit: number = 10,
-    searchValue: string = ''
+    searchValue: string = '',
+    role: string = ''
   ): Observable<Baseresponsewlist<any>> {
     var params = new HttpParams()
       .set('pageNumber', Number(page))
       .set('pageSize', Number(limit))
-      .set('searchVal', String(searchValue));
+      .set('searchVal', String(searchValue))
+      .set('role', String(role));
     return this.http
-      .get<Baseresponsewlist<any>>(
-        `${this.apiURL}user/get-user`,
-        { params }
-      )
+      .get<Baseresponsewlist<any>>(`${this.apiURL}user/get-user`, { params })
       .pipe(
         timeout(60000),
         catchError((err) => {
@@ -147,33 +144,31 @@ export class RoleService {
 
   updateUser(newUser: any) {
     var apiurl = environment.environment;
-    return this.http
-      .put<any>(`${apiurl}user/update-user`, newUser)
-      .pipe(
-        timeout(60000),
-        catchError((err) => {
-          console.error(err);
-          if (err.name === 'TimeoutError') {
-            Swal.fire('Time Out!!', 'Internal Server Problem');
-          }
-          if (err === 'Bad Request') {
-            Swal.fire('Error!!', 'Form Submission Error');
-          }
-          if (err === 'Unknown Error') {
-            Swal.fire('Error!!', 'No Connection Found');
-          }
-          if (
-            err.message === "Cannot read properties of null (reading 'message')"
-          ) {
-            Swal.fire(
-              'Error!!',
-              'Resource Not Available. Link is Not Working',
-              'error'
-            );
-          }
-          throw err;
-        })
-      );
+    return this.http.put<any>(`${apiurl}user/update-user`, newUser).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        if (
+          err.message === "Cannot read properties of null (reading 'message')"
+        ) {
+          Swal.fire(
+            'Error!!',
+            'Resource Not Available. Link is Not Working',
+            'error'
+          );
+        }
+        throw err;
+      })
+    );
   }
 
   getMenuWeb(): Observable<Baseresponse<any>> {

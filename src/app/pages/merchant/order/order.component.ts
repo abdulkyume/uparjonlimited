@@ -457,7 +457,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   getAllusers() {
     let data: any = [];
     this.roleService
-      .getAllusers(0, 1000)
+      .getAllusers(0, 1000,"","44eff443-bf52-4e6f-a5d5-d42fb409e0c1")
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -726,7 +726,7 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   serviceChargeData = [
     {
-      serviceName: 'Standard Service (Bike Delivery: 2-6 hr)',
+      serviceName: 'Bike Delivery: 2-6 hr',
       items: {
         list: [
           'Book',
@@ -742,7 +742,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       cost: 100,
     },
     {
-      serviceName: 'Express Service (Bike Delivery 1-3 hr)',
+      serviceName: 'Bike Delivery 1-3 hr',
       items: {
         list: [
           'Dry Food',
@@ -760,7 +760,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       cost: 150,
     },
     {
-      serviceName: 'Express Service (Bike Delivery 1-2 hr)',
+      serviceName: 'Bike Delivery 1-2 hr',
       items: {
         list: [
           'Frozen Food',
@@ -777,7 +777,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       cost: 200,
     },
     {
-      serviceName: 'Express Service (Bike Delivery 1-2 hr)',
+      serviceName: 'Bike Delivery 1-2 hr',
       items: {
         list: ['Birthday Cake', 'Cup Cake'],
       },
@@ -785,7 +785,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     },
     {
       serviceName:
-        'Super Express Service (AC Car / Freezing Van: Flexible Time) 2-6 hr',
+        'AC Car / Freezing Van (Flexible Time): 2-6 hr',
       items: {
         list: [
           'Birthday Cake',
@@ -802,7 +802,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     },
     {
       serviceName:
-        'Super Express Service (AC Car / Freezing Van: Urgent Delivery): 1-2 hr',
+        'AC Car / Freezing Van (Urgent Delivery): 1-2 hr',
       items: {
         list: [
           'Birthday Cake',

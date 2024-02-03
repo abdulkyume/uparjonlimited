@@ -1,4 +1,4 @@
 {
-  "localUrl": "http://localhost:8080/api/",
+  "localUrl": "http://localhost:8081/api/",
   "prodUrl": "https://uparjonbackend.abdulkyume.com/api/"
 }
