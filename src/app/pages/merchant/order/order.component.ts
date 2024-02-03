@@ -109,6 +109,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     this.userId = JSON.parse(
       this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
     ).id;
+    this.getAllmerchantonly();
     this.getAllusers();
     this.getallZone();
     this.dropdownSettings = {
@@ -163,8 +164,10 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   getMerchantInformation(id: any) {
+    console.log(id);
     let user = this.existingUserList.filter((m: any) => m.id == id);
 
+    console.log(user);
     if (user.length > 0) {
       let merchant = this.merchantList.filter(
         (m: any) => m.phoneNumber == user[0].mobile
@@ -466,7 +469,6 @@ export class OrderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
-          this.existingUserList = res.data.content;
           res.data.content.map((content: any) => {
             data.push({
               id: content.id,
@@ -481,6 +483,21 @@ export class OrderComponent implements OnInit, OnDestroy {
         complete: () => {
           this.dropdownList3 = data;
         },
+      });
+  }
+  getAllmerchantonly() {
+    this.roleService
+      .getAllusers(0, 1000, '', '')
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          this.existingUserList = res.data.content;
+        },
+        error: (err) => {
+          console.error(err);
+          this.loader = false;
+        },
+        complete: () => {},
       });
   }
 

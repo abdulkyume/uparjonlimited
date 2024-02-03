@@ -292,7 +292,6 @@ export class PendingorderComponent implements OnInit, OnDestroy {
   }
   getMerchantInformation(id: any) {
     let user = this.existingUserList.filter((m: any) => m.id == id);
-
     if (user.length > 0) {
       let merchant = this.merchantList.filter(
         (m: any) => m.phoneNumber == user[0].mobile
