@@ -801,7 +801,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     {
       serviceName: 'Bike Delivery 1-2 hr',
       items: {
-        list: ['Birthday Cake', 'Cup Cake'],
+        list: ['Cup Cake'],
       },
       cost: 250,
     },
