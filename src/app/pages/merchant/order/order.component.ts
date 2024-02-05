@@ -164,10 +164,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   getMerchantInformation(id: any) {
-    console.log(id);
     let user = this.existingUserList.filter((m: any) => m.id == id);
-
-    console.log(user);
     if (user.length > 0) {
       let merchant = this.merchantList.filter(
         (m: any) => m.phoneNumber == user[0].mobile
