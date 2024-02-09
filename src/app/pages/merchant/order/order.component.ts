@@ -16,7 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subject, catchError, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { LoaderComponent } from 'src/app/common/loader/loader.component';
 import {
   NgbDropdownModule,
@@ -27,7 +27,6 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { ConfigurationService } from 'src/app/core/service/configuration.service';
 import Swal from 'sweetalert2';
 import { RoleService } from 'src/app/core/service/role.service';
-import { filter } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -482,6 +481,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         },
       });
   }
+
   getAllmerchantonly() {
     this.roleService
       .getAllusers(0, 1000, '', '')
@@ -582,7 +582,7 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   orderSformRefresh() {
     this.orderSform = this.formbuilder.group({
-      id: [''],
+      orderNo: [''],
       status: ['PENDING'],
       fromDate: [`${this.currentdate}`],
       toDate: [`${this.currentdate}`],
@@ -599,7 +599,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         .getOrder(
           this.page,
           this.pageSize,
-          this.sfc['id'].value,
+          this.sfc['orderNo'].value,
           this.sfc['status'].value,
           this.sfc['fromDate'].value,
           this.sfc['toDate'].value
@@ -631,7 +631,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         .getOrder(
           this.page,
           this.pageSize,
-          this.sfc['id'].value,
+          this.sfc['orderNo'].value,
           this.sfc['status'].value,
           this.sfc['fromDate'].value,
           this.sfc['toDate'].value,
@@ -783,7 +783,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       items: {
         list: [
           'Frozen Food',
-          'Cooked Food',
+          'Cooked Items',
           'Lunch Items',
           'Tub Cake',
           'Slice Cake',
@@ -808,7 +808,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         list: [
           'Birthday Cake',
           'Cooked Items',
-          'Frozen Itmes',
+          'Frozen Items',
           'Ice Cream',
           'Fragile',
           'Liquid',
@@ -836,6 +836,8 @@ export class OrderComponent implements OnInit, OnDestroy {
       items: {
         list: [
           'Birthday Cake',
+          'Lunch Items',
+          'Cooked Items',
           'Urgent Food Delivery',
           'Bulk Food Delivery',
           'Fragile',
