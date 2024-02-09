@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, catchError, map, timeout } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { EncryptionService } from 'src/app/core/service/encryption.service';
 
@@ -20,16 +20,15 @@ export class AuthService {
     private router: Router,
     private encryptionservice: EncryptionService
   ) {
-    if (localStorage.getItem("currentUser")) {
+    if (localStorage.getItem('currentUser')) {
       this.currentUserSubject = new BehaviorSubject<any>(
         JSON.parse(
-          this.encryptionservice.decrypt(localStorage.getItem("currentUser")!)
+          this.encryptionservice.decrypt(localStorage.getItem('currentUser')!)
         )
       );
-    }
-    else {
+    } else {
       this.currentUserSubject = new BehaviorSubject<any>(
-        JSON.parse(localStorage.getItem("currentUser")!)
+        JSON.parse(localStorage.getItem('currentUser')!)
       );
     }
     this.currentUser = this.currentUserSubject.asObservable();
@@ -48,12 +47,18 @@ export class AuthService {
       .pipe(
         map((res: any) => {
           if (res && res.data.refreshToken) {
-            localStorage.setItem('currentUser', this.encryptionservice.encrypt(JSON.stringify(res.data)));
+            localStorage.setItem(
+              'currentUser',
+              this.encryptionservice.encrypt(JSON.stringify(res.data))
+            );
             localStorage.setItem(
               'username',
               this.encryptionservice.encrypt(email)
             );
-            localStorage.setItem('role', this.encryptionservice.encrypt(res.data.roleId));
+            localStorage.setItem(
+              'role',
+              this.encryptionservice.encrypt(res.data.roleId)
+            );
             this.currentUserSubject.next(res.data);
             this.isLoggedIn = true;
           }
@@ -98,12 +103,12 @@ export class AuthService {
 
     this.currentUserSubject.next(null!);
     this.isLoggedIn = false;
-    this.router.navigate(["/account/login"]);
+    this.router.navigate(['/account/login']);
   }
 
   changepassword(currentPassword: string, newPassword: string) {
     let user = JSON.parse(
-      this.encryptionservice.decrypt(localStorage.getItem("currentUser")!)
+      this.encryptionservice.decrypt(localStorage.getItem('currentUser')!)
     );
     let reqm = {
       id: user.id,
@@ -116,10 +121,44 @@ export class AuthService {
       mobile: user.mobile,
       email: user.email,
       password: newPassword,
-      roleId: user.roleId
-    }
+      roleId: user.roleId,
+    };
+    return this.http.post(this.apiurl + 'user/update-userp', reqm).pipe(
+      timeout(60000),
+      catchError((err: any) => {
+        console.error(err);
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (
+          err.message === "Cannot read properties of null (reading 'message')"
+        ) {
+          Swal.fire(
+            'Error!!',
+            'Resource Not Available. Link is Not Working',
+            'error'
+          );
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  getRoleWiseMenu(): Observable<any> {
+    let user = JSON.parse(
+      this.encryptionservice.decrypt(localStorage.getItem('currentUser')!)
+    );
+    let reqmodel = {
+      roleId: user.roleId,
+    };
     return this.http
-      .post(this.apiurl + 'user/update-userp', reqm)
+      .post<any>(`${this.apiurl}menu/getRoleWiseMenu`, reqmodel)
       .pipe(
         timeout(60000),
         catchError((err: any) => {
@@ -147,19 +186,14 @@ export class AuthService {
       );
   }
 
-  getRoleWiseMenu(): Observable<any> {
-    let user = JSON.parse(this.encryptionservice.decrypt(
-      localStorage.getItem('currentUser')!
-    ))
-    let reqmodel = {
-      roleId: user.roleId
-    }
+  resetUserPass(data: any): Observable<any> {
+    let params = new HttpParams().set('id', String(data.id));
+
     return this.http
-      .post<any>(`${this.apiurl}menu/getRoleWiseMenu`, reqmodel)
+      .get<any>(`${this.apiurl}access-management/reset-user-pass`, { params })
       .pipe(
         timeout(60000),
-        catchError((err: any) => {
-          console.error(err);
+        catchError((err) => {
           if (err.name === 'TimeoutError') {
             Swal.fire('Time Out!!', 'Internal Server Problem');
           }

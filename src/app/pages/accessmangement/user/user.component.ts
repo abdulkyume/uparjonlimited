@@ -58,7 +58,7 @@ export class UserComponent implements OnInit, OnDestroy {
     private roleService: RoleService,
     private authService: AuthService,
     private encryptionService: EncryptionService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.createUserFormRefresh();
@@ -122,6 +122,36 @@ export class UserComponent implements OnInit, OnDestroy {
       this.addUserBtn();
     }
   }
+  restPass(data: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, reset it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.loader = true;
+        this.authService.resetUserPass(data).subscribe({
+          next: (res: any) => {
+            if (res.isSuccess || res.statusCode == 200) {
+              this.successmsg(res.message);
+            } else {
+              this.errorssmsg(res.message);
+            }
+          },
+          error: (err: any) => {
+            console.error(err);
+          },
+          complete: () => {
+            this.loader = false;
+          },
+        });
+      }
+    });
+  }
   successmsg(message: string) {
     Swal.fire('Success!', message, 'success');
   }
@@ -169,7 +199,7 @@ export class UserComponent implements OnInit, OnDestroy {
               console.error(err);
               this.loader = false;
             },
-            complete: () => { },
+            complete: () => {},
           });
       } else {
         this.roleService
@@ -191,7 +221,7 @@ export class UserComponent implements OnInit, OnDestroy {
               console.error(err);
               this.loader = false;
             },
-            complete: () => { },
+            complete: () => {},
           });
       }
     } else {
@@ -293,7 +323,7 @@ export class UserComponent implements OnInit, OnDestroy {
     this.loader = true;
     this.roleService
       .getAllusers(
-        this.pagea-1,
+        this.pagea - 1,
         this.pageSizes,
         this.fsu['usernumbersearch'].value
       )
