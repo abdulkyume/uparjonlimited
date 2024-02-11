@@ -450,6 +450,50 @@ export class OrderComponent implements OnInit, OnDestroy {
       });
   }
 
+  cancelOrder(data: any) {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger ms-2',
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        title: 'Are you sure?',
+        text: 'Do you want to Cancel!',
+        icon: 'warning',
+        confirmButtonText: 'Yes!',
+        cancelButtonText: 'No!',
+        showCancelButton: true,
+      })
+      .then((result) => {
+        if (result.value) {
+          this.loader = true;
+          data.deliveryStatus = 'CANCELLED';
+          this.merchantService.updateOrder(data).subscribe({
+            next: (res: any) => {
+              if (res.isSuccess || res.statusCode == 200) {
+                this.successmsg(res.message);
+              } else {
+                this.errorssmsg(res.message);
+              }
+            },
+            error: (err: any) => {
+              console.error(err);
+              this.loader = false;
+            },
+            complete: () => {
+              this.getAllOrder();
+              window.scrollTo(0, 0);
+              this.loader = false;
+            },
+          });
+        }
+      });
+  }
+
   getRider(id: string): string {
     let d = this.existingUserList.filter((m: any) => m.id === id);
     if (d.length > 0) {
@@ -594,6 +638,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   getAllOrder() {
+    this.loader = true;
     if (this.userRoleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc') {
       this.merchantService
         .getOrder(
