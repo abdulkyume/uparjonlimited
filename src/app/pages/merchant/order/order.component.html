@@ -264,6 +264,19 @@
           >
           </ng-multiselect-dropdown>
         </div>
+        <div
+          class="col-lg-3 col-12 mb-2"
+          *ngIf="roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
+        >
+          <label for="deliveryStatus">Order Status</label>
+          <select formControlName="deliveryStatus" id="deliveryStatus" class="form-select">
+            <option value="PENDING">PENDING</option>
+            <option value="APPROVED">APPROVED</option>
+            <option value="CANCELLED">CANCELLED</option>
+            <option value="PICKEDUP">PICKEDUP</option>
+            <option value="DELIVERED">DELIVERED</option>
+          </select>
+        </div>
         <div class="col-lg-12">
           <div class="row mt-2">
             <div class="col-lg-6">
@@ -287,10 +300,10 @@
     <div class="row mt-2" *ngIf="showAddBtn">
       <form class="row" [formGroup]="orderSform" (ngSubmit)="onSearch()">
         <div class="col-lg-3 mb-2">
-          <label for="id">Order Id</label>
+          <label for="orderNo">Order Id</label>
           <input
             type="text"
-            formControlName="id"
+            formControlName="orderNo"
             id="id"
             class="form-control"
           />

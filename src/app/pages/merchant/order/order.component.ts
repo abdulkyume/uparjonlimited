@@ -53,7 +53,8 @@ export class OrderComponent implements OnInit, OnDestroy {
   totalCOrder: number = 0;
   totalCnOrder: number = 0;
   page: number = 0;
-  pageSize: number = 100;
+  private dataLoaded: boolean = false;
+  pageSize: number = 10;
   cPageVal: number = 1;
   toPageVal: number = 0;
   total: number = 0;
@@ -100,6 +101,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.orderSformRefresh();
     this.getAllmerchant();
     this.roleid = this.encryptionService.decrypt(localStorage.getItem('role')!);
     this.userRoleid = JSON.parse(
@@ -118,32 +120,113 @@ export class OrderComponent implements OnInit, OnDestroy {
       itemsShowLimit: 5,
       allowSearchFilter: true,
     };
-    this.orderSformRefresh();
     this.placeOrderFormRefresh();
     this.sericecharge();
     this.getAllOrder();
   }
 
   downloadXl() {
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(
-      this.table.nativeElement
-    );
-    let rr = parseInt(ws['!ref']![ws['!ref']!.length - 1]);
-    // Identify the column to exclude
-    const columnToExclude = 0; // Change this to the index of the column to exclude
+    this.loader = true;
+    if (this.userRoleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc') {
+      this.merchantService
+        .getOrder(
+          this.page,
+          1000,
+          this.sfc['orderNo'].value,
+          this.sfc['status'].value,
+          this.sfc['fromDate'].value,
+          this.sfc['toDate'].value
+        )
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            if (res.isSuccess || res.statusCode == 200) {
+              this.orderList = res.data.content;
+              this.total = res.data.totalElements;
+              if (this.toPageVal > this.total) {
+                this.toPageVal = this.total;
+              } else {
+                this.toPageVal = this.orderList.length;
+              }
+              this.dataLoaded = true;
+            }
+          },
 
-    // Remove the column from each row
-    for (let i = 1; i <= rr; i++) {
-      delete ws[`A${i}`];
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false;
+          },
+          complete: () => {
+            setTimeout(() => {
+              this.generateAndDownloadExcel();
+            }, 5000);
+            setTimeout(() => {
+              this.getAllOrder();
+            }, 7000);
+          },
+        });
+    } else {
+      this.merchantService
+        .getOrder(
+          this.page,
+          1000,
+          this.sfc['orderNo'].value,
+          this.sfc['status'].value,
+          this.sfc['fromDate'].value,
+          this.sfc['toDate'].value,
+          this.userId
+        )
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            if (res.isSuccess || res.statusCode == 200) {
+              this.orderList = res.data.content;
+              this.total = res.data.totalElements;
+              if (this.toPageVal > this.total) {
+                this.toPageVal = this.total;
+              } else {
+                this.toPageVal = this.orderList.length;
+              }
+              this.dataLoaded = true;
+            }
+          },
+
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false;
+          },
+          complete: () => {
+            setTimeout(() => {
+              this.generateAndDownloadExcel();
+            }, 5000);
+            setTimeout(() => {
+              this.getAllOrder();
+            }, 7000);
+          },
+        });
     }
+  }
 
-    // Create a new workbook and append the modified sheet
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'my-sheet');
+  private generateAndDownloadExcel() {
+    if (this.dataLoaded) {
+      const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(
+        this.table.nativeElement
+      );
 
-    // Save the workbook to a file
-    const fileName = 'Merchant_Order.xlsx';
-    XLSX.writeFile(wb, fileName);
+      let rr = parseInt(ws['!ref']!.split(':')[1].replace(/[^\d]/g, ''));
+      // Remove the column from each row
+      for (let i = 1; i <= rr; i++) {
+        delete ws[`A${i}`];
+      }
+
+      // Create a new workbook and append the modified sheet
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'my-sheet');
+
+      // Save the workbook to a file
+      const fileName = 'Merchant_Order.xlsx';
+      XLSX.writeFile(wb, fileName);
+    }
   }
 
   getAllmerchant() {
@@ -164,10 +247,10 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   getMerchantInformation(id: any) {
     let user = this.existingUserList.filter((m: any) => m.id == id);
-    if (user.length > 0) {
-      let merchant = this.merchantList.filter(
-        (m: any) => m.phoneNumber == user[0].mobile
-      );
+    let merchant = this.merchantList.filter(
+      (m: any) => m.phoneNumber == user[0].mobile
+    );
+    if (user.length > 0 && merchant.length > 0) {
       return (
         merchant[0].name +
         '<br/><br/>' +
