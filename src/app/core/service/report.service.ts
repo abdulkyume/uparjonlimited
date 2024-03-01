@@ -39,7 +39,8 @@ export class ReportService {
         .set('page', String(page))
         .set('fromDate', String(fromDate))
         .set('toDate', String(toDate))
-        .set('pageSize', String(pageSize));
+        .set('pageSize', String(pageSize))
+        .set('merchantId', String(mercahntId));
     } else {
       params = new HttpParams()
         .set('riderId', String(userId))

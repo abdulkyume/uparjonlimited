@@ -57,7 +57,9 @@ export class DailyComponent implements OnInit, OnDestroy {
   dropdownList = [];
   selectedItems = [];
   dropdownList1: any;
+  dropdownList2: any;
   selectedItems1: any = [];
+  selectedItems2: any = [];
   existingUserList: any = [];
 
   userid: string = '';
@@ -81,10 +83,10 @@ export class DailyComponent implements OnInit, OnDestroy {
     private configService: ConfigurationService,
     private merchantService: MerchantService,
     private roleService: RoleService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.getAllusers();
+    this.getAllusers1();
     this.reprotFormRefresh();
     this.getAllmerchant();
     this.getitemlist();
@@ -97,10 +99,10 @@ export class DailyComponent implements OnInit, OnDestroy {
     };
   }
 
-  getAllusers() {
+  getAllusers1() {
     let ilist: any[] = [];
     this.roleService
-      .getAllusers(0, 500)
+      .getAllusers(0, 1000, '', '44eff443-bf52-4e6f-a5d5-d42fb409e0c1')
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -117,7 +119,7 @@ export class DailyComponent implements OnInit, OnDestroy {
           this.loader = false;
         },
         complete: () => {
-          this.dropdownList1 = ilist;
+          this.dropdownList2 = ilist;
         },
       });
   }
@@ -218,8 +220,8 @@ export class DailyComponent implements OnInit, OnDestroy {
         this.pageSize,
         this.f['fromdate'].value,
         this.f['toDate'].value,
-        this.f['merchantId'].value,
-        this.f['riderId'].value
+        this.f['riderId'].value,
+        this.f['merchantId'].value
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -292,8 +294,8 @@ export class DailyComponent implements OnInit, OnDestroy {
           this.loader = false;
         },
         complete: () => {
-          this.loader = false;
           this.dropdownList = merchantdetailsList;
+          this.loader = false;
         },
       });
   }
@@ -312,7 +314,7 @@ export class DailyComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         console.error(err);
       },
-      complete: () => { },
+      complete: () => {},
     });
   }
 
@@ -333,7 +335,7 @@ export class DailyComponent implements OnInit, OnDestroy {
   }
 
   onInitiatorItemUnSelect1(item: any) {
-    this.f['riderId'].setValue(item.id);
+    this.f['riderId'].setValue('');
   }
 
   onPageChange(event: number) {
