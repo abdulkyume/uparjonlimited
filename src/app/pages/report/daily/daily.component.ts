@@ -61,6 +61,7 @@ export class DailyComponent implements OnInit, OnDestroy {
   selectedItems1: any = [];
   selectedItems2: any = [];
   existingUserList: any = [];
+  existingUserListm: any = [];
 
   userid: string = '';
   page: number = 0;
@@ -120,7 +121,25 @@ export class DailyComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.dropdownList2 = ilist;
+          this.getAllusers2();
         },
+      });
+  }
+
+  getAllusers2() {
+    let ilist: any[] = [];
+    this.roleService
+      .getAllusers(0, 1000, '', 'e4241052-bf66-497b-9c4e-ee439cc586d4')
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          this.existingUserListm = res.data.content;
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loader = false;
+        },
+        complete: () => {},
       });
   }
 
@@ -139,7 +158,18 @@ export class DailyComponent implements OnInit, OnDestroy {
     if (d.length > 0) {
       return d[0].name;
     }
-    return '';
+
+    /**/
+
+    let user = this.existingUserListm.filter((m: any) => m.id == id);
+    let merchant = this.merchantList.filter(
+      (m: any) => m.phoneNumber == user[0].mobile
+    );
+    if (user.length > 0 && merchant.length > 0) {
+      return merchant[0].name;
+    } else {
+      return '';
+    }
   }
 
   getRider(id: string): string {
@@ -155,7 +185,15 @@ export class DailyComponent implements OnInit, OnDestroy {
     if (d.length > 0) {
       return d[0].phoneNumber;
     }
-    return '';
+    let user = this.existingUserListm.filter((m: any) => m.id == id);
+    let merchant = this.merchantList.filter(
+      (m: any) => m.phoneNumber == user[0].mobile
+    );
+    if (user.length > 0 && merchant.length > 0) {
+      return merchant[0].phoneNumber;
+    } else {
+      return '';
+    }
   }
 
   downloadxl() {
