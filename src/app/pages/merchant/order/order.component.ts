@@ -847,7 +847,9 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   servicechargef() {
     let a = this.serviceChargeData.filter(
-      (x: any) => x.serviceName == this.f['service'].value
+      (x: any) =>
+        x.serviceName == this.f['service'].value &&
+        x.items.list.includes(this.f['item'].value)
     );
     this.f['deliveryCost'].setValue(a[0].cost);
     this.deliveryCost = this.f['deliveryCost'].value;
@@ -879,11 +881,11 @@ export class OrderComponent implements OnInit, OnDestroy {
           'Book',
           'Medicine',
           'Documents',
-          'Jewellery',
+          'Jewelry',
           'Cosmetics',
           'Dresses',
           'Pet Care',
-          'Other Ecommerce Products',
+          'Other e-commerce Products',
         ],
       },
       cost: 100,
