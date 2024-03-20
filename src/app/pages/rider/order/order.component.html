@@ -104,55 +104,56 @@
           <div class="row pb-5">
             <div class="col-lg-12">
               <table
-                  class="table table-centered table-nowrap table-bordered"
-                  [formGroup]="slubform"
-                >
-                  <thead class="customise-thead"></thead>
-                  <tbody formArrayName="slubformval">
-                    <tr
-                      *ngFor="let data1 of slubdata().controls; let i = index"
-                      [formGroupName]="i"
+                class="table table-centered table-nowrap table-bordered"
+                [formGroup]="slubform"
+              >
+                <thead class="customise-thead"></thead>
+                <tbody formArrayName="slubformval">
+                  <tr
+                    *ngFor="let data1 of slubdata().controls; let i = index"
+                    [formGroupName]="i"
+                  >
+                    <td
+                      class="d-flex justify-content-center align-items-center"
                     >
-                      <td
-                        class="d-flex justify-content-center align-items-center"
+                      <i class="fas fa-trash-alt" (click)="deleteslub(i)"></i>
+                    </td>
+                    <td style="width: 50px">
+                      <input
+                        type="number"
+                        formControlName="quantity"
+                        id="quantity"
+                        placeholder="Quantity"
+                        min="1"
+                        class="form-control m-0"
+                        style="width: 50px"
+                      />
+                    </td>
+                    <td colspan="3">
+                      <ng-multiselect-dropdown
+                        [placeholder]="'Select Item'"
+                        [settings]="dropdownSettings"
+                        [data]="dropdownList1"
+                        [(ngModel)]="selectedItems1[i]"
+                        [ngModelOptions]="{ standalone: true }"
+                        (onSelect)="onInitiatorItemSelect1($event, i)"
+                        (onDeSelect)="onInitiatorItemUnSelect1($event, i)"
                       >
-                        <i class="fas fa-trash-alt" (click)="deleteslub(i)"></i>
-                      </td>
-                      <td class="w-25">
-                        <input
-                          type="number"
-                          formControlName="quantity"
-                          id="quantity"
-                          placeholder="Quantity"
-                          min="1"
-                          class="form-control"
-                        />
-                      </td>
-                      <td>
-                        <ng-multiselect-dropdown
-                          [placeholder]="'Select Item'"
-                          [settings]="dropdownSettings"
-                          [data]="dropdownList1"
-                          [(ngModel)]="selectedItems1[i]"
-                          [ngModelOptions]="{ standalone: true }"
-                          (onSelect)="onInitiatorItemSelect1($event, i)"
-                          (onDeSelect)="onInitiatorItemUnSelect1($event, i)"
-                        >
-                        </ng-multiselect-dropdown>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="9">
-                        <div
-                          *ngIf="slubadderrorshow && slubdata().invalid"
-                          class="text-danger"
-                        >
-                          <div>Fill Up the Form First</div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                      </ng-multiselect-dropdown>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="9">
+                      <div
+                        *ngIf="slubadderrorshow && slubdata().invalid"
+                        class="text-danger"
+                      >
+                        <div>Fill Up the Form First</div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

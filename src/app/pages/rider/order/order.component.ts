@@ -46,6 +46,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   searchForm!: FormGroup;
   slubform!: FormGroup;
   userid: string = '';
+  roleId: string = '';
   page: number = 0;
   pageSize: number = 10;
   cPageVal: number = 1;
@@ -73,10 +74,18 @@ export class OrderComponent implements OnInit, OnDestroy {
     private encryptionService: EncryptionService,
     private configService: ConfigurationService,
     private merchantService: MerchantService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.getitemlist();
+    this.userid = JSON.parse(
+      this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
+    ).id;
+    this.roleId = this.encryptionService.decrypt(localStorage.getItem('role')!);
+
+    this.slubform = this.formBuilder.group({
+      slubformval: this.formBuilder.array([]),
+    });
+    
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'id',
@@ -84,21 +93,17 @@ export class OrderComponent implements OnInit, OnDestroy {
       itemsShowLimit: 6,
       allowSearchFilter: true,
     };
-    this.userid = JSON.parse(
-      this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
-    ).id;
-    this.slubform = this.formBuilder.group({
-      slubformval: this.formBuilder.array([]),
-    });
 
     this.orderRefreshForm();
     this.searchRefreshForm();
+    this.getAllmerchant();
   }
 
   getAllmerchant() {
+    this.loader = true;
     let merchantdetailsList: any = [];
     this.merchantService
-      .getMerchantDetail("", this.page, 1000, '')
+      .getMerchantDetail('', this.page, 1000, '')
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -116,7 +121,8 @@ export class OrderComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.dropdownList = merchantdetailsList;
-          this.loader = false;
+
+          this.getitemlist();
         },
       });
   }
@@ -137,8 +143,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.dropdownList1 = ilist;
-
-        this.getAllmerchant();
+        this.getAllOrderList();
       },
     });
   }
@@ -279,20 +284,23 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   searchRefreshForm() {
     this.searchForm = this.formBuilder.group({
-      fromdate: [''],
-      todate: [''],
+      fromdate: [`${this.currentdate}`],
+      todate: [`${this.currentdate}`],
     });
-    this.getAllOrderList();
   }
 
   getAllOrderList() {
+    let isUser = this.userid;
+    if (this.roleId === '1143fcc9-02d1-4bd0-ab47-b5efc92072fc') {
+      isUser = '';
+    }
     this.orderService
       .getAllOrder(
         this.page,
         this.pageSize,
         this.sf['fromdate'].value,
         this.sf['todate'].value,
-        this.userid
+        isUser
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -302,7 +310,7 @@ export class OrderComponent implements OnInit, OnDestroy {
           if (this.toPageVal > this.total) {
             this.toPageVal = this.total;
           } else {
-            this.toPageVal = this.merchantList.length;
+            this.toPageVal = this.orderList.length;
           }
         },
         error: (err) => {
