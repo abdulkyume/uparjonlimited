@@ -269,7 +269,11 @@
           *ngIf="roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
         >
           <label for="deliveryStatus">Order Status</label>
-          <select formControlName="deliveryStatus" id="deliveryStatus" class="form-select">
+          <select
+            formControlName="deliveryStatus"
+            id="deliveryStatus"
+            class="form-select"
+          >
             <option value="PENDING">PENDING</option>
             <option value="APPROVED">APPROVED</option>
             <option value="CANCELLED">CANCELLED</option>
@@ -451,8 +455,7 @@
                         *ngIf="roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
                         class="dropdown-item"
                         (click)="cancelOrder(data)"
-                        ><i class="fas fa-ban text-danger me-1"></i
-                        >Cancel Order
+                        ><i class="fas fa-ban text-danger me-1"></i>Cancel Order
                       </a>
                       <hr class="m-0" />
                       <a
@@ -524,7 +527,7 @@
                   class="align-middle double-column"
                   (click)="openModal(content, data)"
                 >
-                  <p>Collection Amount{{ data.collectionAmount }}</p>
+                  <p>Collection Amount: {{ data.collectionAmount }}</p>
                   <br />
                   <p>{{ data.paymentInfo }}</p>
                 </td>
@@ -533,14 +536,12 @@
                   (click)="openModal(content, data)"
                 >
                   <div [innerHTML]="getRider(data.pickUpAssigned)"></div>
-                  <!-- {{ getRider(data.pickUpAssigned) }} -->
                 </td>
                 <td
                   class="align-middle double-column"
                   (click)="openModal(content, data)"
                 >
                   <div [innerHTML]="getRider(data.deliveryAssigned)"></div>
-                  <!-- {{ getRider(data.deliveryAssigned) }} -->
                 </td>
                 <td
                   class="align-middle double-column"
