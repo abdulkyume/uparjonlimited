@@ -121,52 +121,27 @@
                 <th>Merchant</th>
                 <th>Merchant Number</th>
                 <th>Received Amount</th>
+                <th>Item</th>
                 <th>Delivery Cost</th>
                 <th>Mercahnt Payable</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let data of orderList">
-                <td>{{ data.orderDate }}</td>
-                <td>{{ getRider(data.userId) }}</td>
-                <td>{{ getMercahntName(data.merchantId) }}</td>
-                <td>{{ getMercahntMobile(data.merchantId) }}</td>
-                <td>{{ data.receivedAmount }}</td>
-                <td>{{ data.deliveryCost }}</td>
-                <td>{{ data.receivedAmount - data.deliveryCost }}</td>
+                <td>{{ data.order_date }}</td>
+                <td>{{ getRider(data.user_id) }}</td>
+                <td>{{ getMercahntName(data.merchant_id) }}</td>
+                <td>{{ getMercahntMobile(data.merchant_id) }}</td>
+                <td>{{ data.received_amount }}</td>
+                <td>{{ data.item }}</td>
+                <td>{{ data.deliverycost }}</td>
+                <td>{{ data.merchantpayable }}</td>
+                
               </tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
-    <!-- pagination start -->
-    <div class="row justify-content-md-between align-items-md-center mt-2">
-      <div class="col-sm-12 col-md-5">
-        <div
-          class="dataTables_info mb-2"
-          id="tickets-table_info"
-          role="status"
-          aria-live="polite"
-        >
-          Showing
-          {{ cPageVal }} to {{ toPageVal }} of {{ total }}
-          entries
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-5">
-        <div class="text-md-right float-md-end pagination-rounded">
-          <ngb-pagination
-            id="paginationCustoimse"
-            [collectionSize]="total"
-            (pageChange)="page = onPageChange($event)"
-            [pageSize]="pageSize"
-            [maxSize]="3"
-          >
-          </ngb-pagination>
-        </div>
-      </div>
-    </div>
-    <!-- pagination ends -->
   </div>
 </div>

@@ -162,9 +162,12 @@ export class DailyComponent implements OnInit, OnDestroy {
     /**/
 
     let user = this.existingUserListm.filter((m: any) => m.id == id);
-    let merchant = this.merchantList.filter(
-      (m: any) => m.phoneNumber == user[0].mobile
-    );
+    let merchant;
+    if (user.length > 0) {
+      merchant = this.merchantList.filter(
+        (m: any) => m.phoneNumber == user[0].mobile
+      );
+    }
     if (user.length > 0 && merchant.length > 0) {
       return merchant[0].name;
     } else {
@@ -186,9 +189,12 @@ export class DailyComponent implements OnInit, OnDestroy {
       return d[0].phoneNumber;
     }
     let user = this.existingUserListm.filter((m: any) => m.id == id);
-    let merchant = this.merchantList.filter(
-      (m: any) => m.phoneNumber == user[0].mobile
-    );
+    let merchant;
+    if (user.length > 0) {
+      merchant = this.merchantList.filter(
+        (m: any) => m.phoneNumber == user[0].mobile
+      );
+    }
     if (user.length > 0 && merchant.length > 0) {
       return merchant[0].phoneNumber;
     } else {
@@ -264,8 +270,8 @@ export class DailyComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
-          this.orderList = res.data.content;
-          this.total = res.data.totalElements!;
+          this.orderList = res.data;
+          this.total = this.orderList.length;
           this.totalOrder = this.total;
           if (this.toPageVal > this.total) {
             this.toPageVal = this.total;
@@ -280,8 +286,8 @@ export class DailyComponent implements OnInit, OnDestroy {
         complete: () => {
           this.orderList.map((x: any) => {
             this.totalReceivedAmount =
-              this.totalReceivedAmount + +x.receivedAmount;
-            this.totalDeliveryCost = this.totalDeliveryCost + +x.deliveryCost;
+              this.totalReceivedAmount + +x.received_amount;
+            this.totalDeliveryCost = this.totalDeliveryCost + +x.deliverycost;
             this.totalPayable =
               this.totalReceivedAmount - this.totalDeliveryCost;
             this.totalProfit = this.totalDeliveryCost - this.totalExpense;
