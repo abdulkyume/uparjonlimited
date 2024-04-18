@@ -82,9 +82,15 @@ export class OrderComponent implements OnInit, OnDestroy {
   dropdownList2 = [];
   selectedItems2: any;
 
-  dropdownList3 = [];
+  dropdownList3: any[] = [];
   selectedItems3: any;
+
   selectedItems4: any;
+
+  dropdownList5: any[] = [];
+  selectedItems5: any;
+
+  selectedItems6: any;
 
   modalData: any;
 
@@ -272,9 +278,12 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   filterArea(m: any) {
-    return this.dropdownList1.filter((x: any) => x.id == m.area)[0][
-      'customtext'
-    ];
+    let a = this.dropdownList1.filter((x: any) => x.id == m.area);
+    if (a.length > 0) {
+      return a[0]['customtext'];
+    } else {
+      return '';
+    }
   }
 
   placeOrderFormRefresh() {
@@ -324,6 +333,10 @@ export class OrderComponent implements OnInit, OnDestroy {
 
     this.selectedItems4 = this.dropdownList3.filter(
       (item: any) => item.id === data.deliveryAssigned
+    );
+
+    this.selectedItems5 = this.dropdownList5.filter(
+      (item: any) => item.id === data.mercahntId
     );
     this.serviceList = this.getServiceInfoByItem(data.item);
     this.f['id'].setValue(data.id);
@@ -578,9 +591,9 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   getRider(id: string): string {
-    let d = this.existingUserList.filter((m: any) => m.id === id);
+    let d = this.dropdownList3.filter((m: any) => m.id === id);
     if (d.length > 0) {
-      return d[0].firstName + ' ' + d[0].lastName + ' <br/><br/>' + d[0].mobile;
+      return d[0].customtext;
     }
     return '';
   }
@@ -610,18 +623,27 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   getAllmerchantonly() {
+    let data: any[] = [];
     this.roleService
-      .getAllusers(0, 1000, '', '')
+      .getAllusers(0, 1000, '', 'e4241052-bf66-497b-9c4e-ee439cc586d4')
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
           this.existingUserList = res.data.content;
+          res.data.content.map((content: any) => {
+            data.push({
+              id: content.id,
+              customtext: `${content.firstName} ${content.lastName} - ${content.mobile}`,
+            });
+          });
         },
         error: (err) => {
           console.error(err);
           this.loader = false;
         },
-        complete: () => {},
+        complete: () => {
+          this.dropdownList5 = data;
+        },
       });
   }
 
@@ -710,10 +732,12 @@ export class OrderComponent implements OnInit, OnDestroy {
   orderSformRefresh() {
     this.orderSform = this.formbuilder.group({
       orderNo: [''],
+      mercahntId: [''],
       status: ['PENDING'],
       fromDate: [`${this.currentdate}`],
       toDate: [`${this.currentdate}`],
     });
+    this.selectedItems6 = [];
   }
 
   get sfc() {
@@ -730,7 +754,8 @@ export class OrderComponent implements OnInit, OnDestroy {
           this.sfc['orderNo'].value,
           this.sfc['status'].value,
           this.sfc['fromDate'].value,
-          this.sfc['toDate'].value
+          this.sfc['toDate'].value,
+          this.sfc['mercahntId'].value
         )
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
@@ -839,6 +864,22 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   onInitiatorItemUnSelect4(item: any) {
     this.placeOrderForm.controls['deliveryAssigned'].setValue('');
+  }
+
+  onInitiatorItemSelect5(item: any) {
+    this.placeOrderForm.controls['mercahntId'].setValue(item.id);
+  }
+
+  onInitiatorItemUnSelect5(item: any) {
+    this.placeOrderForm.controls['mercahntId'].setValue('');
+  }
+
+  onInitiatorItemSelect6(item: any) {
+    this.orderSform.controls['mercahntId'].setValue(item.id);
+  }
+
+  onInitiatorItemUnSelect6(item: any) {
+    this.orderSform.controls['mercahntId'].setValue('');
   }
 
   get f() {

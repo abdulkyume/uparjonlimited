@@ -46,6 +46,23 @@
     </div>
     <div class="row mt-2" *ngIf="!showAddBtn">
       <form class="row" [formGroup]="placeOrderForm" (ngSubmit)="onSubmit()">
+        <div
+          class="col-lg-3 col-12 mb-2"
+          *ngIf="roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
+        >
+          <label for="merchant">Merchant</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Merchant'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList5"
+            [(ngModel)]="selectedItems5"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect5($event)"
+            (onDeSelect)="onInitiatorItemUnSelect5($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+        
         <div class="col-lg-3 col-6 mb-2">
           <label for="pickupDate">Pick Up Date</label>
           <input
@@ -312,7 +329,23 @@
             class="form-control"
           />
         </div>
-        <div class="col-lg-3 mb-2">
+        <div
+          class="col-lg-3 mb-2"
+          *ngIf="roleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
+        >
+          <label for="merchant">Merchant</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Merchant'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList5"
+            [(ngModel)]="selectedItems6"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect6($event)"
+            (onDeSelect)="onInitiatorItemUnSelect6($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+        <div class="col-lg-2 mb-2">
           <label for="status">Order Status</label>
           <select formControlName="status" class="form-select">
             <option value="">All</option>
@@ -323,7 +356,7 @@
             <option value="DELIVERED">DELIVERED</option>
           </select>
         </div>
-        <div class="col-lg-3 mb-2">
+        <div class="col-lg-2 mb-2">
           <label for="fromDate">From Date</label>
           <input
             type="date"
@@ -332,7 +365,7 @@
             class="form-control"
           />
         </div>
-        <div class="col-lg-3 mb-2">
+        <div class="col-lg-2 mb-2">
           <label for="toDate">To Date</label>
           <input
             type="date"
