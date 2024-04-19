@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 export class MerchantService {
   private apiurl = environment.environment;
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   addMerchantForm(newUser: any) {
     var apiurl = environment.environment;
@@ -317,7 +317,17 @@ export class MerchantService {
     );
   }
 
-  getOrder(page: number = 0, limit: number = 10, id: string = '', status: string = '', fromDate: string = '', toDate: string = '', merchantId: string = '', pickup: string = '', delivery: string = '') {
+  getOrder(
+    page: number = 0,
+    limit: number = 10,
+    id: string = '',
+    status: string = '',
+    fromDate: string = '',
+    toDate: string = '',
+    merchantId: string = '',
+    pickup: string = '',
+    delivery: string = ''
+  ) {
     let params = new HttpParams()
       .set('id', String(id))
       .set('status', String(status))
@@ -331,6 +341,46 @@ export class MerchantService {
 
     return this.http
       .get(`${this.apiurl}merchant/get-order`, {
+        params,
+      })
+      .pipe(
+        timeout(60000),
+        catchError((err) => {
+          console.error(err);
+          if (
+            err === 'Unauthorized user.' ||
+            err.message === 'Unauthorized user.'
+          ) {
+            this.authService.logout();
+          }
+          if (err.name === 'TimeoutError') {
+            Swal.fire('Time Out!!', 'Internal Server Problem');
+          }
+          if (
+            err.message === "Cannot read properties of null (reading 'message')"
+          ) {
+            Swal.fire(
+              'Error!!',
+              'Resource Not Available. Link is Not Working',
+              'error'
+            );
+          }
+          if (err === 'Bad Request') {
+            Swal.fire('Error!!', 'Form Submission Error');
+          }
+          if (err === 'Unknown Error') {
+            Swal.fire('Error!!', 'No Connection Found');
+          }
+          throw err;
+        })
+      );
+  }
+
+  getMerchantInfo(Mobile: string) {
+    let params = new HttpParams().set('merchantMobile', String(Mobile));
+
+    return this.http
+      .get(`${this.apiurl}merchant/get-merchant-info`, {
         params,
       })
       .pipe(
