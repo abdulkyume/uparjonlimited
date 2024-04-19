@@ -121,7 +121,6 @@ export class PickdropzoneComponent implements OnInit, OnDestroy {
   editItem(data: any) {
     this.itemForm.controls['id'].setValue(data.id);
     this.itemForm.controls['name'].setValue(data.name);
-    this.itemForm.controls['price'].setValue(data.price);
     this.showAddBtn = false;
   }
   onsubmit() {

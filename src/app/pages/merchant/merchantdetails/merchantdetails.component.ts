@@ -124,7 +124,12 @@ export class MerchantdetailsComponent implements OnInit, OnDestroy {
 
   getZoneName(string: any) {
     let a: any = this.dropdownList.filter((x: any) => x.id == string);
-    return a[0].customtext;
+    if (a.length > 0) {
+      return a[0].customtext;
+    }
+    else{
+      return '';
+    }
   }
 
   get f() {

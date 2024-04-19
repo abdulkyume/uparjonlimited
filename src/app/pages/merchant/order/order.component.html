@@ -62,7 +62,7 @@
           >
           </ng-multiselect-dropdown>
         </div>
-        
+
         <div class="col-lg-3 col-6 mb-2">
           <label for="pickupDate">Pick Up Date</label>
           <input
@@ -108,7 +108,9 @@
           </select>
         </div>
         <div class="col-lg-3 mb-2 col-12">
-          <label for="item">Delivery Item</label>
+          <label for="item"
+            >Delivery Item<span class="text-danger">*</span></label
+          >
           <ng-multiselect-dropdown
             [placeholder]="'Select Delivery Item'"
             [settings]="dropdownSettings"
@@ -121,12 +123,20 @@
           </ng-multiselect-dropdown>
         </div>
         <div class="col-lg-3 mb-2 col-12">
-          <label for="service">Delivery Service</label>
+          <label for="service"
+            >Delivery Service<span class="text-danger">*</span></label
+          >
           <select
             (change)="servicechargef()"
             class="form-select"
             formControlName="service"
             id="service"
+            [ngClass]="{
+              'border-danger':
+                placeOrderForm.get('service')?.invalid &&
+                (placeOrderForm.get('service')?.touched ||
+                  placeOrderForm.get('service')?.dirty)
+            }"
           >
             <option value="">Select Delivery Service</option>
             <option [value]="data.serviceName" *ngFor="let data of serviceList">
@@ -155,32 +165,56 @@
           />
         </div>
         <div class="col-lg-3 col-6 mb-2">
-          <label for="deliveryCost">Delivery Cost</label>
+          <label for="deliveryCost"
+            >Delivery Cost<span class="text-danger">*</span></label
+          >
           <input
             type="number"
             formControlName="deliveryCost"
             id="deliveryCost"
             readonly
             class="form-control"
+            [ngClass]="{
+              'border-danger':
+                placeOrderForm.get('deliveryCost')?.invalid &&
+                (placeOrderForm.get('deliveryCost')?.touched ||
+                  placeOrderForm.get('deliveryCost')?.dirty)
+            }"
           />
         </div>
         <div class="col-lg-3 col-6 mb-2">
-          <label for="productCost">Product Cost</label>
+          <label for="productCost"
+            >Product Cost<span class="text-danger">*</span></label
+          >
           <input
             type="number"
             formControlName="productCost"
             id="productCost"
             (keyup)="updateCollectionCost()"
             class="form-control"
+            [ngClass]="{
+              'border-danger':
+                placeOrderForm.get('productCost')?.invalid &&
+                (placeOrderForm.get('productCost')?.touched ||
+                  placeOrderForm.get('productCost')?.dirty)
+            }"
           />
         </div>
         <div class="col-lg-3 col-6 mb-2">
-          <label for="collectionAmount">Collection Amount</label>
+          <label for="collectionAmount"
+            >Collection Amount <span class="text-danger">*</span></label
+          >
           <input
             type="number"
             formControlName="collectionAmount"
             id="collectionAmount"
             class="form-control"
+            [ngClass]="{
+              'border-danger':
+                placeOrderForm.get('collectionAmount')?.invalid &&
+                (placeOrderForm.get('collectionAmount')?.touched ||
+                  placeOrderForm.get('collectionAmount')?.dirty)
+            }"
           />
         </div>
         <div class="col-lg-3 col-md-6 col-12 mb-3">
@@ -196,16 +230,26 @@
           </select>
         </div>
         <div class="col-lg-3 col-12 mb-2">
-          <label for="customerName">Customer Name</label>
+          <label for="customerName"
+            >Customer Name<span class="text-danger">*</span></label
+          >
           <input
             type="text"
             formControlName="customerName"
             id="customerName"
             class="form-control"
+            [ngClass]="{
+              'border-danger':
+                placeOrderForm.get('customerName')?.invalid &&
+                (placeOrderForm.get('customerName')?.touched ||
+                  placeOrderForm.get('customerName')?.dirty)
+            }"
           />
         </div>
         <div class="col-lg-3 col-12 mb-2">
-          <label for="customerNumber">Customer Number</label>
+          <label for="customerNumber"
+            >Customer Number<span class="text-danger">*</span></label
+          >
           <input
             type="tel"
             formControlName="customerNumber"
@@ -213,6 +257,12 @@
             minlength="11"
             maxlength="11"
             class="form-control"
+            [ngClass]="{
+              'border-danger':
+                placeOrderForm.get('customerNumber')?.invalid &&
+                (placeOrderForm.get('customerNumber')?.touched ||
+                  placeOrderForm.get('customerNumber')?.dirty)
+            }"
           />
         </div>
         <div class="col-lg-3 col-12 mb-2">
@@ -228,7 +278,9 @@
         </div>
 
         <div class="col-lg-3 col-12 mb-2">
-          <label for="customerArea">Customer Area</label>
+          <label for="customerArea"
+            >Customer Area<span class="text-danger">*</span></label
+          >
           <ng-multiselect-dropdown
             [placeholder]="'Select Area'"
             [settings]="dropdownSettings"
@@ -241,12 +293,20 @@
           </ng-multiselect-dropdown>
         </div>
         <div class="col-lg-3 col-12 mb-2">
-          <label for="customerAddress">Customer Address</label>
+          <label for="customerAddress"
+            >Customer Address<span class="text-danger">*</span></label
+          >
           <input
             type="text"
             formControlName="customerAddress"
             id="customerAddress"
             class="form-control"
+            [ngClass]="{
+              'border-danger':
+                placeOrderForm.get('customerAddress')?.invalid &&
+                (placeOrderForm.get('customerAddress')?.touched ||
+                  placeOrderForm.get('customerAddress')?.dirty)
+            }"
           />
         </div>
         <div

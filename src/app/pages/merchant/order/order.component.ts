@@ -54,6 +54,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   totalCnOrder: number = 0;
   page: number = 0;
   private dataLoaded: boolean = false;
+  submitted: boolean = false;
   pageSize: number = 10;
   cPageVal: number = 1;
   toPageVal: number = 0;
@@ -253,25 +254,29 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   getMerchantInformation(id: any) {
     let user = this.existingUserList.filter((m: any) => m.id == id);
-    let merchant = this.merchantList.filter(
-      (m: any) => m.phoneNumber == user[0].mobile
-    );
-    if (user.length > 0 && merchant.length > 0) {
-      return (
-        merchant[0].name +
-        '<br/><br/>' +
-        merchant[0].phoneNumber +
-        '/' +
-        merchant[0].altPhoneNumber +
-        '<br/><br/>' +
-        merchant[0].house +
-        ', ' +
-        merchant[0].road +
-        '<br/><br/>' +
-        this.filterArea(merchant[0]) +
-        ', ' +
-        merchant[0].district
+    if (user.length > 0) {
+      let merchant = this.merchantList.filter(
+        (m: any) => m.phoneNumber == user[0].mobile
       );
+      if (user.length > 0 && merchant.length > 0) {
+        return (
+          merchant[0].name +
+          '<br/><br/>' +
+          merchant[0].phoneNumber +
+          '/' +
+          merchant[0].altPhoneNumber +
+          '<br/><br/>' +
+          merchant[0].house +
+          ', ' +
+          merchant[0].road +
+          '<br/><br/>' +
+          this.filterArea(merchant[0]) +
+          ', ' +
+          merchant[0].district
+        );
+      } else {
+        return '';
+      }
     } else {
       return '';
     }
@@ -654,6 +659,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     Swal.fire('Ops!', message, 'error');
   }
   onSubmit() {
+    this.submitted = true;
     if (this.placeOrderForm.invalid) {
       return;
     }
