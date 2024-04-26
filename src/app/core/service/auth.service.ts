@@ -91,6 +91,7 @@ export class AuthService {
   logout() {
     let user = localStorage.getItem('username');
 
+    localStorage.clear();
     localStorage.removeItem('currentUser');
     localStorage.removeItem('getMenuWeb');
     localStorage.removeItem('getRoleWiseMenu');

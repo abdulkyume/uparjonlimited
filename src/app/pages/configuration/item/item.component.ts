@@ -73,7 +73,7 @@ export class ItemComponent implements OnInit, OnDestroy {
   onPageChange(event: number) {
     this.loader = true;
     this.toPageVal = event * this.pageSize;
-    this.page = event-1;
+    this.page = event - 1;
 
     this.cPageVal = (event - 1) * this.pageSize + 1;
 
@@ -140,6 +140,7 @@ export class ItemComponent implements OnInit, OnDestroy {
               this.successmsg(res.reason);
               this.itemRefreshForm();
               this.showAddBtn = true;
+              localStorage.removeItem('itemList');
               this.getallItem();
             }
           },
@@ -164,6 +165,7 @@ export class ItemComponent implements OnInit, OnDestroy {
               this.successmsg(res.reason);
               this.itemRefreshForm();
               this.showAddBtn = true;
+              localStorage.removeItem('itemList');
               this.getallItem();
             }
           },

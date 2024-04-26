@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { timeout, catchError } from 'rxjs';
+import { timeout, catchError, BehaviorSubject } from 'rxjs';
 import { AuthService } from './auth.service';
 import Swal from 'sweetalert2';
 
@@ -10,6 +10,8 @@ import Swal from 'sweetalert2';
 })
 export class MerchantService {
   private apiurl = environment.environment;
+
+  merchantList: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

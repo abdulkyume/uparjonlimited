@@ -95,7 +95,7 @@
           </button>
         </div>
         <div class="col-lg-4 col-md-4 col-12 mt-3">
-          <button class="btn btn-lg btn-success w-100" (click)="downloadxl()">
+          <button type="button" class="btn btn-lg btn-success w-100" (click)="downloadGetAllOrderList()">
             Download
           </button>
         </div>
@@ -119,7 +119,6 @@
                 <th>Date</th>
                 <th>Rider</th>
                 <th>Merchant</th>
-                <th>Merchant Number</th>
                 <th>Received Amount</th>
                 <th>Item</th>
                 <th>Delivery Cost</th>
@@ -129,14 +128,12 @@
             <tbody>
               <tr *ngFor="let data of orderList">
                 <td>{{ data.order_date }}</td>
-                <td>{{ getRider(data.user_id) }}</td>
-                <td>{{ getMercahntName(data.merchant_id) }}</td>
-                <td>{{ getMercahntMobile(data.merchant_id) }}</td>
+                <td>{{ data.rider }}</td>
+                <td>{{ data.merchant }}</td>
                 <td>{{ data.received_amount }}</td>
                 <td>{{ data.item }}</td>
                 <td>{{ data.deliverycost }}</td>
                 <td>{{ data.merchantpayable }}</td>
-                
               </tr>
             </tbody>
           </table>

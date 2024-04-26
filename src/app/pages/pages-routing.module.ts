@@ -15,9 +15,7 @@ const routes: Routes = [
   {
     path: 'rider',
     loadChildren: () =>
-      import('./rider/order.module').then(
-        (m) => m.RiderModule
-      ),
+      import('./rider/order.module').then((m) => m.RiderModule),
   },
   {
     path: 'report',
@@ -33,7 +31,9 @@ const routes: Routes = [
   {
     path: 'configuration',
     loadChildren: () =>
-      import('./configuration/configuration-routing.module').then((m) => m.ConfigurationRoutingModule),
+      import('./configuration/configuration-routing.module').then(
+        (m) => m.ConfigurationRoutingModule
+      ),
   },
 ];
 
@@ -41,4 +41,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class PagesRoutingModule { }
+export class PagesRoutingModule {}

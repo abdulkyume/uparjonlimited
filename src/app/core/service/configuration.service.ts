@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, timeout } from 'rxjs';
+import { BehaviorSubject, catchError, timeout } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { AuthService } from './auth.service';
@@ -11,6 +11,8 @@ import { AuthService } from './auth.service';
 export class ConfigurationService {
   private apiurl = environment.environment;
   constructor(private http: HttpClient, private authService: AuthService) {}
+
+  allItem: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   getAllItem(page: number = 0, limit: number = 10, searchValue: string = '') {
     var params = new HttpParams()

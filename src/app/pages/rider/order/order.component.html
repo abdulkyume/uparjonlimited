@@ -85,7 +85,7 @@
             formControlName="orderDate"
             id="orderDate"
             class="form-control"
-            [value]="currentdate"
+            [value]="currentDate"
           />
         </div>
 
@@ -105,18 +105,18 @@
             <div class="col-lg-12">
               <table
                 class="table table-centered table-nowrap table-bordered"
-                [formGroup]="slubform"
+                [formGroup]="slubForm"
               >
                 <thead class="customise-thead"></thead>
-                <tbody formArrayName="slubformval">
+                <tbody formArrayName="slubFormVal">
                   <tr
-                    *ngFor="let data1 of slubdata().controls; let i = index"
+                    *ngFor="let data1 of slubData().controls; let i = index"
                     [formGroupName]="i"
                   >
                     <td
                       class="d-flex justify-content-center align-items-center"
                     >
-                      <i class="fas fa-trash-alt" (click)="deleteslub(i)"></i>
+                      <i class="fas fa-trash-alt" (click)="deleteSlub(i)"></i>
                     </td>
                     <td style="width: 50px">
                       <input
@@ -145,7 +145,7 @@
                   <tr>
                     <td colspan="9">
                       <div
-                        *ngIf="slubadderrorshow && slubdata().invalid"
+                        *ngIf="slubadderrorshow && slubData().invalid"
                         class="text-danger"
                       >
                         <div>Fill Up the Form First</div>
@@ -191,7 +191,7 @@
           type="date"
           formControlName="fromdate"
           id="fromdate"
-          [value]="currentdate"
+          [value]="currentDate"
         />
       </div>
       <div class="col-lg-6 mb-3">
@@ -201,7 +201,7 @@
           type="date"
           formControlName="todate"
           id="todate"
-          [value]="currentdate"
+          [value]="currentDate"
         />
       </div>
       <div class="col-lg-6 mb-3">
@@ -255,8 +255,8 @@
               </div>
             </td>
             <td>{{ data.orderDate }}</td>
-            <td>{{ getMercahntName(data.merchantId) }}</td>
-            <td>{{ getMercahntMobile(data.merchantId) }}</td>
+            <td>{{ getMerchantName(data.merchantId) }}</td>
+            <td>{{ getMerchantMobile(data.merchantId) }}</td>
             <td>{{ data.paymentTypeId }}</td>
             <td>{{ data.receivedAmount }}</td>
             <td>{{ data.otherNote }}</td>

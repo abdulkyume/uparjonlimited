@@ -18,7 +18,8 @@ export class ReportService {
     fromDate: string,
     toDate: string,
     userId: string,
-    mercahntId: string
+    mercahntId: string,
+    download: boolean = false
   ) {
     let params;
     if (mercahntId == '' && userId == '') {
@@ -26,21 +27,24 @@ export class ReportService {
         .set('page', String(page))
         .set('fromDate', String(fromDate))
         .set('toDate', String(toDate))
-        .set('pageSize', String(pageSize));
+        .set('pageSize', String(pageSize))
+        .set('download', String(download));
     } else if (mercahntId == '') {
       params = new HttpParams()
         .set('riderId', String(userId))
         .set('page', String(page))
         .set('fromDate', String(fromDate))
         .set('toDate', String(toDate))
-        .set('pageSize', String(pageSize));
+        .set('pageSize', String(pageSize))
+        .set('download', String(download));
     } else if (userId == '') {
       params = new HttpParams()
         .set('page', String(page))
         .set('fromDate', String(fromDate))
         .set('toDate', String(toDate))
         .set('pageSize', String(pageSize))
-        .set('merchantId', String(mercahntId));
+        .set('merchantId', String(mercahntId))
+        .set('download', String(download));
     } else {
       params = new HttpParams()
         .set('riderId', String(userId))
@@ -48,12 +52,96 @@ export class ReportService {
         .set('page', String(page))
         .set('fromDate', String(fromDate))
         .set('toDate', String(toDate))
-        .set('pageSize', String(pageSize));
+        .set('pageSize', String(pageSize))
+        .set('download', String(download));
     }
 
     return this.http
       .get(`${this.apiurl}report/order`, {
         params,
+      })
+      .pipe(
+        timeout(60000),
+        catchError((err) => {
+          console.error(err);
+          if (
+            err === 'Unauthorized user.' ||
+            err.message === 'Unauthorized user.'
+          ) {
+            this.authService.logout();
+          }
+          if (err.name === 'TimeoutError') {
+            Swal.fire('Time Out!!', 'Internal Server Problem');
+          }
+          if (
+            err.message === "Cannot read properties of null (reading 'message')"
+          ) {
+            Swal.fire(
+              'Error!!',
+              'Resource Not Available. Link is Not Working',
+              'error'
+            );
+          }
+          if (err === 'Bad Request') {
+            Swal.fire('Error!!', 'Form Submission Error');
+          }
+          if (err === 'Unknown Error') {
+            Swal.fire('Error!!', 'No Connection Found');
+          }
+          throw err;
+        })
+      );
+  }
+
+  downloadGetAllOrderReport(
+    page: number = 0,
+    pageSize: number = 20,
+    fromDate: string,
+    toDate: string,
+    userId: string,
+    mercahntId: string,
+    download: boolean = true
+  ) {
+    let params;
+    if (mercahntId == '' && userId == '') {
+      params = new HttpParams()
+        .set('page', String(page))
+        .set('fromDate', String(fromDate))
+        .set('toDate', String(toDate))
+        .set('pageSize', String(pageSize))
+        .set('download', String(download));
+    } else if (mercahntId == '') {
+      params = new HttpParams()
+        .set('riderId', String(userId))
+        .set('page', String(page))
+        .set('fromDate', String(fromDate))
+        .set('toDate', String(toDate))
+        .set('pageSize', String(pageSize))
+        .set('download', String(download));
+    } else if (userId == '') {
+      params = new HttpParams()
+        .set('page', String(page))
+        .set('fromDate', String(fromDate))
+        .set('toDate', String(toDate))
+        .set('pageSize', String(pageSize))
+        .set('merchantId', String(mercahntId))
+        .set('download', String(download));
+    } else {
+      params = new HttpParams()
+        .set('riderId', String(userId))
+        .set('merchantId', String(mercahntId))
+        .set('page', String(page))
+        .set('fromDate', String(fromDate))
+        .set('toDate', String(toDate))
+        .set('pageSize', String(pageSize))
+        .set('download', String(download));
+    }
+
+    return this.http
+      .get(`${this.apiurl}report/order`, {
+        params,
+        observe: 'response',
+        responseType: 'blob',
       })
       .pipe(
         timeout(60000),

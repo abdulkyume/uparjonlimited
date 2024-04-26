@@ -2,7 +2,6 @@
   <div class="navbar-header">
     <div class="d-flex">
       <div class="navbar-brand-box bg-white">
-
         <a routerLink="/" class="logo logo-light fl">
           <span class="">
             <img src="assets/images/upjl/icon.png" alt="" height="50" />
@@ -38,7 +37,7 @@
           <i class="fas fa-chevron-down ms-2 tap-color"></i>
         </button>
         <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-
+          <a class="dropdown-item text-danger" routerLink="/public/faq">FAQ</a>
           <a
             class="dropdown-item text-danger"
             routerLink="/account/change-password"
@@ -53,7 +52,8 @@
           >
             <i
               class="bx bx-power-off font-size-16 align-middle me-1 text-danger"
-            ></i> Logout</a
+            ></i>
+            Logout</a
           >
         </div>
       </div>

@@ -20,7 +20,6 @@ import {
   NgbDropdownModule,
   NgbPaginationModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-order',
@@ -44,8 +43,8 @@ export class OrderComponent implements OnInit, OnDestroy {
   slubadderrorshow: boolean = false;
   orderForm!: FormGroup;
   searchForm!: FormGroup;
-  slubform!: FormGroup;
-  userid: string = '';
+  slubForm!: FormGroup;
+  userId: string = '';
   roleId: string = '';
   page: number = 0;
   pageSize: number = 10;
@@ -64,7 +63,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   dropdownList1: any;
   selectedItems1: any = [];
 
-  currentdate: string = `${new Date().getFullYear()}-${String(
+  currentDate: string = `${new Date().getFullYear()}-${String(
     new Date().getMonth() + 1
   ).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
 
@@ -77,15 +76,15 @@ export class OrderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.userid = JSON.parse(
+    this.userId = JSON.parse(
       this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
     ).id;
     this.roleId = this.encryptionService.decrypt(localStorage.getItem('role')!);
 
-    this.slubform = this.formBuilder.group({
-      slubformval: this.formBuilder.array([]),
+    this.slubForm = this.formBuilder.group({
+      slubFormVal: this.formBuilder.array([]),
     });
-    
+
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'id',
@@ -96,63 +95,78 @@ export class OrderComponent implements OnInit, OnDestroy {
 
     this.orderRefreshForm();
     this.searchRefreshForm();
-    this.getAllmerchant();
+    this.getAllMerchant();
   }
 
-  getAllmerchant() {
+  getAllMerchant() {
     this.loader = true;
-    let merchantdetailsList: any = [];
-    this.merchantService
-      .getMerchantDetail('', this.page, 1000, '')
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
+    if (this.merchantService.merchantList.value) {
+      this.merchantService.merchantList.subscribe((li) => {
+        this.dropdownList = li;
+      });
+      this.loader = false;
+    } else {
+      let merchantDetailsList: any = [];
+      this.merchantService
+        .getMerchantDetail('', this.page, 1000, '')
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            this.merchantList = res.data.content;
+            res.data.content.map((merchant: any) => {
+              merchantDetailsList.push({
+                id: merchant.id,
+                customtext: merchant.name + ' - ' + merchant.phoneNumber,
+              });
+            });
+          },
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false;
+          },
+          complete: () => {
+            this.dropdownList = merchantDetailsList;
+            this.merchantService.merchantList.next(this.dropdownList);
+            this.getItemList();
+          },
+        });
+    }
+  }
+
+  getItemList() {
+    if (this.configService.allItem.value) {
+      this.itemList = this.configService.allItem.subscribe((item: any) => {
+        this.dropdownList1 = item;
+      });
+      this.loader = false;
+    } else {
+      let ilist: any[] = [];
+      this.configService.getAllItem(0, 1000, '').subscribe({
         next: (res: any) => {
-          this.merchantList = res.data.content;
-          res.data.content.map((merchant: any) => {
-            merchantdetailsList.push({
-              id: merchant.id,
-              customtext: merchant.name + ' - ' + merchant.phoneNumber,
+          res.data.content.map((x: any) => {
+            ilist.push({
+              id: x.id,
+              customtext: `${x.name}-${x.price}`,
             });
           });
         },
         error: (err: any) => {
           console.error(err);
-          this.loader = false;
         },
         complete: () => {
-          this.dropdownList = merchantdetailsList;
-
-          this.getitemlist();
+          this.dropdownList1 = ilist;
+          this.configService.allItem.next(this.dropdownList1);
+          this.getAllOrderList();
         },
       });
-  }
-
-  getitemlist() {
-    let ilist: any[] = [];
-    this.configService.getAllItem(0, 1000, '').subscribe({
-      next: (res: any) => {
-        res.data.content.map((x: any) => {
-          ilist.push({
-            id: x.id,
-            customtext: `${x.name}-${x.price}`,
-          });
-        });
-      },
-      error: (err: any) => {
-        console.error(err);
-      },
-      complete: () => {
-        this.dropdownList1 = ilist;
-        this.getAllOrderList();
-      },
-    });
+    }
   }
 
   orderRefreshForm() {
     this.orderForm = this.formBuilder.group({
       id: [null],
-      userId: [this.userid, [Validators.required]],
-      orderDate: [this.currentdate, [Validators.required]],
+      userId: [this.userId, [Validators.required]],
+      orderDate: [this.currentDate, [Validators.required]],
       otherNote: [''],
       paymentTypeId: ['COD Received'],
       receivedAmount: [0, [Validators.required]],
@@ -164,7 +178,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   submitOrder() {
-    this.orderForm.controls['orderDetails'].setValue(this.slubdata().value);
+    this.orderForm.controls['orderDetails'].setValue(this.slubData().value);
     if (
       this.orderForm.invalid ||
       this.orderForm.controls['orderDetails'].value?.length < 1
@@ -180,7 +194,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         d.amount = d.quantity * ids[0].customtext.split('-')[1];
       });
       this.orderForm.controls['orderDetails'].setValue(
-        this.slubdata().value.concat(this.deletedData)
+        this.slubData().value.concat(this.deletedData)
       );
       this.orderService
         .updateOrder(this.orderForm.value)
@@ -188,11 +202,11 @@ export class OrderComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (res: any) => {
             if (res.isSuccess) {
-              this.successmsg(res.message);
+              this.successMsg(res.message);
               this.orderRefreshForm();
               this.showAddBtn = true;
             } else {
-              this.errorssmsg(res.message);
+              this.errorsMsg(res.message);
             }
           },
           error: (err: any) => {
@@ -218,11 +232,11 @@ export class OrderComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (res: any) => {
             if (res.isSuccess) {
-              this.successmsg(res.message);
+              this.successMsg(res.message);
               this.orderRefreshForm();
               this.showAddBtn = false;
             } else {
-              this.errorssmsg(res.message);
+              this.errorsMsg(res.message);
             }
           },
           error: (err: any) => {
@@ -236,10 +250,11 @@ export class OrderComponent implements OnInit, OnDestroy {
     }
   }
 
-  successmsg(message: string) {
+  successMsg(message: string) {
     Swal.fire('Success!', message, 'success');
   }
-  errorssmsg(message: string) {
+
+  errorsMsg(message: string) {
     Swal.fire('Ops!', message, 'error');
   }
 
@@ -251,13 +266,13 @@ export class OrderComponent implements OnInit, OnDestroy {
     return this.searchForm.controls;
   }
 
-  slubdata(): FormArray {
-    return this.slubform.get('slubformval') as FormArray;
+  slubData(): FormArray {
+    return this.slubForm.get('slubFormVal') as FormArray;
   }
 
   setnameforstakeholder(event: any, index: any) {
     let f = this.merchantList.filter((x: any) => x.id == event);
-    this.slubdata().controls[index].patchValue({
+    this.slubData().controls[index].patchValue({
       TransactionFeeStakeHolderName: f[0].stakeholderName,
     });
   }
@@ -271,26 +286,26 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   onInitiatorItemSelect1(item: any, i: any) {
-    this.slubdata().controls[i].patchValue({
+    this.slubData().controls[i].patchValue({
       itemId: item.id,
     });
   }
 
   onInitiatorItemUnSelect1(item: any, i: any) {
-    this.slubdata().controls[i].patchValue({
+    this.slubData().controls[i].patchValue({
       itemId: '',
     });
   }
 
   searchRefreshForm() {
     this.searchForm = this.formBuilder.group({
-      fromdate: [`${this.currentdate}`],
-      todate: [`${this.currentdate}`],
+      fromdate: [`${this.currentDate}`],
+      todate: [`${this.currentDate}`],
     });
   }
 
   getAllOrderList() {
-    let isUser = this.userid;
+    let isUser = this.userId;
     if (this.roleId === '1143fcc9-02d1-4bd0-ab47-b5efc92072fc') {
       isUser = '';
     }
@@ -318,7 +333,7 @@ export class OrderComponent implements OnInit, OnDestroy {
           this.loader = false;
         },
         complete: () => {
-          this.loader = false;
+          this.getItemList();
         },
       });
   }
@@ -327,7 +342,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     this.showAddBtn ? (this.showAddBtn = false) : (this.showAddBtn = true);
   }
 
-  slabrefreshform(): FormGroup {
+  slabRefreshForm(): FormGroup {
     return this.formBuilder.group({
       id: [],
       orderId: [],
@@ -339,7 +354,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     });
   }
 
-  getMercahntName(id: string): string {
+  getMerchantName(id: string): string {
     let d = this.merchantList.filter((m: any) => m.id === id);
     if (d.length > 0) {
       return d[0].name;
@@ -348,7 +363,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   editOrder(data: any) {
-    this.slubdata().clear();
+    this.slubData().clear();
 
     this.orderForm.controls['id'].setValue(data.id);
     this.orderForm.controls['receivedAmount'].setValue(data.receivedAmount);
@@ -363,7 +378,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     this.showAddBtn = false;
   }
 
-  setOrderNameinUI(data: any, i: any) {
+  setOrderNameInUI(data: any, i: any) {
     this.selectedItems1[i] = this.dropdownList1.filter(
       (x: any) => x.id == data.itemId
     );
@@ -372,7 +387,7 @@ export class OrderComponent implements OnInit, OnDestroy {
   getOrderDetail(date: string, orderId: string) {
     this.loader = true;
     this.orderService
-      .getAllOrderDetail(date, date, this.userid, orderId)
+      .getAllOrderDetail(date, date, this.userId, orderId)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -380,8 +395,8 @@ export class OrderComponent implements OnInit, OnDestroy {
             let data = res.data;
             let i = 0;
             data.map((value: any) => {
-              this.setOrderNameinUI(value, i);
-              this.slubdata().push(
+              this.setOrderNameInUI(value, i);
+              this.slubData().push(
                 this.formBuilder.group({
                   id: [value.id],
                   amount: [value.amount],
@@ -405,7 +420,7 @@ export class OrderComponent implements OnInit, OnDestroy {
       });
   }
 
-  getMercahntMobile(id: string): string {
+  getMerchantMobile(id: string): string {
     let d = this.merchantList.filter((m: any) => m.id === id);
     if (d.length > 0) {
       return d[0].phoneNumber;
@@ -414,18 +429,18 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   addSlub() {
-    let arr = this.slubdata().value;
-    if (arr.length > 0 && this.slubdata().invalid) {
+    let arr = this.slubData().value;
+    if (arr.length > 0 && this.slubData().invalid) {
       this.slubadderrorshow = true;
       return;
     }
 
-    this.slubdata().push(this.slabrefreshform());
+    this.slubData().push(this.slabRefreshForm());
     this.slubadderrorshow = false;
   }
 
-  deleteslub(i: number) {
-    let items = this.slubdata().value;
+  deleteSlub(i: number) {
+    let items = this.slubData().value;
     let j = 0;
 
     items.map((item: any) => {
@@ -436,12 +451,12 @@ export class OrderComponent implements OnInit, OnDestroy {
         j++;
       }
     });
-    this.slubdata().removeAt(i);
+    this.slubData().removeAt(i);
     this.selectedItems1[i] = [];
   }
 
   autoAddSlab() {
-    this.slubdata().clear();
+    this.slubData().clear();
     this.addSlub();
   }
 
@@ -455,7 +470,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     if (this.toPageVal > this.total) {
       this.toPageVal = this.total;
     }
-    this.getAllmerchant();
+    this.getAllMerchant();
     return event;
   }
 

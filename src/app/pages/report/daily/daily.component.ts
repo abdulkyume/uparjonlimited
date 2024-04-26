@@ -5,6 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { saveAs } from 'file-saver';
 import { CommonModule } from '@angular/common';
 import { LoaderComponent } from 'src/app/common/loader/loader.component';
 import {
@@ -153,87 +154,6 @@ export class DailyComponent implements OnInit, OnDestroy {
     this.getExpense();
   }
 
-  getMercahntName(id: string): string {
-    let d = this.merchantList.filter((m: any) => m.id === id);
-    if (d.length > 0) {
-      return d[0].name;
-    }
-
-    /**/
-
-    let user = this.existingUserListm.filter((m: any) => m.id == id);
-    let merchant;
-    if (user.length > 0) {
-      merchant = this.merchantList.filter(
-        (m: any) => m.phoneNumber == user[0].mobile
-      );
-    }
-    if (user.length > 0 && merchant.length > 0) {
-      return merchant[0].name;
-    } else {
-      return '';
-    }
-  }
-
-  getRider(id: string): string {
-    let d = this.existingUserList.filter((m: any) => m.id === id);
-    if (d.length > 0) {
-      return d[0].firstName + ' ' + d[0].lastName + ' - ' + d[0].mobile;
-    }
-    return '';
-  }
-
-  getMercahntMobile(id: string): string {
-    let d = this.merchantList.filter((m: any) => m.id === id);
-    if (d.length > 0) {
-      return d[0].phoneNumber;
-    }
-    let user = this.existingUserListm.filter((m: any) => m.id == id);
-    let merchant;
-    if (user.length > 0) {
-      merchant = this.merchantList.filter(
-        (m: any) => m.phoneNumber == user[0].mobile
-      );
-    }
-    if (user.length > 0 && merchant.length > 0) {
-      return merchant[0].phoneNumber;
-    } else {
-      return '';
-    }
-  }
-
-  downloadxl() {
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(
-      this.table.nativeElement
-    );
-
-    /* new format */
-    var fmt = '0.00';
-    /* change cell format of range B2:D4 */
-    var range = { s: { r: 1, c: 1 }, e: { r: 2, c: 100000 } };
-    for (var R = range.s.r; R <= range.e.r; ++R) {
-      for (var C = range.s.c; C <= range.e.c; ++C) {
-        var cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
-        if (!cell || cell.t != 'n') continue; // only format numeric cells
-        cell.z = fmt;
-      }
-    }
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'hisab');
-    var fmt = '@';
-    wb.Sheets['hisab']['F'] = fmt;
-    const newWorksheet = XLSX.utils.aoa_to_sheet([
-      ['Expense', 'Profit'],
-      [this.totalExpense, this.totalProfit],
-    ]);
-
-    // Add the new worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, newWorksheet, 'profit');
-
-    /* save to file */
-    XLSX.writeFile(wb, 'Daily-Hisab.xlsx');
-  }
-
   getExpense() {
     this.loader = true;
     this.orderService
@@ -292,6 +212,37 @@ export class DailyComponent implements OnInit, OnDestroy {
               this.totalReceivedAmount - this.totalDeliveryCost;
             this.totalProfit = this.totalDeliveryCost - this.totalExpense;
           });
+          this.loader = false;
+        },
+      });
+  }
+
+  downloadGetAllOrderList() {
+    this.loader = true;
+    this.totalReceivedAmount = 0;
+    this.totalDeliveryCost = 0;
+    this.totalPayable = 0;
+    this.totalProfit = 0;
+    this.orderService
+      .downloadGetAllOrderReport(
+        this.page,
+        this.pageSize,
+        this.f['fromdate'].value,
+        this.f['toDate'].value,
+        this.f['riderId'].value,
+        this.f['merchantId'].value,
+        true
+      )
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          saveAs(res.body, 'Daily Report.xlsx');
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loader = false;
+        },
+        complete: () => {
           this.loader = false;
         },
       });
