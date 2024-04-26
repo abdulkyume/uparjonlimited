@@ -100,9 +100,12 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   getAllMerchant() {
     this.loader = true;
-    if (this.merchantService.merchantList.value) {
+    if (this.merchantService.merchantList.value && this.merchantService.merchantListC.value) {
       this.merchantService.merchantList.subscribe((li) => {
         this.dropdownList = li;
+      });
+      this.merchantService.merchantListC.subscribe((li) => {
+        this.merchantList = li;
       });
       this.loader = false;
     } else {
@@ -113,6 +116,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (res: any) => {
             this.merchantList = res.data.content;
+            this.merchantService.merchantListC.next(this.merchantList);
             res.data.content.map((merchant: any) => {
               merchantDetailsList.push({
                 id: merchant.id,

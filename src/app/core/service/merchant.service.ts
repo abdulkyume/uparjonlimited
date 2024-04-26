@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 export class MerchantService {
   private apiurl = environment.environment;
 
+  merchantListC: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   merchantList: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(private http: HttpClient, private authService: AuthService) {}
