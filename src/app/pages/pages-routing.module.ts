@@ -35,6 +35,12 @@ const routes: Routes = [
         (m) => m.ConfigurationRoutingModule
       ),
   },
+
+  {
+    path: 'faq',
+    loadChildren: () =>
+      import('./faq/faq-routing.module').then((m) => m.FaqRoutingModule),
+  },
 ];
 
 @NgModule({
