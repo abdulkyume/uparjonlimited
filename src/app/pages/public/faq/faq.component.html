@@ -1,6 +1,6 @@
-<div class="p-5">
+<div class="p-lg-5 p-md-5 p-2">
   <h2 class="text-center mb-4">FAQ</h2>
-
+  <h1 *ngIf="itemList.length < 1" class="text-center mt-5">Loading...</h1>
   <div *ngIf="itemList">
     <ngb-accordion>
       <ngb-panel *ngFor="let item of itemList" [title]="item.title">
