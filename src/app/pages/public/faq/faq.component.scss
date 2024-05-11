@@ -21,11 +21,14 @@ th {
 th {
   border: 1px solid #dddddd;
   text-align: left;
-  padding: 8px;
 }
 
 ::ng-deep .accordion-button {
   font-weight: bolder;
   font-size: 1rem;
   letter-spacing: 0.08rem;
+}
+
+::ng-deep .accordion-body {
+  padding: 0.4rem;
 }
