@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Inject, Output, HostListener } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  Output,
+  HostListener,
+} from '@angular/core';
 import { DOCUMENT, CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { SimplebarAngularModule } from 'simplebar-angular';
@@ -6,15 +12,23 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/core/service/auth.service';
 import { EncryptionService } from 'src/app/core/service/encryption.service';
 import { RoleService } from 'src/app/core/service/role.service';
+import { MerchantService } from 'src/app/core/service/merchant.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, SimplebarAngularModule, NgbDropdownModule, RouterModule],
+  imports: [
+    CommonModule,
+    SimplebarAngularModule,
+    NgbDropdownModule,
+    RouterModule,
+  ],
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
 })
 export class TopbarComponent {
+  private ngUnsubscribe: Subject<any> = new Subject();
   element!: any;
   cookieValue!: any;
   flagvalue!: any;
@@ -25,14 +39,16 @@ export class TopbarComponent {
   role: string = '';
 
   userRole: string = '';
+  user: any;
 
   constructor(
     @Inject(DOCUMENT) private document: any,
     private router: Router,
     private authService: AuthService,
     private roleService: RoleService,
-    private encryptionService: EncryptionService
-  ) { }
+    private encryptionService: EncryptionService,
+    private merchantService: MerchantService
+  ) {}
   @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
     if (event['storageArea'] == localStorage) {
       localStorage.getItem('currentUser') ?? this.authService.logout();
@@ -45,6 +61,9 @@ export class TopbarComponent {
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
   ngOnInit() {
+    this.user = JSON.parse(
+      this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
+    );
     if (localStorage.getItem('allroleid') == null) {
       this.roleService.getAllRoleIds().subscribe((res: any) => {
         localStorage.setItem(
@@ -70,9 +89,8 @@ export class TopbarComponent {
             role.id ===
             +this.encryptionService.encrypt(localStorage.getItem('role')!)
         )[0]?.roleName;
-      }
-      else {
-        this.authService.logout()
+      } else {
+        this.authService.logout();
       }
     }, 2000);
     this.openMobileMenu = false;
@@ -81,6 +99,29 @@ export class TopbarComponent {
     this.username = this.encryptionService
       .decrypt(localStorage.getItem('username')!)
       .replace(/^"(.*)"$/, '$1');
+
+    this.getAllmerchant();
+  }
+
+  getAllmerchant() {
+    this.merchantService
+      .getMerchantDetail('', 0, 1000, this.user.mobile)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          let merchant = res.data.content;
+          if (merchant.length > 0) {
+            localStorage.setItem(
+              'currentMerchant',
+              this.encryptionService.encrypt(JSON.stringify(merchant[0]))
+            );
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+        },
+        complete: () => {},
+      });
   }
   /**
    * Toggles the right sidebar

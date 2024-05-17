@@ -70,6 +70,9 @@ export class DailyComponent implements OnInit, OnDestroy {
   cPageVal: number = 1;
   toPageVal!: number;
   total!: number;
+  role: string = '';
+  user: any;
+  merchant: any;
 
   reprotForm!: FormGroup;
 
@@ -88,10 +91,16 @@ export class DailyComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.getAllusers1();
-    this.reprotFormRefresh();
+    this.role = this.encryptionService.decrypt(localStorage.getItem('role')!);
+    this.user = JSON.parse(
+      this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
+    );
+    if (localStorage.getItem('currentMerchant')) {
+      this.merchant = JSON.parse(
+        this.encryptionService.decrypt(localStorage.getItem('currentMerchant')!)
+      );
+    }
     this.getAllmerchant();
-    this.getitemlist();
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'id',
@@ -99,6 +108,7 @@ export class DailyComponent implements OnInit, OnDestroy {
       itemsShowLimit: 6,
       allowSearchFilter: true,
     };
+    this.reprotFormRefresh();
   }
 
   getAllusers1() {
@@ -144,9 +154,24 @@ export class DailyComponent implements OnInit, OnDestroy {
       });
   }
 
-  reprotFormRefresh() {
+  clear() {
     this.reprotForm = this.formbuilder.group({
       merchantId: [''],
+      riderId: [''],
+      fromdate: [`${this.currentdate}`],
+      toDate: [`${this.currentdate}`],
+    });
+    this.selectedItems1 = [];
+    this.selectedItems2 = [];
+  }
+
+  reprotFormRefresh() {
+    this.reprotForm = this.formbuilder.group({
+      merchantId: [
+        this.role === '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'
+          ? ''
+          : this.merchant.id,
+      ],
       riderId: [''],
       fromdate: [`${this.currentdate}`],
       toDate: [`${this.currentdate}`],
