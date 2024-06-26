@@ -41,6 +41,12 @@ const routes: Routes = [
     loadChildren: () =>
       import('./faq/faq-routing.module').then((m) => m.FaqRoutingModule),
   },
+
+  {
+    path: 'inventory-sales',
+    loadChildren: () =>
+      import('./invesale/invesale.module').then((m) => m.InvesaleModule),
+  },
 ];
 
 @NgModule({
