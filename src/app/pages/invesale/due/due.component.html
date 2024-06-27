@@ -1,1 +1,57 @@
-<p>due works!</p>
+<div class="position-relative">
+  <div class="bgsetforloading position-absolute" *ngIf="loader">
+    <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row bg-white mt-3">
+      <div class="col-lg-6 col-md-6 col-12">
+        <h3>Due</h3>
+      </div>
+      <div class="col-lg-6 col-md-6 col-12 text-end">
+        <button
+          class="btn btn-lg btn-primary"
+          (click)="toggleAddBtn()"
+          *ngIf="showAddBtn"
+        >
+          Add New
+        </button>
+        <button
+          class="btn btn-lg btn-primary"
+          (click)="toggleAddBtn()"
+          *ngIf="!showAddBtn"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <!-- pagination start -->
+    <div class="row justify-content-md-between align-items-md-center mt-2">
+        <div class="col-sm-12 col-md-5">
+          <div
+            class="dataTables_info mb-2"
+            id="tickets-table_info"
+            role="status"
+            aria-live="polite"
+          >
+            Showing
+            {{ cPageVal }} to {{ toPageVal }} of {{ total }}
+            entries
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-5">
+          <div class="text-md-right float-md-end pagination-rounded">
+            <ngb-pagination
+              id="paginationCustoimse"
+              [collectionSize]="total"
+              (pageChange)="page = onPageChange($event)"
+              [pageSize]="pageSize"
+              [maxSize]="3"
+            >
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+      <!-- pagination ends -->
+</div>

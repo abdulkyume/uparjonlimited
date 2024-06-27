@@ -61,9 +61,13 @@ export class TopbarComponent {
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
   ngOnInit() {
-    this.user = JSON.parse(
-      this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
-    );
+    if (localStorage.getItem('currentUser')!) {
+      this.user = JSON.parse(
+        this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
+      );
+    } else {
+      this.authService.logout();
+    }
     if (localStorage.getItem('allroleid') == null) {
       this.roleService.getAllRoleIds().subscribe((res: any) => {
         localStorage.setItem(
