@@ -25,15 +25,6 @@ export class RoleService {
         if (err.name === 'TimeoutError') {
           Swal.fire('Time Out!!', 'Internal Server Problem');
         }
-        if (
-          err.message === "Cannot read properties of null (reading 'message')"
-        ) {
-          Swal.fire(
-            'Error!!',
-            'Resource Not Available. Link is Not Working',
-            'error'
-          );
-        }
         if (err === 'Bad Request') {
           Swal.fire('Error!!', 'Form Submission Error');
         }
@@ -53,21 +44,12 @@ export class RoleService {
         if (err.name === 'TimeoutError') {
           Swal.fire('Time Out!!', 'Internal Server Problem');
         }
-        // if (
-        //   err.message === "Cannot read properties of null (reading 'message')"
-        // ) {
-        //   Swal.fire(
-        //     'Error!!',
-        //     'Resource Not Available. Link is Not Working',
-        //     'error'
-        //   );
-        // }
         if (err === 'Bad Request') {
           Swal.fire('Error!!', 'Form Submission Error');
         }
-        // if (err === 'Unknown Error') {
-        //   Swal.fire('Error!!', 'No Connection Found');
-        // }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
         throw err;
       })
     );

@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 })
 export class InventorySalesService {
   private apiurl = environment.environment;
-  private entry: string = 'inventory-sales/due';
+  private dueEntry: string = 'inventory-sales/due';
 
   private http = inject(HttpClient)
   private authService = inject(AuthService)
@@ -20,15 +20,17 @@ export class InventorySalesService {
     limit: number = 10,
     inventoryItemId: string = '',
     shopId: string = '',
-    orderId: string = ''
+    orderId: string = '',
+    dsoId: string = '',
   ) {
     var params = new HttpParams()
       .set('page', Number(page))
       .set('pageSize', Number(limit))
       .set('inventoryItemId', String(inventoryItemId))
       .set('shopId', String(shopId))
+      .set('dsoId', String(dsoId))
       .set('orderId', String(orderId));
-    return this.http.get(`${this.apiurl}${this.entry}/get`, { params }).pipe(
+    return this.http.get(`${this.apiurl}${this.dueEntry}/get`, { params }).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);
@@ -47,8 +49,9 @@ export class InventorySalesService {
   }
 
   addDue(newUser: any) {
+    console.log(newUser)
     var apiurl = environment.environment;
-    return this.http.post<any>(`${apiurl}${this.entry}/add`, newUser).pipe(
+    return this.http.post<any>(`${apiurl}${this.dueEntry}/add`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);
@@ -74,7 +77,7 @@ export class InventorySalesService {
 
   updateDue(newUser: any) {
     var apiurl = environment.environment;
-    return this.http.put<any>(`${apiurl}${this.entry}/update`, newUser).pipe(
+    return this.http.put<any>(`${apiurl}${this.dueEntry}/update`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);
@@ -109,7 +112,7 @@ export class InventorySalesService {
 
   deleteDue(id: any) {
     var apiurl = environment.environment;
-    return this.http.delete<any>(`${apiurl}${this.entry}/delete/${id}`).pipe(
+    return this.http.delete<any>(`${apiurl}${this.dueEntry}/delete/${id}`).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);
