@@ -158,7 +158,16 @@
                   </div>
                 </div>
               </td>
-              <td>{{ data.name }}</td>
+              <td>
+                {{ data.name }}
+                <sub
+                  ><a
+                    href="javascript:void(0)"
+                    (click)="seeDetail(content, data)"
+                    >( Details )</a
+                  ></sub
+                >
+              </td>
               <td>{{ data.vendor }}</td>
             </tr>
           </tbody>
@@ -196,3 +205,27 @@
     <!-- pagination ends -->
   </div>
 </div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Details</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-inventorydetails [dataId]="dataId"/>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-light"
+      (click)="modal.close('Close click')"
+    >
+      Close
+    </button>
+  </div>
+</ng-template>

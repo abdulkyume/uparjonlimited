@@ -1,1 +1,226 @@
-<p>inventorydetails works!</p>
+<div class="position-relative">
+  <div class="bgsetforloading position-absolute" *ngIf="loader">
+    <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row bg-white mt-3">
+      <div class="col-lg-6 col-md-6 col-12">
+        <h3>Inventory Details</h3>
+      </div>
+      <div class="col-lg-6 col-md-6 col-12 text-end">
+        <button
+          class="btn btn-lg btn-primary"
+          (click)="toggleAddBtn()"
+          *ngIf="showAddBtn"
+        >
+          Add New
+        </button>
+        <button
+          class="btn btn-lg btn-primary"
+          (click)="toggleAddBtn()"
+          *ngIf="!showAddBtn"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <div class="row bg-white mt-2" *ngIf="!showAddBtn">
+      <form [formGroup]="invDetailForm" class="row" (ngSubmit)="onsubmit()">
+        <div class="col-lg-4 mb-3">
+          <label for="type">Item Type</label>
+          <select class="form-select" formControlName="type" id="type">
+            <option value="">Select</option>
+            <option value="PET">PET</option>
+            <option value="GRB">GRB</option>
+            <option value="CAN">CAN</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+
+        <div class="col-lg-4 mb-3">
+          <label for="unit">Item Unit</label>
+          <select class="form-select" formControlName="unit" id="unit">
+            <option value="">Select</option>
+            <option value="Case">Case</option>
+            <option value="Pcs">Pcs</option>
+            <option value="Kg">Kg</option>
+            <option value="Gm">Gm</option>
+            <option value="200 ML">200 ML</option>
+            <option value="250 ML">250 ML</option>
+            <option value="600 ML">600 ML</option>
+            <option value="1000 ML">1000 ML</option>
+            <option value="2000 ML">2000 ML</option>
+          </select>
+        </div>
+
+        <div class="col-lg-4 mb-3">
+          <label for="buy">Quantity</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="buy"
+            id="buy"
+          />
+        </div>
+
+        <div class="col-lg-6 mb-3">
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            *ngIf="!invDetailForm.controls['id'].value"
+          >
+            Submit
+          </button>
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            *ngIf="invDetailForm.controls['id'].value"
+          >
+            Update
+          </button>
+        </div>
+
+        <div class="col-lg-6 mb-3">
+          <button
+            class="btn btn-warning w-100"
+            type="button"
+            (click)="invDetailRefreshForm()"
+          >
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="row bg-white mt-3" *ngIf="showAddBtn">
+      <div class="col-lg-12 col-md-12 col-12 p-3">
+        <form [formGroup]="shopSForm" class="row" (ngSubmit)="searchInv()">
+            <div class="col-lg-6 mb-3">
+                <label for="type">Item Type</label>
+                <select class="form-select" formControlName="type" id="type">
+                  <option value="">Select</option>
+                  <option value="PET">PET</option>
+                  <option value="GRB">GRB</option>
+                  <option value="CAN">CAN</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+      
+              <div class="col-lg-6 mb-3">
+                <label for="unit">Item Unit</label>
+                <select class="form-select" formControlName="unit" id="unit">
+                  <option value="">Select</option>
+                  <option value="Case">Case</option>
+                  <option value="Pcs">Pcs</option>
+                  <option value="Kg">Kg</option>
+                  <option value="Gm">Gm</option>
+                  <option value="200 ML">200 ML</option>
+                  <option value="250 ML">250 ML</option>
+                  <option value="600 ML">600 ML</option>
+                  <option value="1000 ML">1000 ML</option>
+                  <option value="2000 ML">2000 ML</option>
+                </select>
+              </div>
+
+          <div class="col-lg-6 mb-3">
+            <button class="btn btn-primary w-100" type="submit">Search</button>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <button
+              class="btn btn-warning w-100"
+              type="button"
+              (click)="invDetailSRefreshForm()"
+            >
+              Clear
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row bg-white">
+      <div class="col-lg-12">
+        <table class="table table-responsive">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Type</th>
+              <th>Unit</th>
+              <th>Quantity</th>
+              <th>Sold</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of invDetList">
+              <td class="p-0">
+                <div
+                  class="absolute-position dropdown customcolorforaction"
+                  ngbDropdown
+                  placement="bottom-right"
+                >
+                  <a class="dropdown-toggle card-drop" ngbDropdownToggle>
+                    <i class="fas fa-ellipsis-h font-size-18 ms-2 mt-3"></i>
+                  </a>
+                  <div
+                    class="dropdown-menu dropdown-menu-end dropdown-menu-customize"
+                    ngbDropdownMenu
+                  >
+                    <a
+                      class="dropdown-item"
+                      (click)="editDue(data)"
+                      href="javascript: void(0);"
+                      ><i class="fas fa-pencil-alt text-success me-1"></i
+                      >Edit</a
+                    >
+                    <a
+                      class="dropdown-item"
+                      (click)="deleteDue(data.id)"
+                      href="javascript: void(0);"
+                      ><i class="fas fa-trash text-danger me-1"></i>Delete</a
+                    >
+                  </div>
+                </div>
+              </td>
+              <td>{{ data.type }}</td>
+              <td>{{ data.unit }}</td>
+              <td>{{ data.buy }}</td>
+              <td>{{ data.sell }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- pagination start -->
+    <div class="row justify-content-md-between align-items-md-center mt-2">
+      <div class="col-sm-12 col-md-5">
+        <div
+          class="dataTables_info mb-2"
+          id="tickets-table_info"
+          role="status"
+          aria-live="polite"
+        >
+          Showing
+          {{ cPageVal }} to {{ toPageVal }} of {{ total }}
+          entries
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-5">
+        <div class="text-md-right float-md-end pagination-rounded">
+          <ngb-pagination
+            id="paginationCustoimse"
+            [collectionSize]="total"
+            (pageChange)="page = onPageChange($event)"
+            [pageSize]="pageSize"
+            [maxSize]="3"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+    <!-- pagination ends -->
+  </div>
+</div>

@@ -12,8 +12,13 @@ import { RoleService } from 'src/app/core/service/role.service';
 import { EncryptionService } from 'src/app/core/service/encryption.service';
 import Swal from 'sweetalert2';
 import { LoaderComponent } from 'src/app/common/loader/loader.component';
-import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbModal,
+  NgbPagination,
+} from '@ng-bootstrap/ng-bootstrap';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { InventorydetailsComponent } from '../inventorydetails/inventorydetails.component';
 
 @Component({
   selector: 'app-inventory',
@@ -26,6 +31,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     NgbDropdownModule,
     NgMultiSelectDropDownModule,
     FormsModule,
+    InventorydetailsComponent,
   ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss'],
@@ -48,11 +54,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
   selectedItems: any;
   dropdownList1 = [];
   selectedItems1: any;
+  dataId: string = '';
 
   private insService = inject(InventorySalesService);
   private roleService = inject(RoleService);
   private encryptionService = inject(EncryptionService);
   private formBuilder = inject(FormBuilder);
+  private modalService = inject(NgbModal);
 
   get f() {
     return this.invForm.controls;
@@ -302,6 +310,16 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   errorssmsg(message: string): void {
     Swal.fire('Ops!', message, 'error');
+  }
+
+  seeDetail(content: any, data: any): void {
+    this.dataId = data.id;
+    this.modalService.open(content, {
+      size: 'xl',
+      backdrop: 'static',
+      centered: true,
+      scrollable: true,
+    });
   }
 
   ngOnDestroy(): void {

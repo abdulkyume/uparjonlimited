@@ -13,6 +13,7 @@ export class InventorySalesService {
   private dueEntry: string = 'inventory-sales/due';
   private invEntry: string = 'inventory-sales/inventory';
   private shopEntry: string = 'inventory-sales/shop';
+  private invDetEntry: string = 'inventory-sales/inventory-details';
 
   private http = inject(HttpClient)
   private authService = inject(AuthService)
@@ -344,6 +345,124 @@ export class InventorySalesService {
   deleteShop(id: any) {
     var apiurl = environment.environment;
     return this.http.delete<any>(`${apiurl}${this.shopEntry}/delete/${id}`).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  getAllInvDet(
+    page: number = 0,
+    limit: number = 10,
+    inventoryId: string = '',
+    type: string = '',
+    unit: string = '',
+  ) {
+    var params = new HttpParams()
+      .set('page', Number(page))
+      .set('pageSize', Number(limit))
+      .set('type', String(type))
+      .set('unit', String(unit))
+      .set('inventoryId', String(inventoryId));
+    return this.http.get(`${this.apiurl}${this.invDetEntry}/get`, { params }).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  addInvDet(newUser: any) {
+    var apiurl = environment.environment;
+    return this.http.post<any>(`${apiurl}${this.invDetEntry}/add`, newUser).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  updateInvDet(newUser: any) {
+    var apiurl = environment.environment;
+    return this.http.put<any>(`${apiurl}${this.invDetEntry}/update`, newUser).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        if (
+          err.message === "Cannot read properties of null (reading 'message')"
+        ) {
+          Swal.fire(
+            'Error!!',
+            'Resource Not Available. Link is Not Working',
+            'error'
+          );
+        }
+        throw err;
+      })
+    );
+  }
+
+  deleteInvDet(id: any) {
+    var apiurl = environment.environment;
+    return this.http.delete<any>(`${apiurl}${this.invDetEntry}/delete/${id}`).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);

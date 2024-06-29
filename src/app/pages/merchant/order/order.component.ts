@@ -1054,31 +1054,6 @@ export class OrderComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  // getAllZone() {
-  //   let allzone: any = [];
-  //   this.configservice
-  //     .getAllZone(
-  //       0,
-  //       2000,
-  //       ""
-  //     )
-  //     .pipe(takeUntil(this.ngUnsubscribe))
-  //     .subscribe({
-  //       next: (res: any) => {
-  //         res.data.content.map((content: any) => {
-  //           allzone.push({ id: content.id, customtext: content.name });
-  //         });
-  //       },
-  //       error: (err: any) => {
-  //         console.error(err);
-  //         this.loader = false;
-  //       },
-  //       complete: () => {
-  //         this.dropdownList2 = allzone;
-  //       },
-  //     });
-  // }
-
   getZoneName(st: any) {
     let a: any = this.dropdownList1.filter((x: any) => x.id === st);
     if (a.length > 0) {
