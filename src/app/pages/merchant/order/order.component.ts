@@ -1075,7 +1075,6 @@ export class OrderComponent implements OnInit, OnDestroy {
   //       },
   //       complete: () => {
   //         this.dropdownList2 = allzone;
-  //         console.log(this.dropdownList2)
   //       },
   //     });
   // }

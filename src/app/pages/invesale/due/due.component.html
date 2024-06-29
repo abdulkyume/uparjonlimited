@@ -29,15 +29,45 @@
     <div class="row bg-white mt-2" *ngIf="!showAddBtn">
       <form [formGroup]="dueForm" class="row" (ngSubmit)="onsubmit()">
         <div class="col-lg-3 mb-3">
-          <label for="dsoId">DSO Id</label>
-          <select formControlName="dsoId" id="dsoId" class="form-select">
-            <option value="Fuel for Car">Fuel for Car</option>
-            <option value="Fuel for Bike">Fuel for Bike</option>
-            <option value="Mobile Bill">Mobile Bill</option>
-            <option value="Food">Food</option>
-            <option value="Conveyance">Conveyance</option>
-            <option value="Others">Others</option>
-          </select>
+          <label for="">Select DSO</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select DSO'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList"
+            [(ngModel)]="selectedItems"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect($event)"
+            (onDeSelect)="onInitiatorItemUnSelect($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="col-lg-3 mb-3">
+          <label for="inventoryItemId">Inventory Item</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Item'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList1"
+            [(ngModel)]="selectedItems1"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect1($event)"
+            (onDeSelect)="onInitiatorItemUnSelect1($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="col-lg-3 mb-3">
+          <label for="shopId">Shop</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Shop'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList2"
+            [(ngModel)]="selectedItems2"
+            [ngModelOptions]="{ standalone: true }"
+            (onSelect)="onInitiatorItemSelect2($event)"
+            (onDeSelect)="onInitiatorItemUnSelect2($event)"
+          >
+          </ng-multiselect-dropdown>
         </div>
 
         <div class="col-lg-3 mb-3">
@@ -48,34 +78,6 @@
             formControlName="dueAmount"
             id="dueAmount"
           />
-        </div>
-
-        <div class="col-lg-3 mb-3">
-          <label for="inventoryItemId">Inventory Item</label>
-          <select
-            formControlName="inventoryItemId"
-            id="inventoryItemId"
-            class="form-select"
-          >
-            <option value="Fuel for Car">Fuel for Car</option>
-            <option value="Fuel for Bike">Fuel for Bike</option>
-            <option value="Mobile Bill">Mobile Bill</option>
-            <option value="Food">Food</option>
-            <option value="Conveyance">Conveyance</option>
-            <option value="Others">Others</option>
-          </select>
-        </div>
-
-        <div class="col-lg-3 mb-3">
-          <label for="shopId">Shop</label>
-          <select formControlName="shopId" id="shopId" class="form-select">
-            <option value="Fuel for Car">Fuel for Car</option>
-            <option value="Fuel for Bike">Fuel for Bike</option>
-            <option value="Mobile Bill">Mobile Bill</option>
-            <option value="Food">Food</option>
-            <option value="Conveyance">Conveyance</option>
-            <option value="Others">Others</option>
-          </select>
         </div>
 
         <div class="col-lg-6 mb-3">
@@ -126,30 +128,30 @@
 
           <div class="col-lg-3 mb-3">
             <label for="inventoryItemId">Inventory Item</label>
-            <select
-              formControlName="inventoryItemId"
-              id="inventoryItemId"
-              class="form-select"
+            <ng-multiselect-dropdown
+              [placeholder]="'Select Item'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList1"
+              [(ngModel)]="selectedItems1"
+              [ngModelOptions]="{ standalone: true }"
+              (onSelect)="onInitiatorItemSelect1($event)"
+              (onDeSelect)="onInitiatorItemUnSelect1($event)"
             >
-              <option value="Fuel for Car">Fuel for Car</option>
-              <option value="Fuel for Bike">Fuel for Bike</option>
-              <option value="Mobile Bill">Mobile Bill</option>
-              <option value="Food">Food</option>
-              <option value="Conveyance">Conveyance</option>
-              <option value="Others">Others</option>
-            </select>
+            </ng-multiselect-dropdown>
           </div>
 
           <div class="col-lg-3 mb-3">
             <label for="shopId">Shop</label>
-            <select formControlName="shopId" id="shopId" class="form-select">
-              <option value="Fuel for Car">Fuel for Car</option>
-              <option value="Fuel for Bike">Fuel for Bike</option>
-              <option value="Mobile Bill">Mobile Bill</option>
-              <option value="Food">Food</option>
-              <option value="Conveyance">Conveyance</option>
-              <option value="Others">Others</option>
-            </select>
+            <ng-multiselect-dropdown
+              [placeholder]="'Select Shop'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList2"
+              [(ngModel)]="selectedItems2"
+              [ngModelOptions]="{ standalone: true }"
+              (onSelect)="onInitiatorItemSelect2($event)"
+              (onDeSelect)="onInitiatorItemUnSelect2($event)"
+            >
+            </ng-multiselect-dropdown>
           </div>
 
           <div class="col-lg-3 mb-3">

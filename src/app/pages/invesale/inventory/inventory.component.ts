@@ -126,7 +126,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.loader = true;
     if (this.invForm.controls['id'].value) {
       this.insService
-        .updateDue(this.invForm.value)
+        .updateInventory(this.invForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
@@ -150,7 +150,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         });
     } else {
       this.insService
-        .addDue(this.invForm.value)
+        .addInventory(this.invForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
@@ -175,9 +175,39 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
   }
 
+  searchInv() {
+    this.loader = true;
+    this.insService
+      .getAllInventory(
+        0,
+        10,
+        this.invSForm.controls['name'].value,
+        this.invSForm.controls['vendor'].value
+      )
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          this.invList = res.data.content;
+          this.total = res.data.totalElements!;
+          if (this.toPageVal > this.total) {
+            this.toPageVal = this.total;
+          } else {
+            this.toPageVal = this.invList.length;
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loader = false;
+        },
+        complete: () => {
+          this.loader = false;
+        },
+      });
+  }
+
   getAllDue(): void {
     this.insService
-      .getAllDue(
+      .getAllInventory(
         this.page,
         this.pageSize,
         this.invSForm.controls['name'].value,
@@ -220,7 +250,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   deleteDue(id: string): void {
     this.loader = true;
-    this.insService.deleteDue(id).subscribe({
+    this.insService.deleteInventory(id).subscribe({
       next: (res: any) => {
         if (!res) {
           this.getAllDue();

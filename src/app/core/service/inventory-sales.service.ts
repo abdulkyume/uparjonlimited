@@ -11,6 +11,8 @@ import Swal from 'sweetalert2';
 export class InventorySalesService {
   private apiurl = environment.environment;
   private dueEntry: string = 'inventory-sales/due';
+  private invEntry: string = 'inventory-sales/inventory';
+  private shopEntry: string = 'inventory-sales/shop';
 
   private http = inject(HttpClient)
   private authService = inject(AuthService)
@@ -49,7 +51,6 @@ export class InventorySalesService {
   }
 
   addDue(newUser: any) {
-    console.log(newUser)
     var apiurl = environment.environment;
     return this.http.post<any>(`${apiurl}${this.dueEntry}/add`, newUser).pipe(
       timeout(60000),
@@ -139,19 +140,15 @@ export class InventorySalesService {
   getAllInventory(
     page: number = 0,
     limit: number = 10,
-    inventoryItemId: string = '',
-    shopId: string = '',
-    orderId: string = '',
-    dsoId: string = '',
+    name: string = '',
+    vendor: string = '',
   ) {
     var params = new HttpParams()
       .set('page', Number(page))
       .set('pageSize', Number(limit))
-      .set('inventoryItemId', String(inventoryItemId))
-      .set('shopId', String(shopId))
-      .set('dsoId', String(dsoId))
-      .set('orderId', String(orderId));
-    return this.http.get(`${this.apiurl}${this.dueEntry}/get`, { params }).pipe(
+      .set('name', String(name))
+      .set('vendor', String(vendor));
+    return this.http.get(`${this.apiurl}${this.invEntry}/get`, { params }).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);
@@ -170,9 +167,8 @@ export class InventorySalesService {
   }
 
   addInventory(newUser: any) {
-    console.log(newUser)
     var apiurl = environment.environment;
-    return this.http.post<any>(`${apiurl}${this.dueEntry}/add`, newUser).pipe(
+    return this.http.post<any>(`${apiurl}${this.invEntry}/add`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);
@@ -198,7 +194,7 @@ export class InventorySalesService {
 
   updateInventory(newUser: any) {
     var apiurl = environment.environment;
-    return this.http.put<any>(`${apiurl}${this.dueEntry}/update`, newUser).pipe(
+    return this.http.put<any>(`${apiurl}${this.invEntry}/update`, newUser).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);
@@ -233,7 +229,121 @@ export class InventorySalesService {
 
   deleteInventory(id: any) {
     var apiurl = environment.environment;
-    return this.http.delete<any>(`${apiurl}${this.dueEntry}/delete/${id}`).pipe(
+    return this.http.delete<any>(`${apiurl}${this.invEntry}/delete/${id}`).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  getAllShop(
+    page: number = 0,
+    limit: number = 10,
+    phoneNumber: string = '',
+  ) {
+    var params = new HttpParams()
+      .set('page', Number(page))
+      .set('pageSize', Number(limit))
+      .set('phoneNumber', String(phoneNumber));
+    return this.http.get(`${this.apiurl}${this.shopEntry}/get`, { params }).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  addShop(newUser: any) {
+    var apiurl = environment.environment;
+    return this.http.post<any>(`${apiurl}${this.shopEntry}/add`, newUser).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  updateShop(newUser: any) {
+    var apiurl = environment.environment;
+    return this.http.put<any>(`${apiurl}${this.shopEntry}/update`, newUser).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        if (
+          err.message === "Cannot read properties of null (reading 'message')"
+        ) {
+          Swal.fire(
+            'Error!!',
+            'Resource Not Available. Link is Not Working',
+            'error'
+          );
+        }
+        throw err;
+      })
+    );
+  }
+
+  deleteShop(id: any) {
+    var apiurl = environment.environment;
+    return this.http.delete<any>(`${apiurl}${this.shopEntry}/delete/${id}`).pipe(
       timeout(60000),
       catchError((err) => {
         console.error(err);

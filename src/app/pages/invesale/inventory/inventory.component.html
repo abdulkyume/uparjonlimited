@@ -79,33 +79,25 @@
 
     <div class="row bg-white mt-3" *ngIf="showAddBtn">
       <div class="col-lg-12 col-md-12 col-12 p-3">
-        <form [formGroup]="invSForm" class="row" (ngSubmit)="getAllDue()">
+        <form [formGroup]="invSForm" class="row" (ngSubmit)="searchInv()">
           <div class="col-lg-6 mb-3">
-            <label for="">Select Item</label>
-            <ng-multiselect-dropdown
-              [placeholder]="'Item Name'"
-              [settings]="dropdownSettings"
-              [data]="dropdownList"
-              [(ngModel)]="selectedItems"
-              [ngModelOptions]="{ standalone: true }"
-              (onSelect)="onInitiatorItemSelect($event)"
-              (onDeSelect)="onInitiatorItemUnSelect($event)"
-            >
-            </ng-multiselect-dropdown>
+            <label for="name">Item Name</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              id="name"
+            />
           </div>
 
           <div class="col-lg-6 mb-3">
-            <label for="">Select Vendor</label>
-            <ng-multiselect-dropdown
-              [placeholder]="'Vendor Name'"
-              [settings]="dropdownSettings"
-              [data]="dropdownList1"
-              [(ngModel)]="selectedItems1"
-              [ngModelOptions]="{ standalone: true }"
-              (onSelect)="onInitiatorItemSelect1($event)"
-              (onDeSelect)="onInitiatorItemUnSelect1($event)"
-            >
-            </ng-multiselect-dropdown>
+            <label for="vendor">Vendor name</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="vendor"
+              id="vendor"
+            />
           </div>
 
           <div class="col-lg-6 mb-3">
@@ -116,7 +108,7 @@
             <button
               class="btn btn-warning w-100"
               type="button"
-              (click)="dueRefreshForm()"
+              (click)="dueSRefreshForm()"
             >
               Clear
             </button>

@@ -5,7 +5,13 @@ import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { InventorySalesService } from 'src/app/core/service/inventory-sales.service';
 import { Subject, takeUntil } from 'rxjs';
 import { EncryptionService } from 'src/app/core/service/encryption.service';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import Swal from 'sweetalert2';
 import { RoleService } from 'src/app/core/service/role.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -20,7 +26,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     ReactiveFormsModule,
     NgbDropdownModule,
     NgMultiSelectDropDownModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './due.component.html',
   styleUrls: ['./due.component.scss'],
@@ -41,6 +47,10 @@ export class DueComponent implements OnInit, OnDestroy {
   dropdownSettings = {};
   dropdownList = [];
   selectedItems: any;
+  dropdownList1 = [];
+  selectedItems1: any;
+  dropdownList2 = [];
+  selectedItems2: any;
 
   private insService = inject(InventorySalesService);
   private roleService = inject(RoleService);
@@ -52,6 +62,7 @@ export class DueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.getAllShop();
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'id',
@@ -105,16 +116,22 @@ export class DueComponent implements OnInit, OnDestroy {
     this.dueForm = this.formBuilder.group({
       id: [''],
       dueAmount: [0],
-      inventoryItemId: [''],
-      shopId: [''],
+      inventoryItemId: ['', [Validators.required]],
+      shopId: ['', [Validators.required]],
       orderId: [''],
-      dsoId: [''],
+      dsoId: ['', [Validators.required]],
       deleted: [false],
     });
   }
 
   toggleAddBtn(): void {
-    this.showAddBtn ? (this.showAddBtn = false) : (this.showAddBtn = true);
+    if (this.showAddBtn) {
+      this.showAddBtn = false;
+      this.dueRefreshForm();
+      this.dueSRefreshForm();
+    } else {
+      this.showAddBtn = true;
+    }
   }
 
   onsubmit() {
@@ -204,6 +221,31 @@ export class DueComponent implements OnInit, OnDestroy {
       });
   }
 
+  getAllShop(): void {
+    let data: any = [];
+    this.insService
+      .getAllShop(-1, -1, '')
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          res.data.map((content: any) => {
+            data.push({
+              id: content.id,
+              value: `${content.name} - ${content.phoneNumber}`,
+            });
+          });
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.loader = false;
+        },
+        complete: () => {
+          this.dropdownList2 = data
+          this.loader = false;
+        },
+      });
+  }
+
   editDue(data: any) {
     this.dueForm.controls['id'].setValue(data.id);
     this.dueForm.controls['dueAmount'].setValue(data.dueAmount);
@@ -252,6 +294,22 @@ export class DueComponent implements OnInit, OnDestroy {
 
   onInitiatorItemUnSelect(item: any): void {
     this.f['dsoId'].setValue('');
+  }
+
+  onInitiatorItemSelect1(item: any): void {
+    this.f['inventoryItemId'].setValue(item);
+  }
+
+  onInitiatorItemUnSelect1(item: any): void {
+    this.f['inventoryItemId'].setValue('');
+  }
+
+  onInitiatorItemSelect2(item: any): void {
+    this.f['shopId'].setValue(item);
+  }
+
+  onInitiatorItemUnSelect2(item: any): void {
+    this.f['shopId'].setValue('');
   }
 
   successmsg(message: string): void {
