@@ -1,0 +1,105 @@
+[
+  {
+    "serviceName": "Bike Delivery: 2-6 hr",
+    "items": {
+      "list": [
+        "Book",
+        "Medicine",
+        "Documents",
+        "Jewelry",
+        "Cosmetics",
+        "Dresses",
+        "Pet Care",
+        "Other e-commerce Products"
+      ]
+    },
+    "cost": 100
+  },
+  {
+    "serviceName": "Bike Delivery 1-3 hr",
+    "items": {
+      "list": [
+        "Dry Food",
+        "Brownie",
+        "Jar Cake",
+        "Chocolate",
+        "Cookies",
+        "Bread",
+        "Fruits",
+        "Grocery",
+        "Beverage",
+        "Tree"
+      ]
+    },
+    "cost": 150
+  },
+  {
+    "serviceName": "Bike Delivery 1-2 hr",
+    "items": {
+      "list": [
+        "Frozen Food",
+        "Cooked Items",
+        "Lunch Items",
+        "Tub Cake",
+        "Slice Cake",
+        "Yoghurt",
+        "Dessert",
+        "Sweet",
+        "Milk Items"
+      ]
+    },
+    "cost": 200
+  },
+  {
+    "serviceName": "Bike Delivery 1-2 hr",
+    "items": {
+      "list": ["Cup Cake"]
+    },
+    "cost": 250
+  },
+  {
+    "serviceName": "AC Car / Freezing Van (Flexible Time): 2-6 hr",
+    "items": {
+      "list": [
+        "Birthday Cake",
+        "Cooked Items",
+        "Frozen Items",
+        "Ice Cream",
+        "Fragile",
+        "Liquid",
+        "Surprised Gift",
+        "Others"
+      ]
+    },
+    "cost": 250
+  },
+  {
+    "serviceName": "AC Car / Freezing Van (Urgent Delivery): 1-2 hr",
+    "items": {
+      "list": [
+        "Birthday Cake",
+        "Urgent Food Delivery",
+        "Bulk Food Delivery",
+        "Electronic Items",
+        "Others"
+      ]
+    },
+    "cost": 600
+  },
+  {
+    "serviceName": "Super Express Service (CNG) 1-2 hr",
+    "items": {
+      "list": [
+        "Birthday Cake",
+        "Lunch Items",
+        "Cooked Items",
+        "Urgent Food Delivery",
+        "Bulk Food Delivery",
+        "Fragile",
+        "Gift",
+        "Others"
+      ]
+    },
+    "cost": 400
+  }
+]

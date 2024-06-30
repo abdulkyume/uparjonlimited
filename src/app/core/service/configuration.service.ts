@@ -217,4 +217,8 @@ export class ConfigurationService {
       })
     );
   }
+
+  getAllCharge():any{
+    return this.http.get<any>(`/assets/data/serviceCost.json`);
+  }
 }

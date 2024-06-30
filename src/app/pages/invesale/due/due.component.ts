@@ -51,6 +51,7 @@ export class DueComponent implements OnInit, OnDestroy {
   selectedItems1: any;
   dropdownList2 = [];
   selectedItems2: any;
+  inventoryList = new Map();
 
   private insService = inject(InventorySalesService);
   private roleService = inject(RoleService);
@@ -78,6 +79,47 @@ export class DueComponent implements OnInit, OnDestroy {
     this.dueSRefreshForm();
     this.getAllDue();
     this.dueRefreshForm();
+    this.getAllInventory();
+  }
+
+  getAllInventory(): void {
+    this.insService.getAllInventory(-1, 0).subscribe({
+      next: (res: any) => {
+        res.data.map((content: any) => {
+          this.inventoryList.set(content.id, content.name);
+        });
+      },
+      error: (error: any) => {
+        this.loader = false;
+        console.error('Error:', error);
+      },
+      complete: () => {
+        this.getAllInventoryItem();
+      },
+    });
+  }
+
+  getAllInventoryItem(): void {
+    let data: any = [];
+    this.insService.getAllInvDet(-1, 0).subscribe({
+      next: (res: any) => {
+        res.data.map((content: any) => {
+          data.push({
+            id: content.id,
+            value: `${this.inventoryList.get(content.inventoryId)}-${
+              content.type
+            }-${content.unit}`,
+          });
+        });
+      },
+      error: (error: any) => {
+        this.loader = false;
+        console.error('Error:', error);
+      },
+      complete: () => {
+        this.dropdownList1 = data;
+      },
+    });
   }
 
   getAllDSO(): void {
@@ -110,6 +152,9 @@ export class DueComponent implements OnInit, OnDestroy {
       shopId: [''],
       orderId: [''],
     });
+    this.selectedItems = [];
+    this.selectedItems1 = [];
+    this.selectedItems2 = [];
   }
 
   dueRefreshForm(): void {
@@ -122,16 +167,19 @@ export class DueComponent implements OnInit, OnDestroy {
       dsoId: ['', [Validators.required]],
       deleted: [false],
     });
+    this.selectedItems = [];
+    this.selectedItems1 = [];
+    this.selectedItems2 = [];
   }
 
   toggleAddBtn(): void {
     if (this.showAddBtn) {
       this.showAddBtn = false;
-      this.dueRefreshForm();
-      this.dueSRefreshForm();
     } else {
       this.showAddBtn = true;
     }
+    this.dueRefreshForm();
+    this.dueSRefreshForm();
   }
 
   onsubmit() {
@@ -240,13 +288,22 @@ export class DueComponent implements OnInit, OnDestroy {
           this.loader = false;
         },
         complete: () => {
-          this.dropdownList2 = data
+          this.dropdownList2 = data;
           this.loader = false;
         },
       });
   }
 
   editDue(data: any) {
+    this.selectedItems = this.dropdownList.filter(
+      (item: any) => item.id === data.dsoId
+    );
+    this.selectedItems1 = this.dropdownList1.filter(
+      (item: any) => item.id === data.inventoryItemId
+    );
+    this.selectedItems2 = this.dropdownList2.filter(
+      (item: any) => item.id === data.shopId
+    );
     this.dueForm.controls['id'].setValue(data.id);
     this.dueForm.controls['dueAmount'].setValue(data.dueAmount);
     this.dueForm.controls['inventoryItemId'].setValue(data.inventoryItemId);
@@ -289,7 +346,7 @@ export class DueComponent implements OnInit, OnDestroy {
   }
 
   onInitiatorItemSelect(item: any): void {
-    this.f['dsoId'].setValue(item);
+    this.f['dsoId'].setValue(item.id);
   }
 
   onInitiatorItemUnSelect(item: any): void {
@@ -297,7 +354,7 @@ export class DueComponent implements OnInit, OnDestroy {
   }
 
   onInitiatorItemSelect1(item: any): void {
-    this.f['inventoryItemId'].setValue(item);
+    this.f['inventoryItemId'].setValue(item.id);
   }
 
   onInitiatorItemUnSelect1(item: any): void {
@@ -305,7 +362,7 @@ export class DueComponent implements OnInit, OnDestroy {
   }
 
   onInitiatorItemSelect2(item: any): void {
-    this.f['shopId'].setValue(item);
+    this.f['shopId'].setValue(item.id);
   }
 
   onInitiatorItemUnSelect2(item: any): void {

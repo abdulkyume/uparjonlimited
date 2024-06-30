@@ -95,6 +95,8 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   modalData: any;
 
+  serviceChargeData: any[] = [];
+
   currentdate: string = `${new Date().getFullYear()}-${String(
     new Date().getMonth() + 1
   ).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
@@ -108,6 +110,17 @@ export class OrderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.configservice.getAllCharge().subscribe({
+      next: (data: any) => {
+        this.serviceChargeData = data;
+      },
+      error: (error: any) => {
+        console.error('Error in getting service charge', error);
+      },
+      complete: () => {
+        this.sericecharge();
+      },
+    });
     this.orderSformRefresh();
     this.getAllmerchant();
     this.roleid = this.encryptionService.decrypt(localStorage.getItem('role')!);
@@ -128,7 +141,6 @@ export class OrderComponent implements OnInit, OnDestroy {
       allowSearchFilter: true,
     };
     this.placeOrderFormRefresh();
-    this.sericecharge();
     this.getAllOrder();
   }
 
@@ -919,118 +931,11 @@ export class OrderComponent implements OnInit, OnDestroy {
       this.f['deliveryCost'].value + this.f['productCost'].value
     );
   }
-
-  serviceChargeData = [
-    {
-      serviceName: 'Bike Delivery: 2-6 hr',
-      items: {
-        list: [
-          'Book',
-          'Medicine',
-          'Documents',
-          'Jewelry',
-          'Cosmetics',
-          'Dresses',
-          'Pet Care',
-          'Other e-commerce Products',
-        ],
-      },
-      cost: 100,
-    },
-    {
-      serviceName: 'Bike Delivery 1-3 hr',
-      items: {
-        list: [
-          'Dry Food',
-          'Brownie',
-          'Jar Cake',
-          'Chocolate',
-          'Cookies',
-          'Bread',
-          'Fruits',
-          'Grocery',
-          'Beverage',
-          'Tree',
-        ],
-      },
-      cost: 150,
-    },
-    {
-      serviceName: 'Bike Delivery 1-2 hr',
-      items: {
-        list: [
-          'Frozen Food',
-          'Cooked Items',
-          'Lunch Items',
-          'Tub Cake',
-          'Slice Cake',
-          'Yoghurt',
-          'Dessert',
-          'Sweet',
-          'Milk Items',
-        ],
-      },
-      cost: 200,
-    },
-    {
-      serviceName: 'Bike Delivery 1-2 hr',
-      items: {
-        list: ['Cup Cake'],
-      },
-      cost: 250,
-    },
-    {
-      serviceName: 'AC Car / Freezing Van (Flexible Time): 2-6 hr',
-      items: {
-        list: [
-          'Birthday Cake',
-          'Cooked Items',
-          'Frozen Items',
-          'Ice Cream',
-          'Fragile',
-          'Liquid',
-          'Surprised Gift',
-          'Others',
-        ],
-      },
-      cost: 250,
-    },
-    {
-      serviceName: 'AC Car / Freezing Van (Urgent Delivery): 1-2 hr',
-      items: {
-        list: [
-          'Birthday Cake',
-          'Urgent Food Delivery',
-          'Bulk Food Delivery',
-          'Electronic Items',
-          'Others',
-        ],
-      },
-      cost: 600,
-    },
-    {
-      serviceName: 'Super Express Service (CNG) 1-2 hr',
-      items: {
-        list: [
-          'Birthday Cake',
-          'Lunch Items',
-          'Cooked Items',
-          'Urgent Food Delivery',
-          'Bulk Food Delivery',
-          'Fragile',
-          'Gift',
-          'Others',
-        ],
-      },
-      cost: 400,
-    },
-  ];
-
   sericecharge() {
     const uniqueItemsSet = new Set();
     this.serviceChargeData.forEach((service) => {
       const items = service.items.list;
-      items.forEach((item) => {
+      items.forEach((item: any) => {
         uniqueItemsSet.add(item);
       });
     });

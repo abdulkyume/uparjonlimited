@@ -27,6 +27,7 @@
     </div>
 
     <div class="row bg-white mt-2" *ngIf="!showAddBtn">
+      <h3 class="text-center my-3">New Entry</h3>
       <form [formGroup]="dueForm" class="row" (ngSubmit)="onsubmit()">
         <div class="col-lg-3 mb-3">
           <label for="">Select DSO</label>
