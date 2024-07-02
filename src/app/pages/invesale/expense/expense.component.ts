@@ -157,8 +157,8 @@ export class ExpenseComponent implements OnInit, OnDestroy {
     this.dueSForm = this.formBuilder.group({
       dsoId: [this.userid],
       orderNo: [''],
-      fromDate: [this.currentdate],
-      toDate: [this.currentdate],
+      dateFrom: [this.currentdate],
+      dateTo: [this.currentdate],
     });
     this.selectedItems = [];
     this.selectedItems1 = [];
