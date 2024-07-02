@@ -226,10 +226,10 @@
                   </div>
                 </div>
               </td>
-              <td>{{ data.dsoId }}</td>
+              <td [innerHTML]="dsoList.get(data.dsoId)"></td>
               <td>{{ data.orderId }}</td>
-              <td>{{ data.shopId }}</td>
-              <td>{{ data.inventoryItemId }}</td>
+              <td [innerHTML]="shopList.get(data.shopId)"></td>
+              <td [innerHTML]="inventoryDetailList.get(data.inventoryItemId)"></td>
               <td>{{ data.dueAmount }}</td>
             </tr>
           </tbody>

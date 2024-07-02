@@ -333,7 +333,76 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   onSearch() {
-    this.getAllOrder();
+    this.loader = true;
+    this.page = 0;
+    this.pageSize = 10;
+    if (this.userRoleid == '1143fcc9-02d1-4bd0-ab47-b5efc92072fc') {
+      this.merchantService
+        .getOrder(
+          this.page,
+          this.pageSize,
+          this.sfc['orderNo'].value,
+          this.sfc['status'].value,
+          this.sfc['fromDate'].value,
+          this.sfc['toDate'].value,
+          this.sfc['mercahntId'].value
+        )
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            if (res.isSuccess || res.statusCode == 200) {
+              this.orderList = res.data.content;
+              this.total = res.data.totalElements;
+              if (this.toPageVal > this.total) {
+                this.toPageVal = this.total;
+              } else {
+                this.toPageVal = this.orderList.length;
+              }
+            }
+          },
+
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false;
+          },
+          complete: () => {
+            this.loader = false;
+          },
+        });
+    } else {
+      this.merchantService
+        .getOrder(
+          this.page,
+          this.pageSize,
+          this.sfc['orderNo'].value,
+          this.sfc['status'].value,
+          this.sfc['fromDate'].value,
+          this.sfc['toDate'].value,
+          this.userId
+        )
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            if (res.isSuccess || res.statusCode == 200) {
+              this.orderList = res.data.content;
+              this.total = res.data.totalElements;
+              if (this.toPageVal > this.total) {
+                this.toPageVal = this.total;
+              } else {
+                this.toPageVal = this.orderList.length;
+              }
+            }
+          },
+
+          error: (err: any) => {
+            console.error(err);
+            this.loader = false;
+          },
+          complete: () => {
+            this.loader = false;
+          },
+        });
+    }
   }
 
   editOrder(data: any) {

@@ -52,6 +52,9 @@ export class DueComponent implements OnInit, OnDestroy {
   dropdownList2 = [];
   selectedItems2: any;
   inventoryList = new Map();
+  inventoryDetailList = new Map();
+  shopList = new Map();
+  dsoList = new Map();
 
   private insService = inject(InventorySalesService);
   private roleService = inject(RoleService);
@@ -104,12 +107,16 @@ export class DueComponent implements OnInit, OnDestroy {
     this.insService.getAllInvDet(-1, 0).subscribe({
       next: (res: any) => {
         res.data.map((content: any) => {
-          data.push({
+          let a = {
             id: content.id,
             value: `${this.inventoryList.get(content.inventoryId)}-${
               content.type
             }-${content.unit}`,
-          });
+          };
+          this.inventoryDetailList.set(content.id, `${this.inventoryList.get(content.inventoryId)}<br/>${
+              content.type
+            }-${content.unit}`);
+          data.push(a);
         });
       },
       error: (error: any) => {
@@ -129,10 +136,12 @@ export class DueComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           res.data.content.map((content: any) => {
-            data.push({
+            let a = {
               id: content.id,
-              value: `${content.firstName} ${content.lastName} - ${content.mobile}`,
-            });
+              value: `${content.firstName} ${content.lastName}\n${content.mobile}`,
+            };
+            this.dsoList.set(content.id, `${content.firstName} ${content.lastName}<br/>${content.mobile}`);
+            data.push(a);
           });
         },
         error: (error: any) => {
@@ -281,6 +290,7 @@ export class DueComponent implements OnInit, OnDestroy {
               id: content.id,
               value: `${content.name} - ${content.phoneNumber}`,
             });
+            this.shopList.set(content.id, `${content.name} <br/> ${content.phoneNumber}`);
           });
         },
         error: (err: any) => {
