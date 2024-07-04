@@ -36,15 +36,11 @@ export class ExpenseComponent implements OnInit, OnDestroy {
   total: number = 0;
   userid: string = '';
   dueList: any[] = [];
-  dueSForm!: FormGroup;
-  dueForm!: FormGroup;
+  expenseSForm!: FormGroup;
+  expenseForm!: FormGroup;
   dropdownSettings = {};
   dropdownList = [];
   selectedItems: any;
-  dropdownList1 = [];
-  selectedItems1: any;
-  dropdownList2 = [];
-  selectedItems2: any;
   inventoryList = new Map();
   inventoryDetailList = new Map();
   shopList = new Map();
@@ -61,11 +57,10 @@ export class ExpenseComponent implements OnInit, OnDestroy {
   private formBuilder = inject(FormBuilder);
 
   get f() {
-    return this.dueForm.controls;
+    return this.expenseForm.controls;
   }
 
   ngOnInit(): void {
-    this.getAllShop();
     this.dropdownSettings = {
       singleSelection: true,
       idField: 'id',
@@ -79,54 +74,10 @@ export class ExpenseComponent implements OnInit, OnDestroy {
     ).id;
 
     this.dueSRefreshForm();
-    this.getAllDue();
-    this.dueRefreshForm();
-    this.getAllInventory();
+    this.getAllExpense();
+    this.expenseSRefreshForm();
   }
 
-  getAllInventory(): void {
-    this.insService.getAllInventory(-1, 0).subscribe({
-      next: (res: any) => {
-        res.data.map((content: any) => {
-          this.inventoryList.set(content.id, content.name);
-        });
-      },
-      error: (error: any) => {
-        this.loader = false;
-        console.error('Error:', error);
-      },
-      complete: () => {
-        this.getAllInventoryItem();
-      },
-    });
-  }
-
-  getAllInventoryItem(): void {
-    let data: any = [];
-    this.insService.getAllInvDet(-1, 0).subscribe({
-      next: (res: any) => {
-        res.data.map((content: any) => {
-          let a = {
-            id: content.id,
-            value: `${this.inventoryList.get(content.inventoryId)}-${
-              content.type
-            }-${content.unit}`,
-          };
-          this.inventoryDetailList.set(content.id, `${this.inventoryList.get(content.inventoryId)}<br/>${
-              content.type
-            }-${content.unit}`);
-          data.push(a);
-        });
-      },
-      error: (error: any) => {
-        this.loader = false;
-        console.error('Error:', error);
-      },
-      complete: () => {
-        this.dropdownList1 = data;
-      },
-    });
-  }
 
   getAllDSO(): void {
     let data: any = [];
@@ -154,19 +105,17 @@ export class ExpenseComponent implements OnInit, OnDestroy {
   }
 
   dueSRefreshForm(): void {
-    this.dueSForm = this.formBuilder.group({
-      dsoId: [this.userid],
+    this.expenseSForm = this.formBuilder.group({
+      dsoId: [''],
       orderNo: [''],
       dateFrom: [this.currentdate],
       dateTo: [this.currentdate],
     });
     this.selectedItems = [];
-    this.selectedItems1 = [];
-    this.selectedItems2 = [];
   }
 
-  dueRefreshForm(): void {
-    this.dueForm = this.formBuilder.group({
+  expenseSRefreshForm(): void {
+    this.expenseForm = this.formBuilder.group({
       id: [''],
       dsoId: [this.userid],
       name: [''],
@@ -177,8 +126,6 @@ export class ExpenseComponent implements OnInit, OnDestroy {
       deleted: [false],
     });
     this.selectedItems = [];
-    this.selectedItems1 = [];
-    this.selectedItems2 = [];
   }
 
   toggleAddBtn(): void {
@@ -187,18 +134,18 @@ export class ExpenseComponent implements OnInit, OnDestroy {
     } else {
       this.showAddBtn = true;
     }
-    this.dueRefreshForm();
+    this.expenseSRefreshForm();
     this.dueSRefreshForm();
   }
 
   onsubmit() {
-    if (this.dueForm.invalid) {
+    if (this.expenseForm.invalid) {
       return;
     }
     this.loader = true;
-    if (this.dueForm.controls['id'].value) {
+    if (this.expenseForm.controls['id'].value) {
       this.insService
-        .updateDue(this.dueForm.value)
+        .updateExpense(this.expenseForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
@@ -207,9 +154,9 @@ export class ExpenseComponent implements OnInit, OnDestroy {
               this.errorssmsg(res.reason);
             } else {
               this.successmsg(res.reason);
-              this.dueRefreshForm();
+              this.expenseSRefreshForm();
               this.showAddBtn = true;
-              this.getAllDue();
+              this.getAllExpense();
             }
           },
           error: (err: any) => {
@@ -222,7 +169,7 @@ export class ExpenseComponent implements OnInit, OnDestroy {
         });
     } else {
       this.insService
-        .addDue(this.dueForm.value)
+        .addExpense(this.expenseForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
@@ -231,9 +178,9 @@ export class ExpenseComponent implements OnInit, OnDestroy {
               this.errorssmsg(res.reason);
             } else {
               this.successmsg(res.reason);
-              this.dueRefreshForm();
+              this.expenseSRefreshForm();
               this.showAddBtn = true;
-              this.getAllDue();
+              this.getAllExpense();
             }
           },
           error: (err: any) => {
@@ -247,15 +194,15 @@ export class ExpenseComponent implements OnInit, OnDestroy {
     }
   }
 
-  getAllDue(): void {
+  getAllExpense(): void {
     this.insService
-      .getAllDue(
+      .getAllExpense(
         this.page,
         this.pageSize,
-        this.dueSForm.controls['inventoryItemId'].value,
-        this.dueSForm.controls['shopId'].value,
-        this.dueSForm.controls['orderId'].value,
-        this.dueSForm.controls['dsoId'].value
+        this.expenseSForm.controls['orderNo'].value,
+        this.expenseSForm.controls['dsoId'].value,
+        this.expenseSForm.controls['dateFrom'].value,
+        this.expenseSForm.controls['dateTo'].value
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -278,58 +225,27 @@ export class ExpenseComponent implements OnInit, OnDestroy {
       });
   }
 
-  getAllShop(): void {
-    let data: any = [];
-    this.insService
-      .getAllShop(-1, -1, '')
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res: any) => {
-          res.data.map((content: any) => {
-            data.push({
-              id: content.id,
-              value: `${content.name} - ${content.phoneNumber}`,
-            });
-            this.shopList.set(content.id, `${content.name} <br/> ${content.phoneNumber}`);
-          });
-        },
-        error: (err: any) => {
-          console.error(err);
-          this.loader = false;
-        },
-        complete: () => {
-          this.dropdownList2 = data;
-          this.loader = false;
-        },
-      });
-  }
-
-  editDue(data: any) {
+  
+  editExpense(data: any) {
     this.selectedItems = this.dropdownList.filter(
       (item: any) => item.id === data.dsoId
     );
-    this.selectedItems1 = this.dropdownList1.filter(
-      (item: any) => item.id === data.inventoryItemId
-    );
-    this.selectedItems2 = this.dropdownList2.filter(
-      (item: any) => item.id === data.shopId
-    );
-    this.dueForm.controls['id'].setValue(data.id);
-    this.dueForm.controls['dueAmount'].setValue(data.dueAmount);
-    this.dueForm.controls['inventoryItemId'].setValue(data.inventoryItemId);
-    this.dueForm.controls['shopId'].setValue(data.shopId);
-    this.dueForm.controls['orderId'].setValue(data.orderId);
-    this.dueForm.controls['dsoId'].setValue(data.dsoId);
-    this.dueForm.controls['deleted'].setValue(data.deleted);
+    this.expenseForm.controls['id'].setValue(data.id);
+    this.expenseForm.controls['name'].setValue(data.name);
+    this.expenseForm.controls['amount'].setValue(data.amount);
+    this.expenseForm.controls['orderNo'].setValue(data.orderNo);
+    this.expenseForm.controls['note'].setValue(data.note);
+    this.expenseForm.controls['dsoId'].setValue(data.dsoId);
+    this.expenseForm.controls['date'].setValue(data.date.split("T")[0]);
     this.showAddBtn = false;
     window.scrollTo(0, 0);
   }
 
-  deleteDue(id: string): void {
+  deleteExpense(id: string): void {
     this.loader = true;
-    this.insService.deleteDue(id).subscribe({
+    this.insService.deleteExpense(id).subscribe({
       next: (res: any) => {
-        this.getAllDue();
+        this.getAllExpense();
       },
       error: (err: any) => {
         console.error(err);
@@ -351,7 +267,7 @@ export class ExpenseComponent implements OnInit, OnDestroy {
     if (this.toPageVal > this.total) {
       this.toPageVal = this.total;
     }
-    this.getAllDue();
+    this.getAllExpense();
     return event;
   }
 
@@ -361,22 +277,6 @@ export class ExpenseComponent implements OnInit, OnDestroy {
 
   onInitiatorItemUnSelect(item: any): void {
     this.f['dsoId'].setValue('');
-  }
-
-  onInitiatorItemSelect1(item: any): void {
-    this.f['inventoryItemId'].setValue(item.id);
-  }
-
-  onInitiatorItemUnSelect1(item: any): void {
-    this.f['inventoryItemId'].setValue('');
-  }
-
-  onInitiatorItemSelect2(item: any): void {
-    this.f['shopId'].setValue(item.id);
-  }
-
-  onInitiatorItemUnSelect2(item: any): void {
-    this.f['shopId'].setValue('');
   }
 
   successmsg(message: string): void {
