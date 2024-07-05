@@ -1,1 +1,117 @@
-<p>order works!</p>
+<div class="position-relative">
+  <div class="bgsetforloading position-absolute" *ngIf="loader">
+    <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row bg-white mt-3">
+      <div class="col-lg-6 col-md-6 col-12">
+        <h3>Order</h3>
+      </div>
+    </div>
+
+    <div class="row bg-white mt-3">
+      <div class="col-lg-12 col-md-12 col-12 p-3">
+        <form [formGroup]="orderSForm" class="row" (ngSubmit)="getAllOrder()">
+          <div class="col-lg-4 mb-3">
+            <label for="shopId">Select DSO</label>
+            <ng-multiselect-dropdown
+              [placeholder]="'Select DSO'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList"
+              [(ngModel)]="selectedItems"
+              [ngModelOptions]="{ standalone: true }"
+              (onSelect)="onInitiatorItemSelect($event)"
+              (onDeSelect)="onInitiatorItemUnSelect($event)"
+            >
+            </ng-multiselect-dropdown>
+          </div>
+
+          <div class="col-lg-4 mb-3">
+            <label for="orderDateFrom">From</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="orderDateFrom"
+              id="orderDateFrom"
+            />
+          </div>
+
+          <div class="col-lg-4 mb-3">
+            <label for="orderDateTo">From</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="orderDateTo"
+              id="orderDateTo"
+            />
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <button class="btn btn-primary w-100" type="submit">Search</button>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <button
+              class="btn btn-warning w-100"
+              type="button"
+              (click)="dueSRefreshForm()"
+            >
+              Clear
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row bg-white">
+      <div class="col-lg-12">
+        <table class="table table-responsive">
+          <thead>
+            <tr>
+              <th>Order Id</th>
+              <th>DSO Id</th>
+              <th>Order Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of orderList">
+              <td>{{ data.id }}</td>
+              <td [innerHTML]="dsoList.get(data.dsoId)"></td>
+              <td>{{ data.orderDate | date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- pagination start -->
+    <div class="row justify-content-md-between align-items-md-center mt-2">
+      <div class="col-sm-12 col-md-5">
+        <div
+          class="dataTables_info mb-2"
+          id="tickets-table_info"
+          role="status"
+          aria-live="polite"
+        >
+          Showing
+          {{ cPageVal }} to {{ toPageVal }} of {{ total }}
+          entries
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-5">
+        <div class="text-md-right float-md-end pagination-rounded">
+          <ngb-pagination
+            id="paginationCustoimse"
+            [collectionSize]="total"
+            (pageChange)="page = onPageChange($event)"
+            [pageSize]="pageSize"
+            [maxSize]="3"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+    <!-- pagination ends -->
+  </div>
+</div>

@@ -17,8 +17,8 @@ export class ReportService {
     pageSize: number = 20,
     fromDate: string,
     toDate: string,
-    userId: string,
-    mercahntId: string,
+    userId: string='',
+    mercahntId: string='',
     download: boolean = false
   ) {
     let params;

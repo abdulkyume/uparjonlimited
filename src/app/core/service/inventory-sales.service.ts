@@ -15,6 +15,8 @@ export class InventorySalesService {
   private shopEntry: string = 'inventory-sales/shop';
   private invDetEntry: string = 'inventory-sales/inventory-details';
   private expenseEntry: string = 'inventory-sales/expense';
+  private returnEntry: string = 'inventory-sales/return';
+  private orderEntry: string = 'inventory-sales/order';
 
   private http = inject(HttpClient)
   private authService = inject(AuthService)
@@ -593,6 +595,157 @@ export class InventorySalesService {
         ) {
           this.authService.logout();
         }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  getAllReturn(
+    page: number = 0,
+    limit: number = 10,
+    returnType: string = '',
+    orderId: string = '',
+    dateFrom: string = '',
+    dateTo: string = '',
+  ) {
+    var params = new HttpParams()
+      .set('page', Number(page))
+      .set('pageSize', Number(limit))
+      .set('returnType', String(returnType))
+      .set('orderId', String(orderId))
+      .set('dateTo', String(dateTo))
+      .set('dateFrom', String(dateFrom));
+    return this.http.get(`${this.apiurl}${this.returnEntry}/get`, { params }).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  addReturn(newUser: any) {
+    var apiurl = environment.environment;
+    return this.http.post<any>(`${apiurl}${this.returnEntry}/add`, newUser).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  updateReturn(newUser: any) {
+    var apiurl = environment.environment;
+    return this.http.put<any>(`${apiurl}${this.returnEntry}/update`, newUser).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        if (
+          err.message === "Cannot read properties of null (reading 'message')"
+        ) {
+          Swal.fire(
+            'Error!!',
+            'Resource Not Available. Link is Not Working',
+            'error'
+          );
+        }
+        throw err;
+      })
+    );
+  }
+
+  deleteReturn(id: any) {
+    var apiurl = environment.environment;
+    return this.http.delete<any>(`${apiurl}${this.returnEntry}/delete/${id}`).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
+        if (
+          err === 'Unauthorized user.' ||
+          err.message === 'Unauthorized user.'
+        ) {
+          this.authService.logout();
+        }
+        if (err.name === 'TimeoutError') {
+          Swal.fire('Time Out!!', 'Internal Server Problem');
+        }
+        if (err === 'Bad Request') {
+          Swal.fire('Error!!', 'Form Submission Error');
+        }
+        if (err === 'Unknown Error') {
+          Swal.fire('Error!!', 'No Connection Found');
+        }
+        throw err;
+      })
+    );
+  }
+
+  getAllOrder(
+    page: number = 0,
+    limit: number = 10,
+    dsoId: string = '',
+    orderDateFrom: string = '',
+    orderDateTo: string = ''
+  ) {
+    var params = new HttpParams()
+      .set('page', Number(page))
+      .set('pageSize', Number(limit))
+      .set('dsoId', String(dsoId))
+      .set('orderDateFrom', String(orderDateFrom))
+      .set('orderDateTo', String(orderDateTo));
+    return this.http.get(`${this.apiurl}${this.orderEntry}/get`, { params }).pipe(
+      timeout(60000),
+      catchError((err) => {
+        console.error(err);
         if (err.name === 'TimeoutError') {
           Swal.fire('Time Out!!', 'Internal Server Problem');
         }

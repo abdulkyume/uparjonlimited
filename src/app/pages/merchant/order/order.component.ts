@@ -304,6 +304,11 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   placeOrderFormRefresh() {
+    this.selectedItems5 = [];
+    this.selectedItems = [];
+    this.selectedItems1 = [];
+    this.selectedItems3 = [];
+    this.selectedItems4 = [];
     this.placeOrderForm = this.formbuilder.group({
       id: [null],
       pickupDate: [`${this.currentdate}`],
@@ -736,9 +741,11 @@ export class OrderComponent implements OnInit, OnDestroy {
   successmsg(message: string) {
     Swal.fire('Success!', message, 'success');
   }
+
   errorssmsg(message: string) {
     Swal.fire('Ops!', message, 'error');
   }
+  
   onSubmit() {
     this.submitted = true;
     if (this.placeOrderForm.invalid) {
