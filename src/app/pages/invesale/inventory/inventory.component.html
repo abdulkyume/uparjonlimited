@@ -27,6 +27,7 @@
     </div>
 
     <div class="row bg-white mt-2" *ngIf="!showAddBtn">
+      <h1 class="text-center mb-4">New Entry</h1>
       <form [formGroup]="invForm" class="row" (ngSubmit)="onsubmit()">
         <div class="col-lg-6 mb-3">
           <label for="name">Item Name</label>

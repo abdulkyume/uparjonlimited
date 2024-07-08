@@ -27,8 +27,12 @@
     </div>
 
     <div class="row bg-white mt-2" *ngIf="!showAddBtn">
+      <h1 class="text-center mb-4">New Entry</h1>
+      
+value{{invDetailForm.controls['id'].value}}
+value{{!invDetailForm.controls['id'].value}}
       <form [formGroup]="invDetailForm" class="row" (ngSubmit)="onsubmit()">
-        <div class="col-lg-4 mb-3">
+        <div class="col-lg-3 mb-3">
           <label for="type">Item Type</label>
           <select class="form-select" formControlName="type" id="type">
             <option value="">Select</option>
@@ -39,7 +43,7 @@
           </select>
         </div>
 
-        <div class="col-lg-4 mb-3">
+        <div class="col-lg-3 mb-3">
           <label for="unit">Item Unit</label>
           <select class="form-select" formControlName="unit" id="unit">
             <option value="">Select</option>
@@ -55,8 +59,8 @@
           </select>
         </div>
 
-        <div class="col-lg-4 mb-3">
-          <label for="buy">Quantity</label>
+        <div class="col-lg-3 mb-3">
+          <label for="buy">Buy Price</label>
           <input
             type="number"
             class="form-control"
@@ -65,6 +69,15 @@
           />
         </div>
 
+        <div class="col-lg-3 mb-3">
+          <label for="sell">Sell Price</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="sell"
+            id="sell"
+          />
+        </div>
         <div class="col-lg-6 mb-3">
           <button
             class="btn btn-primary w-100"
@@ -149,8 +162,8 @@
               <th>Action</th>
               <th>Type</th>
               <th>Unit</th>
-              <th>Quantity</th>
-              <th>Sold</th>
+              <th>Buy</th>
+              <th>Sell</th>
             </tr>
           </thead>
           <tbody>

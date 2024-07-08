@@ -78,6 +78,7 @@ export class InventorydetailsComponent implements OnInit, OnDestroy {
       type: ['PET', [Validators.required]],
       unit: ['Case', [Validators.required]],
       buy: [0, [Validators.required]],
+      sell: [0, [Validators.required]],
       deleted: [false],
     });
   }
