@@ -3,7 +3,7 @@
     <div class="position-absolute middleinpage"><app-loader></app-loader></div>
   </div>
 
-  <div class="container-fluid">
+  <div class="">
     <div class="row bg-white mt-3">
       <div class="col-lg-6 col-md-6 col-12">
         <h3 class="my-2">Sales</h3>
@@ -28,72 +28,192 @@
 
     <div class="row bg-white mt-2" *ngIf="!showAddBtn">
       <h3 class="text-center my-3">New Entry</h3>
-      <form [formGroup]="salesForm" class="row" (ngSubmit)="onsubmit()">
-        <div class="col-lg-3 mb-3">
-          <label for="">Select DSO</label>
-          <ng-multiselect-dropdown
-            [placeholder]="'Select DSO'"
-            [settings]="dropdownSettings"
-            [data]="dropdownList"
-            [(ngModel)]="selectedItems"
-            [ngModelOptions]="{ standalone: true }"
-            (onSelect)="onInitiatorItemSelect($event)"
-            (onDeSelect)="onInitiatorItemUnSelect($event)"
-          >
-          </ng-multiselect-dropdown>
-        </div>
+      <div class="col-lg-12 col-12 col-md-12">
+        <form [formGroup]="salesForm" class="row" (ngSubmit)="onsubmit()">
+          <div class="col-lg-6 mb-3">
+            <label for="date">Date</label>
+            <input
+              class="form-control"
+              type="date"
+              formControlName="date"
+              id="date"
+            />
+          </div>
+          <div class="col-lg-6 mb-3">
+            <label for="">Select DSO</label>
+            <ng-multiselect-dropdown
+              [placeholder]="'Select DSO'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList"
+              [(ngModel)]="selectedItems"
+              [ngModelOptions]="{ standalone: true }"
+              (onSelect)="onInitiatorItemSelect($event)"
+              (onDeSelect)="onInitiatorItemUnSelect($event)"
+            >
+            </ng-multiselect-dropdown>
+          </div>
 
-        <div class="col-lg-3 mb-3">
-          <label for="inventoryItemId">Inventory Item</label>
-          <ng-multiselect-dropdown
-            [placeholder]="'Select Item'"
-            [settings]="dropdownSettings"
-            [data]="dropdownList1"
-            [(ngModel)]="selectedItems1"
-            [ngModelOptions]="{ standalone: true }"
-            (onSelect)="onInitiatorItemSelect1($event)"
-            (onDeSelect)="onInitiatorItemUnSelect1($event)"
-          >
-          </ng-multiselect-dropdown>
-        </div>
+          <div class="col-lg-12 col-md-3 col-12 mb-3">
+            <div class="row">
+              <div class="col-lg-12 text-end">
+                <button
+                  type="button"
+                  class="ms-2 btn btn-primary w-md"
+                  (click)="addSlub()"
+                >
+                  Add Item
+                </button>
+              </div>
+            </div>
+            <div class="row pb-5">
+              <div class="col-lg-12">
+                <table
+                  class="table table-centered table-nowrap table-bordered"
+                  [formGroup]="slubForm"
+                >
+                  <thead class="customise-thead"></thead>
+                  <tbody formArrayName="slubFormVal">
+                    <tr
+                      class="py-2 border-primary border-3"
+                      *ngFor="let data1 of slubData().controls; let i = index"
+                      [formGroupName]="i"
+                    >
+                      <td
+                        class="d-flex justify-content-center align-items-center"
+                      >
+                        <div class="row">
+                          <div class="col-lg-1">
+                            <i
+                              class="fas fa-trash-alt"
+                              (click)="deleteSlub(i)"
+                            ></i>
+                          </div>
+                          <div class="col-lg-1">
+                            <ng-multiselect-dropdown
+                              [placeholder]="'Select Item'"
+                              [settings]="dropdownSettings"
+                              [data]="dropdownList1"
+                              [(ngModel)]="selectedItems1[i]"
+                              [ngModelOptions]="{ standalone: true }"
+                              (onSelect)="onInitiatorItemSelect1($event, i)"
+                              (onDeSelect)="onInitiatorItemUnSelect1($event, i)"
+                            >
+                            </ng-multiselect-dropdown>
+                          </div>
+                          <div class="col-6 my-2">
+                            <input
+                              type="number"
+                              formControlName="quantity"
+                              id="quantity"
+                              placeholder="Quantity"
+                              min="1"
+                              class="form-control m-0"
+                            />
+                          </div>
 
-        <div class="col-lg-3 mb-3">
-          <label for="dueAmount">Due Amount</label>
-          <input
-            type="number"
-            class="form-control"
-            formControlName="dueAmount"
-            id="dueAmount"
-          />
-        </div>
+                          <div class="col-6 my-2">
+                            <input
+                              type="number"
+                              [value]="
+                                inventoryPriceList.get(
+                                  slubData().controls[i].get('itemId')?.value
+                                ) *
+                                slubData().controls[i].get('quantity')?.value
+                              "
+                              id="amount"
+                              placeholder="Total Amount"
+                              min="1"
+                              class="form-control m-0"
+                              readonly
+                            />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="9">
+                        <div
+                          *ngIf="slubadderrorshow && slubData().invalid"
+                          class="text-danger"
+                        >
+                          <div>Fill Up the Previous One</div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
 
-        <div class="col-lg-6 mb-3">
-          <button
-            class="btn btn-primary w-100"
-            type="submit"
-            *ngIf="!salesForm.controls['id'].value"
-          >
-            Submit
-          </button>
-          <button
-            class="btn btn-primary w-100"
-            type="submit"
-            *ngIf="salesForm.controls['id'].value"
-          >
-            Update
-          </button>
-        </div>
+          <div class="col-lg-3 mb-3">
+            <label for="amount">Amount</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount"
+              id="amount"
+            />
+          </div>
 
-        <div class="col-lg-6 mb-3">
-          <button
-            class="btn btn-warning w-100"
-            type="button"
-            (click)="dueRefreshForm()"
-          >
-            Clear
-          </button>
-        </div>
-      </form>
+          <div class="col-lg-3 mb-3">
+            <label for="freeItem">Free Item</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="freeItem"
+              id="freeItem"
+            />
+          </div>
+
+          <div class="col-lg-3 mb-3">
+            <label for="discount">Discount</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="discount"
+              id="discount"
+            />
+          </div>
+
+          <div class="col-lg-3 mb-3">
+            <label for="finalAmount">Final Amount</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="finalAmount"
+              id="finalAmount"
+            />
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <button
+              class="btn btn-primary w-100"
+              type="submit"
+              *ngIf="!salesForm.controls['id'].value"
+            >
+              Submit
+            </button>
+            <button
+              class="btn btn-primary w-100"
+              type="submit"
+              *ngIf="salesForm.controls['id'].value"
+            >
+              Update
+            </button>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <button
+              class="btn btn-warning w-100"
+              type="button"
+              (click)="dueRefreshForm()"
+            >
+              Clear
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <div class="row bg-white mt-3" *ngIf="showAddBtn">
@@ -121,8 +241,8 @@
               [data]="dropdownList1"
               [(ngModel)]="selectedItems1"
               [ngModelOptions]="{ standalone: true }"
-              (onSelect)="onInitiatorItemSelect1($event)"
-              (onDeSelect)="onInitiatorItemUnSelect1($event)"
+              (onSelect)="onItemSelect1($event)"
+              (onDeSelect)="onItemUnSelect1($event)"
             >
             </ng-multiselect-dropdown>
           </div>
@@ -221,7 +341,7 @@
                   </div>
                 </div>
               </td>
-              <td >{{ data.inventoryOrderId }}</td>
+              <td>{{ data.inventoryOrderId }}</td>
               <td [innerHTML]="dsoList.get(data.dsoId)"></td>
               <td
                 [innerHTML]="inventoryDetailList.get(data.inventoryItemId)"

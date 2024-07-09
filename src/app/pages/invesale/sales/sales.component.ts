@@ -6,6 +6,7 @@ import {
   FormGroup,
   FormBuilder,
   Validators,
+  FormArray,
 } from '@angular/forms';
 import { NgbPagination, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -44,6 +45,7 @@ export class SalesComponent implements OnInit, OnDestroy {
   salesList: any[] = [];
   salesSForm!: FormGroup;
   salesForm!: FormGroup;
+  slubForm!: FormGroup;
   dropdownSettings = {};
   dropdownList = [];
   selectedItems: any;
@@ -51,12 +53,15 @@ export class SalesComponent implements OnInit, OnDestroy {
   selectedItems1: any;
   inventoryList = new Map();
   inventoryDetailList = new Map();
+  inventoryPriceList = new Map();
   shopList = new Map();
   dsoList = new Map();
+  slubadderrorshow: boolean = false;
+  deletedData: any[] = [];
+
   currentdate: string = `${new Date().getFullYear()}-${String(
     new Date().getMonth() + 1
   ).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
-
 
   private insService = inject(InventorySalesService);
   private roleService = inject(RoleService);
@@ -75,6 +80,9 @@ export class SalesComponent implements OnInit, OnDestroy {
       itemsShowLimit: 5,
       allowSearchFilter: true,
     };
+    this.slubForm = this.formBuilder.group({
+      slubFormVal: this.formBuilder.array([]),
+    });
     this.getAllDSO();
     this.userid = JSON.parse(
       this.encryptionService.decrypt(localStorage.getItem('currentUser')!)
@@ -120,6 +128,7 @@ export class SalesComponent implements OnInit, OnDestroy {
               content.type
             }-${content.unit}`
           );
+          this.inventoryPriceList.set(content.id, content.sell);
           data.push(a);
         });
       },
@@ -167,8 +176,8 @@ export class SalesComponent implements OnInit, OnDestroy {
       inventoryItemId: [''],
       shopId: [''],
       orderId: [''],
-      dateFrom:[this.currentdate],
-      dateTo:[this.currentdate]
+      dateFrom: [this.currentdate],
+      dateTo: [this.currentdate],
     });
     this.selectedItems = [];
     this.selectedItems1 = [];
@@ -177,15 +186,23 @@ export class SalesComponent implements OnInit, OnDestroy {
   dueRefreshForm(): void {
     this.salesForm = this.formBuilder.group({
       id: [''],
-      dueAmount: [0],
-      inventoryItemId: ['', [Validators.required]],
-      shopId: ['', [Validators.required]],
-      orderId: [''],
+      date: [this.currentdate],
       dsoId: ['', [Validators.required]],
+      itemId: ['', [Validators.required]],
+      quantity: [0, [Validators.required]],
+      amount: [0, [Validators.required]],
+      freeItem: [0, [Validators.required]],
+      discount: [0, [Validators.required]],
+      finalAmount: [0, [Validators.required]],
+      inventoryOrderId: [''],
       deleted: [false],
     });
     this.selectedItems = [];
     this.selectedItems1 = [];
+  }
+
+  slubData(): FormArray {
+    return this.slubForm.get('slubFormVal') as FormArray;
   }
 
   toggleAddBtn(): void {
@@ -199,6 +216,7 @@ export class SalesComponent implements OnInit, OnDestroy {
   }
 
   onsubmit() {
+    this.salesForm.controls['orderDetails'].setValue(this.slubData().value);
     if (this.salesForm.invalid) {
       return;
     }
@@ -285,7 +303,44 @@ export class SalesComponent implements OnInit, OnDestroy {
       });
   }
 
-  editDue(data: any) {
+  slabRefreshForm(): FormGroup {
+    return this.formBuilder.group({
+      id: [''],
+      inventoryOrderId: [''],
+      itemId: ['', [Validators.required]],
+      quantity: [1, [Validators.required]],
+      deleted: [false],
+      active: [true],
+    });
+  }
+
+  addSlub(): void {
+    let arr = this.slubData().value;
+    if (arr.length > 0 && this.slubData().invalid) {
+      this.slubadderrorshow = true;
+      return;
+    }
+    this.slubData().push(this.slabRefreshForm());
+    this.slubadderrorshow = false;
+  }
+
+  deleteSlub(i: number): void {
+    let items = this.slubData().value;
+    let j = 0;
+    items.map((item: any) => {
+      if (i == j && item.id) {
+        item.deleted = true;
+        this.deletedData.push(item);
+      } else {
+        j++;
+      }
+    });
+    this.slubData().removeAt(i);
+    this.selectedItems1[i] = [];
+  }
+
+  editDue(data: any): void {
+    this.slubData().clear();
     this.selectedItems = this.dropdownList.filter(
       (item: any) => item.id === data.dsoId
     );
@@ -301,6 +356,11 @@ export class SalesComponent implements OnInit, OnDestroy {
     this.salesForm.controls['deleted'].setValue(data.deleted);
     this.showAddBtn = false;
     window.scrollTo(0, 0);
+  }
+
+  autoAddSlab(): void {
+    this.slubData().clear();
+    this.addSlub();
   }
 
   deleteDue(id: string): void {
@@ -341,12 +401,24 @@ export class SalesComponent implements OnInit, OnDestroy {
     this.f['dsoId'].setValue('');
   }
 
-  onInitiatorItemSelect1(item: any): void {
-    this.f['inventoryItemId'].setValue(item.id);
+  onItemSelect1(item: any): void {
+    this.f['itemId'].setValue(item.id);
   }
 
-  onInitiatorItemUnSelect1(item: any): void {
-    this.f['inventoryItemId'].setValue('');
+  onItemUnSelect1(item: any): void {
+    this.f['itemId'].setValue('');
+  }
+
+  onInitiatorItemSelect1(item: any, i: any) {
+    this.slubData().controls[i].patchValue({
+      itemId: item.id,
+    });
+  }
+
+  onInitiatorItemUnSelect1(item: any, i: any) {
+    this.slubData().controls[i].patchValue({
+      itemId: '',
+    });
   }
 
   onInitiatorItemSelect2(item: any): void {
