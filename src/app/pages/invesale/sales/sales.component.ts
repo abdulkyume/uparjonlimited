@@ -58,6 +58,7 @@ export class SalesComponent implements OnInit, OnDestroy {
   dsoList = new Map();
   slubadderrorshow: boolean = false;
   deletedData: any[] = [];
+  totalAmount: number = 0;
 
   currentdate: string = `${new Date().getFullYear()}-${String(
     new Date().getMonth() + 1
@@ -188,13 +189,12 @@ export class SalesComponent implements OnInit, OnDestroy {
       id: [''],
       date: [this.currentdate],
       dsoId: ['', [Validators.required]],
-      itemId: ['', [Validators.required]],
-      quantity: [0, [Validators.required]],
-      amount: [0, [Validators.required]],
+      amount: [this.totalAmount, [Validators.required]],
       freeItem: [0, [Validators.required]],
       discount: [0, [Validators.required]],
       finalAmount: [0, [Validators.required]],
       inventoryOrderId: [''],
+      orderDetails: [],
       deleted: [false],
     });
     this.selectedItems = [];
@@ -379,6 +379,17 @@ export class SalesComponent implements OnInit, OnDestroy {
     });
   }
 
+  changeOnAmount(): void {
+    this.totalAmount = 0;
+    this.slubData().controls.map((x) => {
+      console.log(x);
+      this.totalAmount +=
+        this.inventoryPriceList.get(x.get('itemId')?.value) *
+        x.get('quantity')?.value;
+    });
+    this.f['amount'].setValue(this.totalAmount)
+  }
+
   onPageChange(event: number): number {
     this.loader = true;
     this.toPageVal = event * this.pageSize;
@@ -413,20 +424,14 @@ export class SalesComponent implements OnInit, OnDestroy {
     this.slubData().controls[i].patchValue({
       itemId: item.id,
     });
+    this.changeOnAmount();
   }
 
   onInitiatorItemUnSelect1(item: any, i: any) {
     this.slubData().controls[i].patchValue({
       itemId: '',
     });
-  }
-
-  onInitiatorItemSelect2(item: any): void {
-    this.f['shopId'].setValue(item.id);
-  }
-
-  onInitiatorItemUnSelect2(item: any): void {
-    this.f['shopId'].setValue('');
+    this.changeOnAmount();
   }
 
   successmsg(message: string): void {
