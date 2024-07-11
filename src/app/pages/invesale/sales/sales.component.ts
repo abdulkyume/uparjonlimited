@@ -54,6 +54,7 @@ export class SalesComponent implements OnInit, OnDestroy {
   inventoryList = new Map();
   inventoryDetailList = new Map();
   inventoryPriceList = new Map();
+  inventoryBuyList = new Map();
   shopList = new Map();
   dsoList = new Map();
   slubadderrorshow: boolean = false;
@@ -91,7 +92,7 @@ export class SalesComponent implements OnInit, OnDestroy {
 
     this.saleSRefreshForm();
     this.getAllDue();
-    this.dueRefreshForm();
+    this.salesRefreshForm();
     this.getAllInventory();
   }
 
@@ -130,6 +131,7 @@ export class SalesComponent implements OnInit, OnDestroy {
             }-${content.unit}`
           );
           this.inventoryPriceList.set(content.id, content.sell);
+          this.inventoryBuyList.set(content.id, content.buy ? content.buy : 0);
           data.push(a);
         });
       },
@@ -184,7 +186,7 @@ export class SalesComponent implements OnInit, OnDestroy {
     this.selectedItems1 = [];
   }
 
-  dueRefreshForm(): void {
+  salesRefreshForm(): void {
     this.salesForm = this.formBuilder.group({
       id: [''],
       date: [this.currentdate],
@@ -211,28 +213,25 @@ export class SalesComponent implements OnInit, OnDestroy {
     } else {
       this.showAddBtn = true;
     }
-    this.dueRefreshForm();
+    this.salesRefreshForm();
     this.saleSRefreshForm();
   }
 
   onsubmit() {
     this.salesForm.controls['orderDetails'].setValue(this.slubData().value);
-    if (this.salesForm.invalid) {
-      return;
-    }
     this.loader = true;
     if (this.salesForm.controls['id'].value) {
       this.insService
-        .updateDue(this.salesForm.value)
+        .updateSales(this.salesForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
             if (!res.isSuccess) {
               this.loader = false;
-              this.errorssmsg(res.reason);
+              this.errorMsg(res.reason);
             } else {
-              this.successmsg(res.reason);
-              this.dueRefreshForm();
+              this.successMsg(res.reason);
+              this.salesRefreshForm();
               this.showAddBtn = true;
               this.getAllDue();
             }
@@ -247,16 +246,16 @@ export class SalesComponent implements OnInit, OnDestroy {
         });
     } else {
       this.insService
-        .addDue(this.salesForm.value)
+        .addSales(this.salesForm.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
             if (!res.isSuccess) {
               this.loader = false;
-              this.errorssmsg(res.reason);
+              this.errorMsg(res.reason);
             } else {
-              this.successmsg(res.reason);
-              this.dueRefreshForm();
+              this.successMsg(res.reason);
+              this.salesRefreshForm();
               this.showAddBtn = true;
               this.getAllDue();
             }
@@ -274,7 +273,7 @@ export class SalesComponent implements OnInit, OnDestroy {
 
   getAllDue(): void {
     this.insService
-      .getAllDue(
+      .getAllSales(
         this.page,
         this.pageSize,
         this.salesSForm.controls['inventoryItemId'].value,
@@ -309,6 +308,8 @@ export class SalesComponent implements OnInit, OnDestroy {
       inventoryOrderId: [''],
       itemId: ['', [Validators.required]],
       quantity: [1, [Validators.required]],
+      buy: [0, [Validators.required]],
+      sell: [0, [Validators.required]],
       deleted: [false],
       active: [true],
     });
@@ -337,6 +338,7 @@ export class SalesComponent implements OnInit, OnDestroy {
     });
     this.slubData().removeAt(i);
     this.selectedItems1[i] = [];
+    this.changeOnAmount();
   }
 
   editDue(data: any): void {
@@ -365,7 +367,7 @@ export class SalesComponent implements OnInit, OnDestroy {
 
   deleteDue(id: string): void {
     this.loader = true;
-    this.insService.deleteDue(id).subscribe({
+    this.insService.deleteSales(id).subscribe({
       next: (res: any) => {
         this.getAllDue();
       },
@@ -382,12 +384,22 @@ export class SalesComponent implements OnInit, OnDestroy {
   changeOnAmount(): void {
     this.totalAmount = 0;
     this.slubData().controls.map((x) => {
-      console.log(x);
       this.totalAmount +=
         this.inventoryPriceList.get(x.get('itemId')?.value) *
         x.get('quantity')?.value;
+      x.get('buy')?.setValue(
+        this.inventoryBuyList.get(x.get('itemId')?.value) *
+          x.get('quantity')?.value
+      );
+      x.get('sell')?.setValue(
+        this.inventoryPriceList.get(x.get('itemId')?.value) *
+          x.get('quantity')?.value
+      );
     });
-    this.f['amount'].setValue(this.totalAmount)
+    this.f['amount'].setValue(this.totalAmount);
+    this.f['finalAmount'].setValue(
+      this.f['amount'].value - this.f['discount'].value
+    );
   }
 
   onPageChange(event: number): number {
@@ -434,12 +446,32 @@ export class SalesComponent implements OnInit, OnDestroy {
     this.changeOnAmount();
   }
 
-  successmsg(message: string): void {
+  successMsg(message: string): void {
     Swal.fire('Success!', message, 'success');
   }
 
-  errorssmsg(message: string): void {
+  errorMsg(message: string): void {
     Swal.fire('Ops!', message, 'error');
+  }
+
+  discountChange(val: any): void {
+    if (+val.target.value < 0) {
+      return;
+    } else {
+      this.f['finalAmount'].setValue(
+        this.f['amount'].value - this.f['discount'].value
+      );
+    }
+  }
+
+  amountChange(val: any): void {
+    if (+val.target.value < 0) {
+      return;
+    } else {
+      this.f['finalAmount'].setValue(
+        this.f['amount'].value - this.f['discount'].value
+      );
+    }
   }
 
   ngOnDestroy(): void {
