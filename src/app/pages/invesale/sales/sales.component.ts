@@ -53,6 +53,7 @@ export class SalesComponent implements OnInit, OnDestroy {
   selectedItems: any;
   dropdownList1 = [];
   selectedItems1: any;
+  selectedItems2: any;
   inventoryList = new Map();
   inventoryDetailList = new Map();
   inventoryPriceList = new Map();
@@ -192,8 +193,6 @@ export class SalesComponent implements OnInit, OnDestroy {
       dateFrom: [this.currentdate],
       dateTo: [this.currentdate],
     });
-    this.selectedItems = [];
-    this.selectedItems1 = [];
   }
 
   salesRefreshForm(): void {
@@ -215,6 +214,7 @@ export class SalesComponent implements OnInit, OnDestroy {
     });
     this.selectedItems = [];
     this.selectedItems1 = [];
+    this.selectedItems2 = [];
   }
 
   slubData(): FormArray {
@@ -226,7 +226,7 @@ export class SalesComponent implements OnInit, OnDestroy {
   }
 
   slubReturnData(): FormArray {
-    return this.slubExpenseForm.get('slubReturnFormVal') as FormArray;
+    return this.slubReturnForm.get('slubReturnFormVal') as FormArray;
   }
 
   toggleAddBtn(): void {
@@ -350,7 +350,7 @@ export class SalesComponent implements OnInit, OnDestroy {
       id: [''],
       orderNo: [''],
       name: ['', [Validators.required]],
-      amount: [0, [Validators.required]],
+      quantity: [0, [Validators.required]],
       dsoId: [0, [Validators.required]],
       date: [this.currentdate, [Validators.required]],
       note: [''],
@@ -387,10 +387,10 @@ export class SalesComponent implements OnInit, OnDestroy {
   slabReturnRefreshForm(): FormGroup {
     return this.formBuilder.group({
       id: [''],
+      returnType: [''],
       orderId: [''],
       itemId: ['', [Validators.required]],
-      amount: [0, [Validators.required]],
-      dsoId: [0, [Validators.required]],
+      quantity: [0, [Validators.required]],
       date: [this.currentdate, [Validators.required]],
       deleted: [false],
       active: [true],
@@ -400,11 +400,11 @@ export class SalesComponent implements OnInit, OnDestroy {
   addReturnSlub(): void {
     let arr = this.slubReturnData().value;
     if (arr.length > 0 && this.slubReturnData().invalid) {
-      this.slubExpenseAddErrorShow = true;
+      this.slubReturnAddErrorShow = true;
       return;
     }
     this.slubReturnData().push(this.slabReturnRefreshForm());
-    this.slubExpenseAddErrorShow = false;
+    this.slubReturnAddErrorShow = false;
   }
 
   deleteReturnSlub(i: number): void {
@@ -419,7 +419,7 @@ export class SalesComponent implements OnInit, OnDestroy {
       }
     });
     this.slubReturnData().removeAt(i);
-    this.changeOnExpenseAmount();
+    this.selectedItems2[i] = [];
   }
 
   addSlub(): void {
@@ -559,6 +559,18 @@ export class SalesComponent implements OnInit, OnDestroy {
       itemId: '',
     });
     this.changeOnAmount();
+  }
+
+  onInitiatorItemSelect2(item: any, i: any) {
+    this.slubReturnData().controls[i].patchValue({
+      itemId: item.id,
+    });
+  }
+
+  onInitiatorItemUnSelect2(item: any, i: any) {
+    this.slubReturnData().controls[i].patchValue({
+      itemId: '',
+    });
   }
 
   successMsg(message: string): void {

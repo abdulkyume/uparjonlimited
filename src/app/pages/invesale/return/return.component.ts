@@ -51,7 +51,6 @@ export class ReturnComponent implements OnInit, OnDestroy {
   ).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
 
   private insService = inject(InventorySalesService);
-  private roleService = inject(RoleService);
   private encryptionService = inject(EncryptionService);
   private formBuilder = inject(FormBuilder);
 
@@ -136,7 +135,7 @@ export class ReturnComponent implements OnInit, OnDestroy {
       returnType: ['OLD DAMAGE'],
       orderId: [''],
       itemId: [''],
-      amount: [''],
+      quantity: [''],
       date: [this.currentdate],
       voucherDate: [''],
       deleted: [false],
@@ -249,7 +248,7 @@ export class ReturnComponent implements OnInit, OnDestroy {
     this.returnForm.controls['returnType'].setValue(data.returnType);
     this.returnForm.controls['orderId'].setValue(data.orderId);
     this.returnForm.controls['itemId'].setValue(data.itemId);
-    this.returnForm.controls['amount'].setValue(data.amount);
+    this.returnForm.controls['quantity'].setValue(data.quantity);
     this.returnForm.controls['date'].setValue(data.date.split('T')[0]);
     this.returnForm.controls['voucherDate'].setValue(data.voucherDate.split('T')[0]);
     this.showAddBtn = false;

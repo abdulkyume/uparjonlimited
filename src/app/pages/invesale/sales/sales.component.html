@@ -232,9 +232,9 @@
                           <div class="col-lg-5 col-md-6 col-12 my-2">
                             <input
                               type="text"
-                              formControlName="amount"
-                              id="amount"
-                              placeholder="Amount"
+                              formControlName="quantity"
+                              id="quantity"
+                              placeholder="Quantity"
                               class="form-control m-0"
                             />
                           </div>
@@ -273,6 +273,84 @@
                   (click)="addExpenseSlub()"
                 >
                   Add Expense
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <h3 class="text-center mt-3">Return</h3>
+              <div class="col-lg-12">
+                <table
+                  class="table table-centered table-nowrap table-bordered"
+                  [formGroup]="slubReturnForm"
+                >
+                  <thead class="customise-thead"></thead>
+                  <tbody formArrayName="slubReturnFormVal">
+                    <tr
+                      class="py-2 border-primary border-3"
+                      *ngFor="
+                        let data1 of slubReturnData().controls;
+                        let i = index
+                      "
+                      [formGroupName]="i"
+                    >
+                      <td colspan="9">
+                        <div class="row">
+                          <div
+                            class="col-lg-1 col-md-1 col-1 my-2 border-1 border-danger border text-center"
+                            (click)="deleteReturnSlub(i)"
+                          >
+                            <i
+                              class="fas fa-trash-alt mt-2"
+                              (click)="deleteReturnSlub(i)"
+                            ></i>
+                          </div>
+                          <div class="col-lg-9 col-md-9 col-11 my-2">
+                            <ng-multiselect-dropdown
+                              [placeholder]="'Select Item'"
+                              [settings]="dropdownSettings"
+                              [data]="dropdownList1"
+                              [(ngModel)]="selectedItems1[i]"
+                              [ngModelOptions]="{ standalone: true }"
+                              (onSelect)="onInitiatorItemSelect2($event, i)"
+                              (onDeSelect)="onInitiatorItemUnSelect2($event, i)"
+                            >
+                            </ng-multiselect-dropdown>
+                          </div>
+
+                          <div class="col-lg-2 col-md-2 col-12 my-2">
+                            <input
+                              type="text"
+                              formControlName="quantity"
+                              id="quantity"
+                              placeholder="Quantity"
+                              class="form-control m-0"
+                            />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="9">
+                        <div
+                          *ngIf="
+                            slubExpenseAddErrorShow && slubReturnData().invalid
+                          "
+                          class="text-danger text-center fw-bolder"
+                        >
+                          <div>Fill Up the Previous One</div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-lg-12 text-end">
+                <button
+                  type="button"
+                  class="ms-2 btn btn-primary w-md"
+                  (click)="addReturnSlub()"
+                >
+                  Add Return
                 </button>
               </div>
             </div>

@@ -76,12 +76,12 @@
         </div>
 
         <div class="col-lg-6 mb-3">
-          <label for="amount">Amount</label>
+          <label for="quantity">Quantity</label>
           <input
             type="number"
             class="form-control"
-            formControlName="amount"
-            id="amount"
+            formControlName="quantity"
+            id="quantity"
             min="0"
           />
         </div>
@@ -231,7 +231,7 @@
               <td>{{ data.voucherDate | date }}</td>
               <td>{{ data.orderId }}</td>
               <td [innerHTML]="inventoryDetailList.get(data.itemId)"></td>
-              <td>{{ data.amount }}</td>
+              <td>{{ data.quantity }}</td>
             </tr>
           </tbody>
         </table>
