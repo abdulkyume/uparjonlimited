@@ -54,7 +54,8 @@
           </div>
 
           <div class="col-lg-12 col-md-12 col-12 mb-3">
-            <div class="row pb-5">
+            <div class="row">
+              <h3 class="text-center mt-3">Items</h3>
               <div class="col-lg-12">
                 <table
                   class="table table-centered table-nowrap table-bordered"
@@ -132,15 +133,9 @@
                         </div>
                       </td>
                     </tr>
-                    <tr *ngIf="slubData().controls.length">
-                      <td colspan="7" class="text-end">Total:</td>
-                      <td colspan="2">{{ totalAmount }}</td>
-                    </tr>
                   </tbody>
                 </table>
               </div>
-            </div>
-            <div class="row">
               <div class="col-lg-12 text-end">
                 <button
                   type="button"
@@ -150,52 +145,137 @@
                   Add Item
                 </button>
               </div>
+
+              <div class="col-lg-3 col-md-6 mb-3">
+                <label for="freeItem">Free Item</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="freeItem"
+                  id="freeItem"
+                />
+              </div>
+
+              <div class="col-lg-3 col-md-6 mb-3">
+                <label for="discount">Discount</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="discount"
+                  id="discount"
+                  min="0"
+                  (input)="discountChange($event)"
+                />
+              </div>
+
+              <div class="col-lg-3 col-md-6 mb-3">
+                <label for="amount">Amount</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="amount"
+                  id="amount"
+                  min="0"
+                  (input)="amountChange($event)"
+                  readonly
+                />
+              </div>
+
+              <div class="col-lg-3 col-md-6 mb-3">
+                <label for="finalAmount">Final Amount</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="finalAmount"
+                  id="finalAmount"
+                />
+              </div>
             </div>
-          </div>
+            <div class="row">
+              <h3 class="text-center mt-3">Expense</h3>
+              <div class="col-lg-12">
+                <table
+                  class="table table-centered table-nowrap table-bordered"
+                  [formGroup]="slubExpenseForm"
+                >
+                  <thead class="customise-thead"></thead>
+                  <tbody formArrayName="slubExpenseFormVal">
+                    <tr
+                      class="py-2 border-primary border-3"
+                      *ngFor="
+                        let data1 of slubExpenseData().controls;
+                        let i = index
+                      "
+                      [formGroupName]="i"
+                    >
+                      <td colspan="9">
+                        <div class="row">
+                          <div
+                            class="col-lg-1 col-md-1 col-1 my-2 border-1 border-danger border text-center"
+                            (click)="deleteExpenseSlub(i)"
+                          >
+                            <i
+                              class="fas fa-trash-alt mt-2"
+                              (click)="deleteExpenseSlub(i)"
+                            ></i>
+                          </div>
+                          <div class="col-lg-6 col-md-6 col-12 my-2">
+                            <input
+                              type="text"
+                              formControlName="name"
+                              id="name"
+                              placeholder="name"
+                              class="form-control m-0"
+                            />
+                          </div>
 
-          <div class="col-lg-3 col-md-6 mb-3">
-            <label for="freeItem">Free Item</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="freeItem"
-              id="freeItem"
-            />
-          </div>
+                          <div class="col-lg-5 col-md-6 col-12 my-2">
+                            <input
+                              type="text"
+                              formControlName="amount"
+                              id="amount"
+                              placeholder="Amount"
+                              class="form-control m-0"
+                            />
+                          </div>
 
-          <div class="col-lg-3 col-md-6 mb-3">
-            <label for="discount">Discount</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="discount"
-              id="discount"
-              min="0"
-              (input)="discountChange($event)"
-            />
-          </div>
-
-          <div class="col-lg-3 col-md-6 mb-3">
-            <label for="amount">Amount</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="amount"
-              id="amount"
-              min="0"
-              (input)="amountChange($event)"
-              readonly
-            />
-          </div>
-
-          <div class="col-lg-3 col-md-6 mb-3">
-            <label for="finalAmount">Final Amount</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="finalAmount"
-              id="finalAmount"
-            />
+                          <div class="col-lg-12 col-md-12 col-12 my-2">
+                            <input
+                              type="text"
+                              formControlName="note"
+                              id="note"
+                              placeholder="note"
+                              class="form-control m-0"
+                            />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="9">
+                        <div
+                          *ngIf="
+                            slubExpenseAddErrorShow && slubExpenseData().invalid
+                          "
+                          class="text-danger text-center fw-bolder"
+                        >
+                          <div>Fill Up the Previous One</div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-lg-12 text-end">
+                <button
+                  type="button"
+                  class="ms-2 btn btn-primary w-md"
+                  (click)="addExpenseSlub()"
+                >
+                  Add Expense
+                </button>
+              </div>
+            </div>
           </div>
 
           <div class="col-lg-6 mb-3">

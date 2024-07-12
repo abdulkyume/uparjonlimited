@@ -46,6 +46,8 @@ export class SalesComponent implements OnInit, OnDestroy {
   salesSForm!: FormGroup;
   salesForm!: FormGroup;
   slubForm!: FormGroup;
+  slubExpenseForm!: FormGroup;
+  slubReturnForm!: FormGroup;
   dropdownSettings = {};
   dropdownList = [];
   selectedItems: any;
@@ -58,6 +60,8 @@ export class SalesComponent implements OnInit, OnDestroy {
   shopList = new Map();
   dsoList = new Map();
   slubadderrorshow: boolean = false;
+  slubExpenseAddErrorShow: boolean = false;
+  slubReturnAddErrorShow: boolean = false;
   deletedData: any[] = [];
   totalAmount: number = 0;
 
@@ -84,6 +88,12 @@ export class SalesComponent implements OnInit, OnDestroy {
     };
     this.slubForm = this.formBuilder.group({
       slubFormVal: this.formBuilder.array([]),
+    });
+    this.slubExpenseForm = this.formBuilder.group({
+      slubExpenseFormVal: this.formBuilder.array([]),
+    });
+    this.slubReturnForm = this.formBuilder.group({
+      slubReturnFormVal: this.formBuilder.array([]),
     });
     this.getAllDSO();
     this.userid = JSON.parse(
@@ -194,9 +204,13 @@ export class SalesComponent implements OnInit, OnDestroy {
       amount: [this.totalAmount, [Validators.required]],
       freeItem: [0, [Validators.required]],
       discount: [0, [Validators.required]],
+      totalExpense: [0, [Validators.required]],
       finalAmount: [0, [Validators.required]],
       inventoryOrderId: [''],
+      expenseDetails: [],
       orderDetails: [],
+      dueDetails: [],
+      returnDetails: [],
       deleted: [false],
     });
     this.selectedItems = [];
@@ -205,6 +219,14 @@ export class SalesComponent implements OnInit, OnDestroy {
 
   slubData(): FormArray {
     return this.slubForm.get('slubFormVal') as FormArray;
+  }
+
+  slubExpenseData(): FormArray {
+    return this.slubExpenseForm.get('slubExpenseFormVal') as FormArray;
+  }
+
+  slubReturnData(): FormArray {
+    return this.slubExpenseForm.get('slubReturnFormVal') as FormArray;
   }
 
   toggleAddBtn(): void {
@@ -218,7 +240,15 @@ export class SalesComponent implements OnInit, OnDestroy {
   }
 
   onsubmit() {
+    this.changeOnAmount();
+    this.changeOnExpenseAmount();
     this.salesForm.controls['orderDetails'].setValue(this.slubData().value);
+    this.salesForm.controls['expenseDetails'].setValue(
+      this.slubExpenseData().value
+    );
+    this.salesForm.controls['returnDetails'].setValue(
+      this.slubReturnData().value
+    );
     this.loader = true;
     if (this.salesForm.controls['id'].value) {
       this.insService
@@ -315,6 +345,83 @@ export class SalesComponent implements OnInit, OnDestroy {
     });
   }
 
+  slabExpenseRefreshForm(): FormGroup {
+    return this.formBuilder.group({
+      id: [''],
+      orderNo: [''],
+      name: ['', [Validators.required]],
+      amount: [0, [Validators.required]],
+      dsoId: [0, [Validators.required]],
+      date: [this.currentdate, [Validators.required]],
+      note: [''],
+      deleted: [false],
+      active: [true],
+    });
+  }
+
+  addExpenseSlub(): void {
+    let arr = this.slubExpenseData().value;
+    if (arr.length > 0 && this.slubExpenseData().invalid) {
+      this.slubExpenseAddErrorShow = true;
+      return;
+    }
+    this.slubExpenseData().push(this.slabExpenseRefreshForm());
+    this.slubExpenseAddErrorShow = false;
+  }
+
+  deleteExpenseSlub(i: number): void {
+    let items = this.slubExpenseData().value;
+    let j = 0;
+    items.map((item: any) => {
+      if (i == j && item.id) {
+        item.deleted = true;
+        this.deletedData.push(item);
+      } else {
+        j++;
+      }
+    });
+    this.slubExpenseData().removeAt(i);
+    this.changeOnExpenseAmount();
+  }
+
+  slabReturnRefreshForm(): FormGroup {
+    return this.formBuilder.group({
+      id: [''],
+      orderId: [''],
+      itemId: ['', [Validators.required]],
+      amount: [0, [Validators.required]],
+      dsoId: [0, [Validators.required]],
+      date: [this.currentdate, [Validators.required]],
+      deleted: [false],
+      active: [true],
+    });
+  }
+
+  addReturnSlub(): void {
+    let arr = this.slubReturnData().value;
+    if (arr.length > 0 && this.slubReturnData().invalid) {
+      this.slubExpenseAddErrorShow = true;
+      return;
+    }
+    this.slubReturnData().push(this.slabReturnRefreshForm());
+    this.slubExpenseAddErrorShow = false;
+  }
+
+  deleteReturnSlub(i: number): void {
+    let items = this.slubReturnData().value;
+    let j = 0;
+    items.map((item: any) => {
+      if (i == j && item.id) {
+        item.deleted = true;
+        this.deletedData.push(item);
+      } else {
+        j++;
+      }
+    });
+    this.slubReturnData().removeAt(i);
+    this.changeOnExpenseAmount();
+  }
+
   addSlub(): void {
     let arr = this.slubData().value;
     if (arr.length > 0 && this.slubData().invalid) {
@@ -386,20 +493,28 @@ export class SalesComponent implements OnInit, OnDestroy {
     this.slubData().controls.map((x) => {
       this.totalAmount +=
         this.inventoryPriceList.get(x.get('itemId')?.value) *
-        x.get('quantity')?.value;
+        +x.get('quantity')?.value;
       x.get('buy')?.setValue(
         this.inventoryBuyList.get(x.get('itemId')?.value) *
-          x.get('quantity')?.value
+          +x.get('quantity')?.value
       );
       x.get('sell')?.setValue(
         this.inventoryPriceList.get(x.get('itemId')?.value) *
-          x.get('quantity')?.value
+          +x.get('quantity')?.value
       );
     });
     this.f['amount'].setValue(this.totalAmount);
     this.f['finalAmount'].setValue(
       this.f['amount'].value - this.f['discount'].value
     );
+  }
+
+  changeOnExpenseAmount(): void {
+    this.totalAmount = 0;
+    this.slubExpenseData().controls.map((x) => {
+      this.totalAmount += +x.get('amount')?.value;
+    });
+    this.f['totalExpense'].setValue(this.totalAmount);
   }
 
   onPageChange(event: number): number {
