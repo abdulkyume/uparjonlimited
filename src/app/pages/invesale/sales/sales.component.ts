@@ -16,6 +16,7 @@ import { EncryptionService } from 'src/app/core/service/encryption.service';
 import { InventorySalesService } from 'src/app/core/service/inventory-sales.service';
 import { RoleService } from 'src/app/core/service/role.service';
 import Swal from 'sweetalert2';
+import { SearchComponent } from '../search/search.component';
 
 @Component({
   selector: 'app-sales',
@@ -28,11 +29,13 @@ import Swal from 'sweetalert2';
     NgbDropdownModule,
     NgMultiSelectDropDownModule,
     FormsModule,
+    SearchComponent,
   ],
   templateUrl: './sales.component.html',
   styleUrls: ['./sales.component.scss'],
 })
 export class SalesComponent implements OnInit, OnDestroy {
+  currentPage: number = 0;
   private ngUnsubscribe: Subject<any> = new Subject();
   loader: boolean = true;
   showAddBtn: boolean = true;
@@ -65,6 +68,7 @@ export class SalesComponent implements OnInit, OnDestroy {
   slubReturnAddErrorShow: boolean = false;
   deletedData: any[] = [];
   totalAmount: number = 0;
+  shopInfo: string = '';
 
   currentdate: string = `${new Date().getFullYear()}-${String(
     new Date().getMonth() + 1
@@ -102,7 +106,7 @@ export class SalesComponent implements OnInit, OnDestroy {
     ).id;
 
     this.saleSRefreshForm();
-    this.getAllDue();
+    this.getAllSales();
     this.salesRefreshForm();
     this.getAllInventory();
   }
@@ -186,9 +190,7 @@ export class SalesComponent implements OnInit, OnDestroy {
 
   saleSRefreshForm(): void {
     this.salesSForm = this.formBuilder.group({
-      dsoId: [this.userid],
-      inventoryItemId: [''],
-      shopId: [''],
+      dsoId: [''],
       orderId: [''],
       dateFrom: [this.currentdate],
       dateTo: [this.currentdate],
@@ -206,9 +208,10 @@ export class SalesComponent implements OnInit, OnDestroy {
       totalExpense: [0, [Validators.required]],
       finalAmount: [0, [Validators.required]],
       inventoryOrderId: [''],
+      dueAmount: [0],
+      dueShopId: [''],
       expenseDetails: [],
       orderDetails: [],
-      dueDetails: [],
       returnDetails: [],
       deleted: [false],
     });
@@ -263,7 +266,7 @@ export class SalesComponent implements OnInit, OnDestroy {
               this.successMsg(res.reason);
               this.salesRefreshForm();
               this.showAddBtn = true;
-              this.getAllDue();
+              this.getAllSales();
             }
           },
           error: (err: any) => {
@@ -287,7 +290,7 @@ export class SalesComponent implements OnInit, OnDestroy {
               this.successMsg(res.reason);
               this.salesRefreshForm();
               this.showAddBtn = true;
-              this.getAllDue();
+              this.getAllSales();
             }
           },
           error: (err: any) => {
@@ -301,15 +304,15 @@ export class SalesComponent implements OnInit, OnDestroy {
     }
   }
 
-  getAllDue(): void {
+  getAllSales(): void {
     this.insService
       .getAllSales(
         this.page,
         this.pageSize,
-        this.salesSForm.controls['inventoryItemId'].value,
-        this.salesSForm.controls['shopId'].value,
+        this.salesSForm.controls['dsoId'].value,
         this.salesSForm.controls['orderId'].value,
-        this.salesSForm.controls['dsoId'].value
+        this.salesSForm.controls['dateFrom'].value,
+        this.salesSForm.controls['dateTo'].value,
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -350,9 +353,9 @@ export class SalesComponent implements OnInit, OnDestroy {
       id: [''],
       orderNo: [''],
       name: ['', [Validators.required]],
-      quantity: [0, [Validators.required]],
-      dsoId: [0, [Validators.required]],
-      date: [this.currentdate, [Validators.required]],
+      amount: [0, [Validators.required]],
+      dsoId: ['', [Validators.required]],
+      date: ['', [Validators.required]],
       note: [''],
       deleted: [false],
       active: [true],
@@ -476,7 +479,7 @@ export class SalesComponent implements OnInit, OnDestroy {
     this.loader = true;
     this.insService.deleteSales(id).subscribe({
       next: (res: any) => {
-        this.getAllDue();
+        this.getAllSales();
       },
       error: (err: any) => {
         console.error(err);
@@ -517,6 +520,12 @@ export class SalesComponent implements OnInit, OnDestroy {
     this.f['totalExpense'].setValue(this.totalAmount);
   }
 
+  next(): void {
+    this.currentPage++;
+  }
+  previous(): void {
+    this.currentPage--;
+  }
   onPageChange(event: number): number {
     this.loader = true;
     this.toPageVal = event * this.pageSize;
@@ -527,12 +536,18 @@ export class SalesComponent implements OnInit, OnDestroy {
     if (this.toPageVal > this.total) {
       this.toPageVal = this.total;
     }
-    this.getAllDue();
+    this.getAllSales();
     return event;
   }
 
   onInitiatorItemSelect(item: any): void {
     this.f['dsoId'].setValue(item.id);
+    this.autoAddSlab();
+  }
+
+  setShop(event: any): void {
+    this.shopInfo = event.name + ' - ' + event.phoneNumber;
+    this.f['dueShopId'].setValue(event.id);
   }
 
   onInitiatorItemUnSelect(item: any): void {

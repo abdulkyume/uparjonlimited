@@ -156,7 +156,7 @@ export class DueComponent implements OnInit, OnDestroy {
 
   dueSRefreshForm(): void {
     this.dueSForm = this.formBuilder.group({
-      dsoId: [this.userid],
+      dsoId: [''],
       inventoryItemId: [''],
       shopId: [''],
       orderId: [''],
@@ -377,6 +377,30 @@ export class DueComponent implements OnInit, OnDestroy {
 
   onInitiatorItemUnSelect2(item: any): void {
     this.f['shopId'].setValue('');
+  }
+
+  onInitiatorItemSelectt(item: any): void {
+    this.dueSForm.controls['dsoId'].setValue(item.id);
+  }
+
+  onInitiatorItemUnSelectt(item: any): void {
+    this.dueSForm.controls['dsoId'].setValue('');
+  }
+
+  onInitiatorItemSelect11(item: any): void {
+    this.dueSForm.controls['inventoryItemId'].setValue(item.id);
+  }
+
+  onInitiatorItemUnSelect11(item: any): void {
+    this.dueSForm.controls['inventoryItemId'].setValue('');
+  }
+
+  onInitiatorItemSelect22(item: any): void {
+    this.dueSForm.controls['shopId'].setValue(item.id);
+  }
+
+  onInitiatorItemUnSelect22(item: any): void {
+    this.dueSForm.controls['shopId'].setValue('');
   }
 
   successmsg(message: string): void {

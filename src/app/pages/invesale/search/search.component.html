@@ -1,0 +1,44 @@
+<mat-form-field appearance="fill">
+  <mat-label>Search by Number</mat-label>
+  <input
+    matInput
+    [(ngModel)]="searchNumber"
+    (ngModelChange)="onSearchChange($event)"
+    placeholder="Enter Mobile Number"
+    type="tel"
+    pattern="^(01[3-9]\d{8})$"
+  />
+</mat-form-field>
+
+<mat-list *ngIf="searchResults.length > 0">
+  <mat-list-item
+    *ngFor="let result of searchResults"
+    (click)="selectResult(result)"
+  >
+    {{ result.name }}
+  </mat-list-item>
+</mat-list>
+
+<mat-form-field
+  appearance="fill"
+  *ngIf="searchNumber && searchResults.length < 1"
+>
+  <mat-label>Shop Name</mat-label>
+  <input
+    matInput
+    [(ngModel)]="newShopName"
+    placeholder="Enter Shop Name"
+    type="text"
+  />
+</mat-form-field>
+
+<button
+  style="margin-left: 1rem"
+  *ngIf="searchNumber && searchResults.length < 1"
+  mat-raised-button
+  color="primary"
+  (click)="addNewEntry()"
+  type="button"
+>
+  Add New Entry
+</button>

@@ -23,6 +23,6 @@ export const appConfig: ApplicationConfig = {
         deps: [ApiConfigService],
         multi: true,
     },
-    provideAnimations()
+    provideAnimations(),
 ]
 };

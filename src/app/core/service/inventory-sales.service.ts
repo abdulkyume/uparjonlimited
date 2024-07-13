@@ -764,7 +764,7 @@ export class InventorySalesService {
   getAllSales(
     page: number = 0,
     limit: number = 10,
-    returnType: string = '',
+    dsoId: string = '',
     orderId: string = '',
     dateFrom: string = '',
     dateTo: string = '',
@@ -772,7 +772,7 @@ export class InventorySalesService {
     var params = new HttpParams()
       .set('page', Number(page))
       .set('pageSize', Number(limit))
-      .set('returnType', String(returnType))
+      .set('dsoId', String(dsoId))
       .set('orderId', String(orderId))
       .set('dateTo', String(dateTo))
       .set('dateFrom', String(dateFrom));
