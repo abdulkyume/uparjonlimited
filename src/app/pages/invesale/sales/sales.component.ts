@@ -215,6 +215,16 @@ export class SalesComponent implements OnInit, OnDestroy {
       returnDetails: [],
       deleted: [false],
     });
+
+    this.slubForm = this.formBuilder.group({
+      slubFormVal: this.formBuilder.array([]),
+    });
+    this.slubExpenseForm = this.formBuilder.group({
+      slubExpenseFormVal: this.formBuilder.array([]),
+    });
+    this.slubReturnForm = this.formBuilder.group({
+      slubReturnFormVal: this.formBuilder.array([]),
+    });
     this.selectedItems = [];
     this.selectedItems1 = [];
     this.selectedItems2 = [];
@@ -312,7 +322,7 @@ export class SalesComponent implements OnInit, OnDestroy {
         this.salesSForm.controls['dsoId'].value,
         this.salesSForm.controls['orderId'].value,
         this.salesSForm.controls['dateFrom'].value,
-        this.salesSForm.controls['dateTo'].value,
+        this.salesSForm.controls['dateTo'].value
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({

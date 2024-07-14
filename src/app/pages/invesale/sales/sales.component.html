@@ -372,9 +372,12 @@
               <div class="col-lg-12 text-center">
                 <app-search (selectedShop)="setShop($event)"></app-search>
               </div>
-              <div class="col-lg-6 my-3 text-center" *ngIf="f['dueShopId'].value">
+              <div
+                class="col-lg-6 my-3 text-center"
+                *ngIf="f['dueShopId'].value"
+              >
                 <label for="">Shop Information</label>
-                <br>
+                <br />
                 {{ shopInfo }}
               </div>
               <div class="col-lg-6 my-3" *ngIf="f['dueShopId'].value">
@@ -413,11 +416,11 @@
               </div>
             </div>
           </div>
-
           <div class="col-lg-6 mb-3">
             <button
               class="btn btn-primary w-100"
               type="submit"
+              [disabled]="salesForm.invalid"
               *ngIf="!salesForm.controls['id'].value"
             >
               Submit
