@@ -1,0 +1,111 @@
+<div class="position-relative">
+    <div class="bgsetforloading position-absolute" *ngIf="loader">
+      <div class="position-absolute middleinpage"><app-loader></app-loader></div>
+    </div>
+    <div class="container-fluid">  
+      <div class="row bg-white">
+        <form [formGroup]="reprotForm" class="row justify-content-center" (ngSubmit)="getExpense()">
+          <div
+            class="col-lg-3 col-md-3 col-12"
+            *ngIf="role === '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
+          >
+            <label for="merchantname"> DSO </label>
+            <ng-multiselect-dropdown
+              [placeholder]="'Select DSO'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList"
+              [(ngModel)]="selectedItems1"
+              [ngModelOptions]="{ standalone: true }"
+              (onSelect)="onInitiatorItemSelect($event)"
+              (onDeSelect)="onInitiatorItemUnSelect($event)"
+            >
+            </ng-multiselect-dropdown>
+          </div>
+          <div class="col-lg-3 col-md-3 col-12">
+            <label for="fromDate">From Date</label>
+            <input
+              type="date"
+              formControlName="fromdate"
+              id="fromDate"
+              class="form-control"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3 col-12">
+            <label for="toDate">To Date</label>
+            <input
+              type="date"
+              formControlName="toDate"
+              id="toDate"
+              class="form-control"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3 col-12">
+            <label for="Shop"> Shop </label>
+            <ng-multiselect-dropdown
+              [placeholder]="'Select Shop'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList2"
+              [(ngModel)]="selectedItems2"
+              [ngModelOptions]="{ standalone: true }"
+              (onSelect)="onInitiatorItemSelect1($event)"
+              (onDeSelect)="onInitiatorItemUnSelect1($event)"
+            >
+            </ng-multiselect-dropdown>
+          </div>
+  
+          <div class="col-lg-4 col-md-4 col-12 mt-3">
+            <button class="btn btn-lg btn-primary w-100" type="submit">
+              Search
+            </button>
+          </div>
+          <div class="col-lg-4 col-md-4 col-12 mt-3">
+            <button
+              type="button"
+              class="btn btn-lg btn-success w-100"
+              (click)="downloadGetAllOrderList()"
+            >
+              Download
+            </button>
+          </div>
+          <div class="col-lg-4 col-md-4 col-12 mt-3">
+            <button class="btn btn-lg btn-warning w-100" (click)="clear()">
+              Clear
+            </button>
+          </div>
+        </form>
+      </div>
+  
+      <div class="row bg-white mt-3">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-responsive" id="reporttable" #reporttable>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>DSO</th>
+                  <th>Sales Amount</th>
+                  <th>Collection Amount</th>
+                  <th>Return Amount</th>
+                  <th>Dues Amount</th>
+                  <th>Dues Shop</th>
+                  <th>Commission Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of salesList">
+                  <td>{{ data.order_date }}</td>
+                  <td>{{ data.rider }}</td>
+                  <td>{{ data.merchant }}</td>
+                  <td>{{ data.received_amount }}</td>
+                  <td>{{ data.item }}</td>
+                  <td>{{ data.deliverycost }}</td>
+                  <td>{{ data.merchantpayable }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
