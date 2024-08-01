@@ -4,7 +4,7 @@
     </div>
     <div class="container-fluid">  
       <div class="row bg-white">
-        <form [formGroup]="reprotForm" class="row justify-content-center" (ngSubmit)="getExpense()">
+        <form [formGroup]="reprotForm" class="row justify-content-center" (ngSubmit)="getAllSalesList()">
           <div
             class="col-lg-3 col-md-3 col-12"
             *ngIf="role === '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'"
@@ -13,7 +13,7 @@
             <ng-multiselect-dropdown
               [placeholder]="'Select DSO'"
               [settings]="dropdownSettings"
-              [data]="dropdownList"
+              [data]="dropdownList1"
               [(ngModel)]="selectedItems1"
               [ngModelOptions]="{ standalone: true }"
               (onSelect)="onInitiatorItemSelect($event)"
@@ -85,7 +85,7 @@
                   <th>DSO</th>
                   <th>Sales Amount</th>
                   <th>Collection Amount</th>
-                  <th>Return Amount</th>
+                  <th>Return Quantity</th>
                   <th>Dues Amount</th>
                   <th>Dues Shop</th>
                   <th>Commission Amount</th>
@@ -93,13 +93,14 @@
               </thead>
               <tbody>
                 <tr *ngFor="let data of salesList">
-                  <td>{{ data.order_date }}</td>
-                  <td>{{ data.rider }}</td>
-                  <td>{{ data.merchant }}</td>
-                  <td>{{ data.received_amount }}</td>
-                  <td>{{ data.item }}</td>
-                  <td>{{ data.deliverycost }}</td>
-                  <td>{{ data.merchantpayable }}</td>
+                  <td>{{ data.date }}</td>
+                  <td>{{ data.dso_name }}</td>
+                  <td>{{ data.sales_amount }}</td>
+                  <td>{{ data.collection_amount }}</td>
+                  <td>{{ data.return_quantity }}</td>
+                  <td>{{ data.dueamount }}</td>
+                  <td>{{ data.shop_name }}</td>
+                  <td>{{ data.discount }}</td>
                 </tr>
               </tbody>
             </table>
@@ -108,4 +109,3 @@
       </div>
     </div>
   </div>
-  

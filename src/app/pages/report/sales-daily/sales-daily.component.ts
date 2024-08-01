@@ -23,6 +23,7 @@ import { RoleService } from 'src/app/core/service/role.service';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { LoaderComponent } from 'src/app/common/loader/loader.component';
+import { InventorySalesService } from 'src/app/core/service/inventory-sales.service';
 
 @Component({
   selector: 'app-sales-daily',
@@ -54,14 +55,10 @@ export class SalesDailyComponent implements OnInit, OnDestroy {
   itemList: any;
 
   dropdownSettings = {};
-  dropdownList = [];
-  selectedItems = [];
   dropdownList1: any;
   dropdownList2: any;
   selectedItems1: any = [];
   selectedItems2: any = [];
-  existingUserList: any = [];
-  existingUserListm: any = [];
 
   userid: string = '';
   page: number = 0;
@@ -85,7 +82,7 @@ export class SalesDailyComponent implements OnInit, OnDestroy {
     private orderService1: OrderService,
     private encryptionService: EncryptionService,
     private configService: ConfigurationService,
-    private merchantService: MerchantService,
+    private invService: InventorySalesService,
     private roleService: RoleService
   ) {}
 
@@ -110,14 +107,13 @@ export class SalesDailyComponent implements OnInit, OnDestroy {
     this.reprotFormRefresh();
   }
 
-  getAllusers1() {
+  getAllDso() {
     let ilist: any[] = [];
     this.roleService
-      .getAllusers(0, 1000, '', '44eff443-bf52-4e6f-a5d5-d42fb409e0c1')
+      .getAllusers(0, 1000, '', 'e4151052-bf99-947b-1c8e-ee934cc685d5')
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
-          this.existingUserList = res.data.content;
           res.data.content.map((x: any) => {
             ilist.push({
               id: x.id,
@@ -130,26 +126,34 @@ export class SalesDailyComponent implements OnInit, OnDestroy {
           this.loader = false;
         },
         complete: () => {
-          this.dropdownList2 = ilist;
-          this.getAllusers2();
+          this.dropdownList1 = ilist;
+          this.getAllShop();
         },
       });
   }
 
-  getAllusers2() {
+  getAllShop() {
     let ilist: any[] = [];
-    this.roleService
-      .getAllusers(0, 1000, '', 'e4241052-bf66-497b-9c4e-ee439cc586d4')
+    this.invService
+      .getAllShop(0, 1000)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
-          this.existingUserListm = res.data.content;
+          res.data.content.map((x: any) => {
+            ilist.push({
+              id: x.id,
+              customtext: `${x.name}-${x.phoneNumber}`,
+            });
+          });
         },
         error: (err: any) => {
           console.error(err);
           this.loader = false;
         },
-        complete: () => {},
+        complete: () => {
+          this.dropdownList2 = ilist;
+          this.loader = false;
+        },
       });
   }
 
@@ -166,44 +170,21 @@ export class SalesDailyComponent implements OnInit, OnDestroy {
 
   reprotFormRefresh() {
     this.reprotForm = this.formbuilder.group({
-      merchantId: [
-        this.role === '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'
-          ? ''
-          : this.merchant.id,
-      ],
+      merchantId: [''],
       riderId: [''],
       fromdate: [`${this.currentdate}`],
       toDate: [`${this.currentdate}`],
     });
-    this.getExpense();
+    this.getAllSalesList();
   }
 
-  getExpense() {
-    this.loader = true;
-    this.orderService
-      .getExpense(this.f['fromdate'].value, this.f['toDate'].value)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res: any) => {
-          this.totalExpense = res.data[0].totalcost;
-        },
-        error: (err: any) => {
-          console.error(err);
-          this.loader = false;
-        },
-        complete: () => {
-          this.getAllOrderList();
-        },
-      });
-  }
-
-  getAllOrderList() {
+  getAllSalesList() {
     this.totalReceivedAmount = 0;
     this.totalDeliveryCost = 0;
     this.totalPayable = 0;
     this.totalProfit = 0;
     this.orderService
-      .getAllOrderReport(
+      .getAllSalesReport(
         this.page,
         this.pageSize,
         this.f['fromdate'].value,
@@ -293,32 +274,6 @@ export class SalesDailyComponent implements OnInit, OnDestroy {
       });
   }
 
-  getAllDso() {
-    let dsoDetailsList: any = [];
-    this.merchantService
-      .getMerchantDetail('', this.page, this.pageSize, '')
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res: any) => {
-          this.merchantList = res.data.content;
-          res.data.content.map((merchant: any) => {
-            dsoDetailsList.push({
-              id: merchant.id,
-              customtext: merchant.name + ' - ' + merchant.phoneNumber,
-            });
-          });
-        },
-        error: (err: any) => {
-          console.error(err);
-          this.loader = false;
-        },
-        complete: () => {
-          this.dropdownList = dsoDetailsList;
-          this.loader = false;
-        },
-      });
-  }
-
   getitemlist() {
     let ilist: any[] = [];
     this.configService.getAllItem(0, 1000, '').subscribe({
@@ -367,7 +322,7 @@ export class SalesDailyComponent implements OnInit, OnDestroy {
     if (this.toPageVal > this.total) {
       this.toPageVal = this.total;
     }
-    this.getAllOrderList();
+    this.getAllSalesList();
     return event;
   }
 
