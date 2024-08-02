@@ -5,6 +5,7 @@ import { EventService } from 'src/app/core/service/event.service';
 import { AuthService } from 'src/app/core/service/auth.service';
 import { EncryptionService } from 'src/app/core/service/encryption.service';
 import { MerchantService } from 'src/app/core/service/merchant.service';
+import { ReportService } from 'src/app/core/service/report.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,12 +28,19 @@ export class DashboardComponent implements OnInit {
   merchantMobile: string = '';
 
   @ViewChild('content') content: any;
+  totalSales: any;
+  totalCollection: any;
+  totalDues: any;
+  totalReturn: any;
+  TotalExpense: any;
+  TotalProfit: any;
   constructor(
     private modalService: NgbModal,
     private eventService: EventService,
     private authService: AuthService,
     private encryptionService: EncryptionService,
-    private merchantService: MerchantService
+    private merchantService: MerchantService,
+    private reportService: ReportService
   ) {}
 
   ngOnInit() {
@@ -52,7 +60,12 @@ export class DashboardComponent implements OnInit {
         horizontal.setAttribute('checked', 'true');
       }
     }
-    this.getMerchantOrderInfos();
+    if (this.roleId === 'e4241052-bf66-497b-9c4e-ee439cc586d4') {
+      this.getMerchantOrderInfos();
+    }
+    if (this.roleId === '1143fcc9-02d1-4bd0-ab47-b5efc92072fc') {
+      this.getDashboard();
+    }
   }
 
   @HostListener('window:storage', ['$event']) checkLoggedIn(event: Storage) {
@@ -72,11 +85,37 @@ export class DashboardComponent implements OnInit {
   getMerchantOrderInfos() {
     this.merchantService.getMerchantInfo(this.merchantMobile).subscribe({
       next: (res: any) => {
-        this.totalOrder = res.data[0].total_orders
-        this.totalDelivered = res.data[0].total_delivered_orders
-        this.todayApprove = res.data[0].todays_approved_orders
-        this.todayCanceled = res.data[0].todays_cancelled_orders
-        this.todayOrder = res.data[0].todays_orders
+        this.totalOrder = res.data[0].total_orders;
+        this.totalDelivered = res.data[0].total_delivered_orders;
+        this.todayApprove = res.data[0].todays_approved_orders;
+        this.todayCanceled = res.data[0].todays_cancelled_orders;
+        this.todayOrder = res.data[0].todays_orders;
+      },
+      error: (err: any) => {
+        console.error(err);
+      },
+      complete: () => {},
+    });
+  }
+
+  getDashboard() {
+    let currentdate: string = `${new Date().getFullYear()}-${String(
+      new Date().getMonth() + 1
+    ).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
+    this.reportService.getDashboard(currentdate, currentdate).subscribe({
+      next: (res: any) => {
+        let data = res.data[0];
+        this.totalCollection = data.total_collection;
+
+        this.totalDues = data.total_dues;
+
+        this.TotalExpense = data.total_expense;
+
+        this.TotalProfit = data.total_profit;
+
+        this.totalReturn = data.total_return;
+
+        this.totalSales = data.total_sales;
       },
       error: (err: any) => {
         console.error(err);

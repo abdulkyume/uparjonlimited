@@ -2,7 +2,10 @@
   <div
     class="d-flex justify-content-center align-items-center"
     style="height: 80vh"
-    *ngIf="roleId !== 'e4241052-bf66-497b-9c4e-ee439cc586d4'"
+    *ngIf="
+      roleId !== 'e4241052-bf66-497b-9c4e-ee439cc586d4' &&
+      roleId !== '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'
+    "
   >
     <img src="assets/images/upjl/Food-Delivery.png" alt="" />
   </div>
@@ -19,7 +22,7 @@
       <div class="col-lg-6 p-3">
         <button class="bg-success border-0 pt-3 px-3 fw-bold w-100 h-100">
           <h1 class="text-white">Total Delivered</h1>
-          <h3 class="text-white mt-5">{{totalDelivered}}</h3>
+          <h3 class="text-white mt-5">{{ totalDelivered }}</h3>
         </button>
       </div>
       <div class="col-lg-4 p-3">
@@ -27,7 +30,7 @@
           class="bg-primary text-white border-0 pt-3 px-3 fw-bold w-100 h-100"
         >
           <h1 class="text-white">Today's Order</h1>
-          <h3 class="text-white mt-5">{{todayOrder}}</h3>
+          <h3 class="text-white mt-5">{{ todayOrder }}</h3>
         </button>
       </div>
       <div class="col-lg-4 p-3">
@@ -35,7 +38,7 @@
           class="bg-success text-white border-0 pt-3 px-3 fw-bold w-100 h-100"
         >
           <h1 class="text-white">Today's Approved</h1>
-          <h3 class="text-white mt-5">{{todayApprove}}</h3>
+          <h3 class="text-white mt-5">{{ todayApprove }}</h3>
         </button>
       </div>
       <div class="col-lg-4 p-3">
@@ -43,7 +46,59 @@
           class="bg-danger text-white border-0 pt-3 px-3 fw-bold w-100 h-100"
         >
           <h1 class="text-white">Today's Canceled</h1>
-          <h3 class="text-white mt-5">{{todayCanceled}}</h3>
+          <h3 class="text-white mt-5">{{ todayCanceled }}</h3>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="roleId === '1143fcc9-02d1-4bd0-ab47-b5efc92072fc'">
+    <div class="row" style="height: 75vh">
+      <div class="col-lg-6 p-3">
+        <button
+          class="bg-success text-white border-0 pt-3 px-3 fw-bold w-100 h-100"
+        >
+          <h1 class="text-white">Total Sales</h1>
+          <h3 class="text-white mt-5">{{ totalSales ?? 0 }}</h3>
+        </button>
+      </div>
+      <div class="col-lg-6 p-3">
+        <button class="bg-success border-0 pt-3 px-3 fw-bold w-100 h-100">
+          <h1 class="text-white">Total Collection</h1>
+          <h3 class="text-white mt-5">{{ totalCollection ?? 0 }}</h3>
+        </button>
+      </div>
+      <div class="col-lg-4 p-3">
+        <button
+          class="bg-primary text-white border-0 pt-3 px-3 fw-bold w-100 h-100"
+        >
+          <h1 class="text-white">Total Dues</h1>
+          <h3 class="text-white mt-5">{{ totalDues ?? 0 }}</h3>
+        </button>
+      </div>
+      <div class="col-lg-4 p-3">
+        <button
+          class="bg-success text-white border-0 pt-3 px-3 fw-bold w-100 h-100"
+        >
+          <h1 class="text-white">Total Return</h1>
+          <h3 class="text-white mt-5">{{ totalReturn ?? 0 }}</h3>
+        </button>
+      </div>
+      <div class="col-lg-4 p-3">
+        <button
+          class="bg-danger text-white border-0 pt-3 px-3 fw-bold w-100 h-100"
+        >
+          <h1 class="text-white">Total Expense</h1>
+          <h3 class="text-white mt-5">{{ TotalExpense ?? 0 }}</h3>
+        </button>
+      </div>
+
+      <div class="col-lg-4 p-3">
+        <button
+          class="bg-danger text-white border-0 pt-3 px-3 fw-bold w-100 h-100"
+        >
+          <h1 class="text-white">Total Profit</h1>
+          <h3 class="text-white mt-5">{{ TotalProfit ?? 0 }}</h3>
         </button>
       </div>
     </div>

@@ -17,8 +17,8 @@ export class ReportService {
     pageSize: number = 20,
     fromDate: string,
     toDate: string,
-    userId: string='',
-    mercahntId: string='',
+    userId: string = '',
+    mercahntId: string = '',
     download: boolean = false
   ) {
     let params;
@@ -265,8 +265,8 @@ export class ReportService {
     pageSize: number = 20,
     fromDate: string,
     toDate: string,
-    dsoId: string='',
-    shopId: string='',
+    dsoId: string = '',
+    shopId: string = '',
     download: boolean = false
   ) {
     let params;
@@ -390,6 +390,48 @@ export class ReportService {
         params,
         observe: 'response',
         responseType: 'blob',
+      })
+      .pipe(
+        timeout(60000),
+        catchError((err) => {
+          console.error(err);
+          if (
+            err === 'Unauthorized user.' ||
+            err.message === 'Unauthorized user.'
+          ) {
+            this.authService.logout();
+          }
+          if (err.name === 'TimeoutError') {
+            Swal.fire('Time Out!!', 'Internal Server Problem');
+          }
+          if (
+            err.message === "Cannot read properties of null (reading 'message')"
+          ) {
+            Swal.fire(
+              'Error!!',
+              'Resource Not Available. Link is Not Working',
+              'error'
+            );
+          }
+          if (err === 'Bad Request') {
+            Swal.fire('Error!!', 'Form Submission Error');
+          }
+          if (err === 'Unknown Error') {
+            Swal.fire('Error!!', 'No Connection Found');
+          }
+          throw err;
+        })
+      );
+  }
+
+  getDashboard(fromDate: string, toDate: string) {
+    let params = new HttpParams()
+      .set('fromDate', String(fromDate))
+      .set('toDate', String(toDate));
+
+    return this.http
+      .get(`${this.apiurl}report/dashboard`, {
+        params,
       })
       .pipe(
         timeout(60000),
